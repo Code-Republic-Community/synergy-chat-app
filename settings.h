@@ -19,6 +19,9 @@ public:
 signals:
     void goBackSignal();
 
+private slots:
+    void handle_back_btn();
+
 private:
     QMap<QComboBox*, int> oldSettings;
     QMap<QComboBox*, int> newSettings;

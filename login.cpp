@@ -103,10 +103,11 @@ void Login::rememberMe(bool isClicked)
     }
 }
 
-void Login::mouseReleaseEvent(QMouseEvent* event)
+void Login::mousePressEvent(QMouseEvent* event)
 {
     if (m_register->underMouse()) {
         qDebug() << "Register link clicked!";
+        emit register_signal();
     }
     if(event) {
 

@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/pngs">
         <file>profileicon</file>
+        <file>searchicon.png</file>
+        <file>panda.jpg</file>
     </qresource>
 </RCC>

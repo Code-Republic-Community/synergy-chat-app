@@ -12,6 +12,11 @@ Settings::Settings(QWidget *parent) : QWidget(parent) {
     styleing();
 }
 
+void Settings::handle_back_btn()
+{
+    emit goBackSignal();
+}
+
 void Settings::init()
 {
     mainLayout = new QVBoxLayout();

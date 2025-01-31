@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QPixmap>
 #include <QVector>
+#include <QKeyEvent>
 #include "scroll_widget.h"
 #include "v_chat_widget.h"
 
@@ -19,18 +20,20 @@ public:
     ~MainPageWindow() = default;
 
 private:
+    ScrollWidget* scroll_widget;
     QPushButton* SearchButton;
     QPushButton* ProfileButton;
     QLineEdit *searchBar;
     QLabel* chat;
-    ScrollWidget* scroll_widget;
     QVector<VChatWidget*> all_vchats; // tmp
 public slots:
-    void handle_vchat_click();
-              // void handleSearchButton();
+    void handleSearch();
+    void handle_vchat_click(QString);
+    void keyPressEvent(QKeyEvent* event);
+    void handleSearchButton();
     void handleProfileButton(); //Tiko Part
 signals:
-    void vchat_clicked_from_main_pg();
+    void vchat_clicked_from_main_pg(QString nickname);
     void profile_button_signal();
 };
 

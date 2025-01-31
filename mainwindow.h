@@ -10,6 +10,8 @@
 #include "chat_widget.h"
 #include "my_profile.h"
 #include "settings.h"
+#include "verification.h"
+#include "otherprofile.h"
 
 class MainWindow : public QMainWindow
 {
@@ -17,6 +19,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+
     ~MainWindow();
 
 private:
@@ -28,14 +31,21 @@ private:
     ChatWidget *chat_pg;
     MyProfile *profile_settings_pg;
     Settings *settings_pg;
+    Verification *verification_pg;
+    OtherProfile *other_profile_pg;
+
+private:
+    // void call_translations_on_pgs();
 
 private slots:
     void goToSignIn();
     void goToRegPg();
     void goToWelcomePg();
     void goToMainPg();
-    void goToChatPg();
+    void goToChatPg(QString nick);
     void goToProfileSettingsPg();
     void goToSettings();
+    void goToVerificationPg();
+    void goToOtherProfilePg();
 };
 #endif // MAINWINDOW_H

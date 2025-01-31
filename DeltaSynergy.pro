@@ -16,10 +16,12 @@ SOURCES += \
     mainwindow.cpp \
     my_profile.cpp \
     navigationPrevOrNext.cpp \
+    otherprofile.cpp \
     registration.cpp \
     scroll_widget.cpp \
     settings.cpp \
     v_chat_widget.cpp \
+    verification.cpp \
     welcomepg.cpp
 
 HEADERS += \
@@ -29,10 +31,12 @@ HEADERS += \
     mainwindow.h \
     my_profile.h \
     navigationPrevOrNext.h \
+    otherprofile.h \
     registration.h \
     scroll_widget.h \
     settings.h \
     v_chat_widget.h \
+    verification.h \
     welcomepg.h
 
 TRANSLATIONS += \

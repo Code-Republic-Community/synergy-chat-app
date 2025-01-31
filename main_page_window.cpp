@@ -1,11 +1,19 @@
 #include "main_page_window.h"
 
 MainPageWindow::MainPageWindow(QWidget* parent):
-    QWidget(parent), SearchButton(new QPushButton(this)),
+    QWidget(parent), scroll_widget(new ScrollWidget(this)), SearchButton(new QPushButton(this)),
+    ProfileButton(new QPushButton(this)),
     searchBar(new QLineEdit(this)), chat(new QLabel(this)){
 
-    QPixmap searchIcon(":/pngs/profileicon");
+    QPixmap searchIcon(":/pngs/searchicon.png");
     QPixmap profileIcon(":/pngs/profileicon");
+
+    for (int i = 0; i < 30; ++i) {
+        VChatWidget* chat = new VChatWidget("Avtandir3000", "@nick" + QString::number(i));
+        connect(chat, &VChatWidget::clicked_vchat, this, &MainPageWindow::handle_vchat_click);
+        scroll_widget->add_chat(chat);
+    }
+    scroll_widget->show_chats();
 
     SearchButton->setGeometry(340, 10, 50, 50);
     SearchButton->setIcon(searchIcon);
@@ -20,22 +28,6 @@ MainPageWindow::MainPageWindow(QWidget* parent):
                                 "QPushButton:pressed {"
                                 "    background-color: rgba(142, 21, 222, 0.2);"
                                 "}");
-    ProfileButton = nullptr;
-    // ProfileButton->setGeometry(10,10, 50, 50);
-    // ProfileButton->setIcon(profileIcon);
-    // ProfileButton->setIconSize(profileIcon.size());
-    // ProfileButton->setStyleSheet("QPushButton {"
-    //                              "    border: none;"
-    //                              "    background-color: transparent;"
-    //                              "}"
-    //                              "QPushButton:hover {"
-    //                              "    background-color: rgba(142, 21, 222, 0.1);"
-    //                              "}"
-    //                              "QPushButton:pressed {"
-    //                              "    background-color: rgba(142, 21, 222, 0.2);"
-    //                              "}");
-    // ProfileButton->setEnabled(true);
-    // connect(ProfileButton, &QPushButton::clicked, this, &MainPageWindow::profile_button_signal);
 
     searchBar->setGeometry(70, 10, 265, 50);
     searchBar->setPlaceholderText("search...");
@@ -60,21 +52,11 @@ MainPageWindow::MainPageWindow(QWidget* parent):
     chat->setGeometry(170, 30, 100, 100);
     chat->setStyleSheet("color: #8e15de; font-size: 16px; font-family: 'Century Gothic', sans-serif; font-weight: bold;");
 
-    scroll_widget = new ScrollWidget(this);
 
-    for (int i = 0; i < 30; ++i) {
-        VChatWidget* chat = new VChatWidget("Avtandir3000", "@nick");
-        connect(chat, &VChatWidget::clicked_vchat, this, &MainPageWindow::handle_vchat_click);
-        scroll_widget->add_chat(chat);
-    }
-    scroll_widget->show_chats();
-
-    QPushButton *just_btn = new QPushButton(this);
-    just_btn->setGeometry(170, 2, 20, 20);
-    just_btn->setGeometry(10,10, 50, 50);
-    just_btn->setIcon(profileIcon);
-    just_btn->setIconSize(profileIcon.size());
-    just_btn->setStyleSheet("QPushButton {"
+    ProfileButton->setGeometry(10,10, 50, 50);
+    ProfileButton->setIcon(profileIcon);
+    ProfileButton->setIconSize(profileIcon.size());
+    ProfileButton->setStyleSheet("QPushButton {"
                                  "    border: none;"
                                  "    background-color: transparent;"
                                  "}"
@@ -84,12 +66,14 @@ MainPageWindow::MainPageWindow(QWidget* parent):
                                  "QPushButton:pressed {"
                                  "    background-color: rgba(142, 21, 222, 0.2);"
                                  "}");
-    connect(just_btn, &QPushButton::clicked, this, &MainPageWindow::handleProfileButton);
+    connect(ProfileButton, &QPushButton::clicked, this, &MainPageWindow::handleProfileButton);
+    connect(SearchButton, &QPushButton::clicked, this, &MainPageWindow::handleSearchButton);
+    connect(searchBar, &QLineEdit::returnPressed, this, &MainPageWindow::handleSearch);
 }
 
-void MainPageWindow::handle_vchat_click()
+void MainPageWindow::handle_vchat_click(QString nickname)
 {
-    emit vchat_clicked_from_main_pg();
+    emit vchat_clicked_from_main_pg(nickname);
 }
 
 void MainPageWindow::handleProfileButton()
@@ -98,3 +82,24 @@ void MainPageWindow::handleProfileButton()
     emit profile_button_signal();
 }
 
+void MainPageWindow::handleSearchButton(){
+    qDebug() << "search button";
+}
+
+void MainPageWindow::handleSearch(){
+    QString searchText = searchBar->text();
+    if (!searchText.isEmpty()) {
+        qDebug() << "Search query:" << searchText;
+        //chat filtration, request
+    } else {
+        qDebug() << "Search query is empty";
+    }
+}
+
+
+void MainPageWindow::keyPressEvent(QKeyEvent* event){
+    if(event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter){
+        searchBar->setFocus();
+    }
+
+}

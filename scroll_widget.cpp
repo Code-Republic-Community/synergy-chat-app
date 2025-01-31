@@ -18,7 +18,7 @@ ScrollWidget::ScrollWidget(QWidget *parent)
     //     add_chat(chat);
     // }
 
-    show_chats();
+    // show_chats();
 
     scroll_content->setLayout(contentLayout);
     scroll->setWidget(scroll_content);

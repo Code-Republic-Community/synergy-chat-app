@@ -1,7 +1,7 @@
 #include "v_chat_widget.h"
 
 VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
-    : QWidget(parent) {
+    : QPushButton(parent) {
     this->setFixedSize(300, 60);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -56,14 +56,18 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     timer = nullptr;
     position = 0;
 
-    set_user_pic("C:\\Users\\aregm_\\Pictures\\panda.jpg");
+    pic->setPixmap(cut_photo(":/pngs/panda"));
+    pic->setFixedSize(40, 40);
+    pic->setStyleSheet("border: 0px;");
+
+    connect(this, &QPushButton::clicked, this, &VChatWidget::handle_click);
 }
 
 
-void VChatWidget::mousePressEvent(QMouseEvent *event) {
-    qDebug() << "its worked";
-    emit clicked_vchat();
-}
+// void VChatWidget::mousePressEvent(QMouseEvent *event) {
+//     qDebug() << "its worked";
+//     emit clicked_vchat(this);
+// }
 
 
 void VChatWidget::scroll_long_text(QString text)
@@ -96,7 +100,7 @@ void VChatWidget::set_name(QString text)
     name->setText(text);
 }
 
-void VChatWidget::set_user_pic(const QString &pic_path)
+QPixmap VChatWidget::cut_photo(const QString &pic_path)
 {
     QPixmap avatar(pic_path);
 
@@ -121,9 +125,12 @@ void VChatWidget::set_user_pic(const QString &pic_path)
     painter.setClipPath(path);
     painter.drawPixmap(0, 0, size, size, avatar);
 
-    pic->setPixmap(triangle);
-    pic->setFixedSize(size, size);
-    pic->setStyleSheet("border: 0px;");
+    return triangle;
+}
+
+void VChatWidget::handle_click()
+{
+    emit clicked_vchat(this->get_nick());
 }
 
 

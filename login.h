@@ -8,7 +8,7 @@
 #include <QCheckBox>
 #include <QMouseEvent>
 #include <QTimer>
-#include "navigationprevornext.h"
+#include "navigationPrevOrNext.h"//
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -46,10 +46,11 @@ private:
 signals:
     void prev_btn_signal();
     void next_btn_signal();
+    void register_signal();
 
 private slots:
     void rememberMe(bool isClicked);
-    void mouseReleaseEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event);
     void handleNextButtonClicked();
     void handlePrevButtonClicked();
     void forgetIcon();
