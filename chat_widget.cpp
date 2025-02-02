@@ -6,6 +6,7 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     this->setFixedSize(400, 700);
 
     v_user = new VChatWidget("username", nick);
+    v_user->resize(200, 60);
 
     QHBoxLayout *layout = new QHBoxLayout();
     QLineEdit *line = new QLineEdit();
@@ -13,7 +14,7 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     line->setFixedHeight(35);
 
     send_btn = new QPushButton();
-    send_btn->setText("🟣");
+    // send_btn->setText("🟣");
     send_btn->setFixedSize(50, 35);
 
     layout->addWidget(line);
@@ -28,20 +29,19 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     mainLayout->addWidget(messagesFrame);
 
     QHBoxLayout *for_user = new QHBoxLayout();
-    for_user->addWidget(v_user);
 
-    QPushButton *backButton = new QPushButton("Back");
+    backButton = new QPushButton();
     backButton->setFixedSize(100, 40);
     backButton->setStyleSheet("background-color: #5A005A; color: white; font-weight: bold; border-radius: 5px;");
+
+    for_user->addWidget(backButton);
+    for_user->addWidget(v_user);
 
     connect(v_user, &VChatWidget::clicked_vchat, this, &ChatWidget::handle_profile_signal);
     connect(backButton, &QPushButton::clicked, this, &ChatWidget::handle_go_back);
 
-    QHBoxLayout *backButtonLayout = new QHBoxLayout();
-    backButtonLayout->addWidget(backButton, 0, Qt::AlignLeft);
-
+    setLanguage();
     mainLayout->addLayout(for_user);
-    mainLayout->addLayout(backButtonLayout);
     setLayout(mainLayout);
 }
 
@@ -63,4 +63,10 @@ void ChatWidget::handle_profile_signal(QString nick)
 void ChatWidget::handle_go_back()
 {
     emit go_back_signal();
+}
+
+void ChatWidget::setLanguage()
+{
+    send_btn->setText("🟣");
+    backButton->setText("Back");
 }

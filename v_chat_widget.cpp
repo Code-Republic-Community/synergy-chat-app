@@ -2,7 +2,9 @@
 
 VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     : QPushButton(parent) {
-    this->setFixedSize(300, 60);
+    // this->setFixedSize(300, 60);
+    this->setMinimumSize(200, 60);
+    this->setMaximumSize(300, 60);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -10,7 +12,7 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     QFrame *container = new QFrame();
     container->setStyleSheet(
         // "background-color: black;"
-        "border: 1px solid white;"
+        "border: 0px solid white;"
         "border-radius: 10px;"
         );
     container->setFixedSize(200, 60);
@@ -24,13 +26,13 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     layout->setSpacing(5);
 
 
-    name = new QLabel(name_text);
+    name = new QLabel();
     name->setStyleSheet("color: white; font-size: 12px; border: none;");
     name->setAlignment(Qt::AlignLeft);
     // name->setFixedWidth(50);
     name->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    nick = new QLabel(nick_text);
+    nick = new QLabel();
     nick->setStyleSheet("color: white; font-size: 12px; border: 0px;");
     nick->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     nick->setAlignment(Qt::AlignRight);
@@ -60,6 +62,7 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     pic->setFixedSize(40, 40);
     pic->setStyleSheet("border: 0px;");
 
+    setLanguage(name_text, nick_text);
     connect(this, &QPushButton::clicked, this, &VChatWidget::handle_click);
 }
 
@@ -148,3 +151,11 @@ QString VChatWidget::get_nick() const {
 QString VChatWidget::get_name() const {
     return this->name->text();
 }
+
+void VChatWidget::setLanguage(QString name_text, QString nick_text)
+{
+    name->setText(name_text);
+    nick->setText(nick_text);
+    pic->setToolTip(tr("User Profile Picture"));
+}
+

@@ -84,6 +84,7 @@ void MainPageWindow::handleProfileButton()
 
 void MainPageWindow::handleSearchButton(){
     qDebug() << "search button";
+    handleSearch();
 }
 
 void MainPageWindow::handleSearch(){
@@ -91,6 +92,7 @@ void MainPageWindow::handleSearch(){
     if (!searchText.isEmpty()) {
         qDebug() << "Search query:" << searchText;
         //chat filtration, request
+        // if (scroll_widget->s)
     } else {
         qDebug() << "Search query is empty";
     }

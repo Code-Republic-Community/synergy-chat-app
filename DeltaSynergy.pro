@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     chat_widget.cpp \
+    httpclient.cpp \
     login.cpp \
     main.cpp \
     main_page_window.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 
 HEADERS += \
     chat_widget.h \
+    httpclient.h \
     login.h \
     main_page_window.h \
     mainwindow.h \

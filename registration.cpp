@@ -494,11 +494,11 @@ bool Registration::checkFormValidity() {
 
 void Registration::handle_reg_btn()
 {
-    if(!checkFormValidity()){
-        return;
-    }
+    // if(!checkFormValidity()){
+    //     return;
+    // }
 
-    registerButton->setEnabled(true);
+    // registerButton->setEnabled(true);
     emit reg_btn_signal();
 }
 

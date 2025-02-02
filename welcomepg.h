@@ -33,5 +33,6 @@ private:
 private:
     void init();
     void conecting();
+    void setLaguage();
 };
 #endif // WELCOMEPG_H

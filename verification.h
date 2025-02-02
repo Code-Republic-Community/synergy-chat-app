@@ -1,7 +1,6 @@
 #ifndef VERIFICATION_H
 #define VERIFICATION_H
 
-#include <QMainWindow>
 #include <QLabel>
 #include <QWidget>
 #include <QVBoxLayout>
@@ -15,7 +14,7 @@
 #include <QTranslator>
 
 
-    class Verification : public QWidget
+class Verification : public QWidget
 {
     Q_OBJECT
 
@@ -37,8 +36,8 @@ private:
     //navigationPrevOrNext *m_nextAndPrev;
     int chanceCnt = 3;
 private:
-    void SetTxt();
-    void setTextForElements(const QString &verificationMessage, const QString &placeholder, const QString &chanceMessage, const QString &VerMss, const QString &BackMs);
+    void setLanguege();
+    // void setTextForElements(const QString &verificationMessage, const QString &placeholder, const QString &chanceMessage, const QString &VerMss, const QString &BackMs);
 };
 
 #endif // VERIFICATION_H

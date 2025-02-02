@@ -30,6 +30,9 @@ public:
     void update_text();
 
 private:
+    void setLanguage(QString name_text, QString nick_text);
+
+private:
     QLabel *pic;
     QLabel *name;
     QLabel *nick;

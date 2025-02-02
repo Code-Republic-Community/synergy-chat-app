@@ -23,6 +23,9 @@ private:
     QPushButton *send_btn;
     VChatWidget *v_user;
     QPushButton *go_back_btn;
+    QPushButton *backButton;
+
+    void setLanguage();
 signals:
     void other_profile_signal(QString nick);
     void go_back_signal();

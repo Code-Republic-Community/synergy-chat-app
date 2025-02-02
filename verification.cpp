@@ -23,10 +23,11 @@ Verification::Verification(QWidget *parent)
     code->setMaxLength(7);
     layout->addWidget(code, 1, Qt::AlignHCenter);
 
-    QString currentText;
+    //QString currentText;
 
     code->setMaxLength(7);
-    connect(code, &QLineEdit::textEdited, this, [this, &currentText](const QString &text) {
+    connect(code, &QLineEdit::textEdited, this, [this](const QString &text) {
+        static QString currentText;
         QString Text = text;
         Text.remove(QRegularExpression("[^\\d]"));
 
@@ -97,53 +98,51 @@ Verification::Verification(QWidget *parent)
     Next->setGeometry(300, 600, 90, 40);
     Next->setStyleSheet("background-color: green;");
     //Next->setEnabled(false);
+    //    connect(Next, &QPushButton::clicked, this, [this]() {
+    //        QString enteredCode = code->text();
+    //        //  int chanceCnt = 3;
+    //        QString correctCode = "123-456";
+    //        if (enteredCode == correctCode) {
+    //            qDebug() << "Code is correct!";
+    //            Next->setEnabled(true);
+    //        } else {
+    //            chanceCnt--;
+    //            if (chanceCnt > 0) {
+    //                chance->setText("You have " + QString::number(chanceCnt) + " chance");
+    //            } else {
+    //                chance->setText("No more chances!");
+    //                Next->setEnabled(false);
+    //            }
+    //            qDebug() << "Incorrect code " << chanceCnt;
+    //        }
 
-    connect(Next, &QPushButton::clicked, this, [this]() {
-        QString enteredCode = code->text();
-        //  int chanceCnt = 3;
-        QString correctCode = "123-456";
-        if (enteredCode == correctCode) {
-            qDebug() << "Code is correct!";
-            Next->setEnabled(true);
-        } else {
-            chanceCnt--;
-            if (chanceCnt > 0) {
-                chance->setText("You have " + QString::number(chanceCnt) + " chance");
-            } else {
-                chance->setText("No more chances!");
-                Next->setEnabled(false);
-            }
-            qDebug() << "Incorrect code " << chanceCnt;
-        }
-
-    } );
+    //    } );
 
     connect(Back, &QPushButton::clicked, this, &Verification::onPrevClicked);
     connect(Next, &QPushButton::clicked, this, &Verification::onNextClicked);
-    SetTxt();
+    setLanguege();
     setLayout(layout);
 }
 
-void Verification::SetTxt()
+void Verification::setLanguege()
 {
-    setTextForElements(
-        tr("Verification code sent to your email: *****@gmail.com"),
-        tr("Enter the 6-digit code"),
-        tr("You have 3 chances"),
-        tr("Verify"),
-        tr("Back")
-        );
+
+    verificationtxt->setText(tr("Verification code sent to your email: *****@gmail.com"));
+    code->setPlaceholderText(tr("Enter the 6-digit code"));
+    chance->setText(tr("You have 3 chances"));
+    Next->setText(tr("Verify"));
+    Back->setText(tr("Back"));
 }
 
-void Verification::setTextForElements(const QString &verificationMessage, const QString &placeholder, const QString &chanceMessage,
-                                      const QString &VerMss, const QString &BackMs)
-{
-    verificationtxt->setText(verificationMessage);
-    code->setPlaceholderText(placeholder);
-    chance->setText(chanceMessage);
-    Next->setText(VerMss);
-    Back->setText(BackMs);
-}
+//void Verification::setTextForElements(const QString &verificationMessage, const QString &placeholder, const QString &chanceMessage,
+//                                      const QString &VerMss, const QString &BackMs)
+//{
+//    verificationtxt->setText(verificationMessage);
+//    code->setPlaceholderText(placeholder);
+//    chance->setText(chanceMessage);
+//    Next->setText(VerMss);
+//    Back->setText(BackMs);
+//}
 
 
 void
@@ -152,14 +151,42 @@ Verification::onPrevClicked()
     qDebug() << "Previous button clicked!";
     chanceCnt = 3;
     chance->setText("You have 3 chances");
+    Next->setEnabled(true);
     emit prevClicked();
 }
 
 void
 Verification::onNextClicked()
 {
+    if(!code || !chance){
+        qDebug() << "Error code or chance is null";
+        return;
+    }
+    QString enteredCode = code->text();
+    //  int chanceCnt = 3;
+    QString correctCode = "123-456";
+    if (enteredCode == correctCode) {
+        qDebug() << "Code is correct!";
+        Next->setEnabled(true);
+    } else {
+        chanceCnt--;
+        if (chanceCnt > 0) {
+            chance->setText("You have " + QString::number(chanceCnt) + " chance");
+        } else {
+            chance->setText("No more chances!");
+            Next->setEnabled(false);
+        }
+        qDebug() << "Incorrect code " << chanceCnt;
+    }
+
     qDebug() << "Next button clicked!";
     emit nextClicked();
 }
 
-Verification::~Verification() {}
+Verification::~Verification() {
+    delete verificationtxt;
+    delete code;
+    delete chance;
+    delete Back;
+    delete Next;
+}

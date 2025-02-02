@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QTimer>
 #include "navigationPrevOrNext.h"//
+#include "httpclient.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,6 +24,7 @@ class Login : public QMainWindow
 public:
     explicit Login(QWidget *parent = nullptr);
     void init();
+    void setLanguage();
     ~Login();
 
 private:
@@ -40,8 +42,9 @@ private:
     QLabel *m_register;
     navigationPrevOrNext *m_nextAndPrev;
     QLabel *m_forget;
-    QLabel *m_imageLabel1;
-    QLabel *m_imageLabel2;
+    QLabel *m_label1;
+    QLabel *m_label2;
+    HttpClient *client_login;
 
 signals:
     void prev_btn_signal();
