@@ -9,8 +9,15 @@ OtherProfile::OtherProfile(QWidget *parent)
     this->setFixedSize(400, 700);
     init();
     setup();
+    setLanguage();
     styling();
     connections();
+}
+
+void OtherProfile::setLanguage()
+{
+    qDebug()<< "Setting text in Other Proffile";
+    goBackButton ->setText(tr("Back"));
 }
 
 void OtherProfile::init()
@@ -19,14 +26,14 @@ void OtherProfile::init()
     nameLabel = new QLabel(this);
     surnameLabel = new QLabel(this);
     nicknameLabel = new QLabel(this);
-    goBackButton = new QPushButton("Back", this);
+    goBackButton = new QPushButton(this);
 }
 
 void OtherProfile::setup()
 {
-    nameLabel->setText("Tigran");
-    surnameLabel->setText("Yeghyan");
-    nicknameLabel->setText("@tigranyeghyan");
+    nameLabel->setText("John");
+    surnameLabel->setText("doe");
+    nicknameLabel->setText("@johndoe");
 
     goBackButton->setGeometry(10, 10, 80, 40);
     profilePhoto->setGeometry(150, 10, 100, 100);
@@ -35,7 +42,7 @@ void OtherProfile::setup()
     surnameLabel->setGeometry(20, 170, 360, 30);
     nicknameLabel->setGeometry(20, 210, 360, 30);
 
-    QPixmap profilePic("C:/Users/tigra/OneDrive/Pictures/user.png");
+    QPixmap profilePic("");
     if (!profilePic.isNull()) {
         profilePhoto->setPixmap(profilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
@@ -95,8 +102,7 @@ void OtherProfile::styling()
 void OtherProfile::connections()
 {
     connect(goBackButton, &QPushButton::clicked, this, [this]() {
-        qDebug() <<"go Back Signal";
         emit goBackSignal();
     });
-}
 
+}

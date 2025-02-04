@@ -1,282 +1,12 @@
-// #include "registration.h"
-
-// #include <QRegularExpressionValidator>
-// #include <QRegularExpression>
-// #include <QMessageBox>
-// #include <QDate>
-
-// Registration::Registration(QWidget *parent)
-//     : QWidget(parent)
-
-// {
-//     this->setFixedSize(400, 700);
-//     //init();
-
-//     //}
-//     //void Registration::init {
-//     centralWidget = new QWidget(this);
-
-//     this->setStyleSheet("background-color: grey;");
-
-//     mainlayout = new QVBoxLayout;
-
-
-//     toplabel = new QLabel("Registration");
-//     toplabel->setText("<h1>Registration</h1>");
-//     toplabel->move(150, 200);
-//     toplabel->setAlignment(Qt::AlignCenter);
-
-//     smalltext = new QLabel("<p style='font-size: 10px;'>A Binary Search Tree (or BST) is a data structure used in computer science for organizing and storing data in a sorted manner. This hierarchical structure allows for efficient searching, insertion, and deletion operations on the data stored in the tree.</p>");
-//     smalltext->setWordWrap(true);
-//     smalltext->setAlignment(Qt::AlignHCenter);
-//     smalltext->adjustSize();
-
-//     toplayout = new QVBoxLayout;
-//     middlelayout = new QHBoxLayout;
-//     bottomlayout = new QHBoxLayout;
-
-//     toplayout->addWidget(toplabel, 0, Qt::AlignTop | Qt::AlignHCenter);
-//     toplayout->addSpacerItem(new QSpacerItem(10, 20, QSizePolicy::Minimum, QSizePolicy::Expanding));
-//     toplayout->addWidget(smalltext, 0, Qt::AlignTop | Qt::AlignHCenter);
-
-//     formlayout = new QFormLayout;
-
-//     QRegularExpression nameRegex("^[A-Z][a-zA-Z]{2,}$");
-//     QRegularExpression surnameRegex("^[A-Z][a-z]{1,}$");
-//     QRegularExpression nicknameRegex("^[a-zA-Z][a-zA-Z0-9_]{2,}$");
-//     QRegularExpression emailRegex("^[\\w\\.]+@[\\w\\.]+\\.[a-z]{2,}$");
-//     QRegularExpression passwordRegex("^(?=(.*[A-Z]){2,})(?=(.*[a-z]){2,})(?=(.*\\d){2,})(?=(.*[!@#$%^&*(),.?\":{}|<>]){2,}).{8,}$");
-//     QRegularExpression confirmPasswordRegex("^(?=(.*[A-Z]){2,})(?=(.*[a-z]){2,})(?=(.*\\d){2,})(?=(.*[!@#$%^&*(),.?\":{}|<>]){2,}).{8,}$");
-
-
-//     nameField = new QLineEdit;
-//     nameField->setPlaceholderText("John");
-//     nameField->setValidator(new QRegularExpressionValidator(nameRegex, this));
-
-//     surnameField = new QLineEdit;
-//     surnameField->setPlaceholderText("Smidth");
-//     surnameField->setValidator(new QRegularExpressionValidator(surnameRegex, this));
-//     nicknameField = new QLineEdit;
-//     nicknameField->setPlaceholderText("Enter your nickname");
-//     nicknameField->setValidator(new QRegularExpressionValidator(nicknameRegex, this));
-//     emailField = new QLineEdit;
-//     emailField->setPlaceholderText("john.smidth@yahoo.com");
-//     emailField->setValidator(new QRegularExpressionValidator(emailRegex, this));
-//     passwordField = new QLineEdit;
-//     passwordField->setPlaceholderText("Enter your password");
-//     passwordField->setValidator(new QRegularExpressionValidator(passwordRegex, this));
-//     confirmPasswordField = new QLineEdit;
-//     confirmPasswordField->setPlaceholderText("Reenter your password");
-//     confirmPasswordField->setValidator(new QRegularExpressionValidator(confirmPasswordRegex, this));
-
-//     passwordField->setEchoMode(QLineEdit::Password);
-//     confirmPasswordField->setEchoMode(QLineEdit::Password);
-
-//     checkbox = new QCheckBox;
-//     checkbox->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
-//     checkbox->setStyleSheet("QCheckBox::indicator { background-color: white; }");
-
-//     checkbox->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
-
-
-//     termsOfUseButton = new QPushButton("Terms of use");
-//     //termsOfUseButton->setStyleSheet("QPushButton { background-color: transparent; color: black; border: none; text-decoration: underline; } ");
-//     termsOfUseButton->setStyleSheet("QPushButton { background-color: transparent; color: blue; border: none; text-decoration: underline; } ");
-//     termsOfUseButton->setFixedHeight(checkbox->sizeHint().height());
-//     QFont tfont = termsOfUseButton->font();
-//     tfont.setPointSize(10);
-//     termsOfUseButton->setFont(tfont);
-
-
-
-//     dateEdit = new QDateEdit;
-//     dateEdit->setCalendarPopup(true);
-//     dateEdit->setDisplayFormat("dd/MM/yyyy");
-//     dateEdit->setMaximumDate(QDate::currentDate().addYears(-18));
-
-
-//     formlayout->addRow("First name:", nameField);
-//     nameField->setStyleSheet("QLineEdit { background-color: lightgrey; width: 110; hеight: 30; border: 2 px solid grey; border-radius: 6px; }");
-
-
-//     formlayout->addRow("Last name (optional):", surnameField);
-//     surnameField->setStyleSheet("QLineEdit { background-color: lightgrey; width: 110; hеight: 30; border: 2 px solid grey; border-radius: 6px; }");
-
-//     formlayout->addRow("Nickname:", nicknameField);
-//     nicknameField->setStyleSheet("QLineEdit { background-color: lightgrey; width: 110; hеight: 30; border: 2 px solid grey; border-radius: 6px; }");
-
-//     formlayout->addRow("Email address:", emailField);
-//     emailField->setStyleSheet("QLineEdit { background-color: lightgrey; width: 110; hеight: 30; border: 2 px solid grey; border-radius: 6px; }");
-
-//     formlayout->addRow("Date of birth:", dateEdit);
-//     dateEdit->setStyleSheet("QDateEdit { background-color: lightgrey; width: 110; hеight: 30; border: 2 px solid grey; border-radius: 6px; }");
-
-//     formlayout->addRow("Password:", passwordField);
-//     passwordField->setStyleSheet("QLineEdit { background-color: lightgrey; width: 110; hеight: 30; border: 2 px solid grey; border-radius: 6px; }");
-
-//     formlayout->addRow("Confirm password:", confirmPasswordField);
-
-//     confirmPasswordField->setStyleSheet("QLineEdit { background-color: lightgrey; width: 110; hеight: 30; border: 2 px solid grey; border-radius: 6px; }");
-
-
-
-//     formlayout->addItem(new QSpacerItem(0, 20));
-//     formlayout->addRow(termsOfUseButton, checkbox);
-//     formlayout->setSpacing(20);
-//     formlayout->setContentsMargins(10, 10, 20, 10);
-//     formlayout->setLabelAlignment(Qt::AlignLeft);
-
-
-//     middlelayout->addLayout(formlayout);
-
-
-//     haveAccountButton = new QPushButton("Already have an account?");
-//     //haveAccountButton->setStyleSheet("QPushButton { background-color: transparent; color: black; border: none; text-decoration: underline; } QPushButton:hover { color: green; }");
-//     QFont font = haveAccountButton->font();
-//     font.setPointSize(10);
-//     haveAccountButton->setFont(font);
-//     haveAccountButton->setStyleSheet("background-color: transparent; color: blue; border: none; text-decoration: underline; ");
-
-//     QHBoxLayout* rowlayout = new QHBoxLayout;
-//     rowlayout->addWidget(haveAccountButton);
-//     rowlayout->addStretch();
-//     formlayout->addRow(rowlayout);
-//     formlayout->addItem(new QSpacerItem(0, 30));
-
-//     //loginButton = new QPushButton("Login");
-//     //loginButton->setStyleSheet("QPushButton { background-color: grey; color: black; width: 100px; height: 40px; border: 2px solid darkgrey; border-radius: 8px; }");
-//     //formlayout->addWidget(loginButton);
-
-//     prevButton = new QPushButton("< Previous");
-//     prevButton->setStyleSheet("QPushButton { background-color: grey; color: black; width: 100px; height: 40px; border: 2px solid darkgrey; border-radius: 8px;}");
-
-//     registerButton = new QPushButton("Register >");
-//     registerButton->setEnabled(true);
-//     registerButton->setStyleSheet("QPushButton { background-color: green; color: black; width: 100px; height: 40px; border: 2px solid green; border-radius: 8px;}");
-
-//     bottomlayout->addWidget(prevButton);
-//     bottomlayout->addWidget(registerButton);
-
-//     mainlayout->addLayout(toplayout);
-//     mainlayout->addLayout(middlelayout);
-//     mainlayout->addLayout(bottomlayout);
-
-//     // setCentralWidget(centralWidget);
-
-//     centralWidget->setLayout(mainlayout);
-
-
-//     connect(haveAccountButton, &QPushButton::clicked, this, &Registration::handle_have_an_account_btn);
-//     connect(termsOfUseButton, &QPushButton::clicked, this, &Registration::handle_terms_of_use_btn);
-
-//     connect(prevButton, &QPushButton::clicked, this, &Registration::handle_prev_btn);
-//     connect(registerButton, &QPushButton::clicked, this, &Registration::handle_reg_btn);
-
-
-// }
-
-// void Registration::handle_reg_btn()
-// {
-//     if(!checkFormValidity()){
-//         return;
-//     }
-
-//     registerButton->setEnabled(true);
-//     emit reg_btn_signal();
-// }
-
-// void Registration::handle_prev_btn()
-// {
-//     emit prev_btn_signal();
-// }
-
-// void Registration::handle_have_an_account_btn()
-// {
-//     emit have_an_account_signal();
-// }
-
-// void Registration::handle_terms_of_use_btn()
-// {
-//     emit terms_of_use_signal();
-// }
-
-
-// bool Registration::checkFormValidity() {
-//     bool isFormValid = true;
-
-//     for(int i = 0; i < formlayout->rowCount(); ++i) {
-//         QLabel* label = qobject_cast<QLabel*>(formlayout->itemAt(i, QFormLayout::LabelRole)->widget());
-//         QWidget* field = formlayout->itemAt(i, QFormLayout::FieldRole)->widget();
-
-//         if(!label && !field) {
-//             continue;
-//         }
-//         QLineEdit* lineEdit = qobject_cast<QLineEdit*>(field);
-
-//         if(lineEdit) {
-//             const QValidator* validator = lineEdit->validator();
-//             QString text = lineEdit->text();
-//             int pos = 0;
-//             bool isValid = validator ? (validator->validate(text, pos) == QValidator::Acceptable) : true;
-
-//             if(!isValid) {
-//                 isFormValid = false;
-//                 if(!label->text().contains("!")) {
-//                     label->setText(label->text()+ " <span style='color: red;'>!</span>");
-//                 }
-//             } else {
-//                 if(label->text().contains("!")) {
-//                     label->setText(label->text().remove(" <span style='color: red;'>!</span>"));
-//                 }
-//             }
-//             continue;
-//         }
-
-//         QCheckBox* checkbox = qobject_cast<QCheckBox*>(field);
-//         if(checkbox) {
-//             if(!checkbox->isChecked()) {
-//                 isFormValid = false;
-//                 if(!label->text().contains("!")) {
-//                     label->setText(label->text()+ " <span style='color: red;'>!</span>");
-//                 }
-//             } else {
-//                 if(label->text().contains("!")) {
-//                     label->setText(label->text()+ " <span style='color: red;'>!</span>");
-//                 }
-//             }
-//             continue;
-//         }
-//         QDateEdit* dateEdit = qobject_cast<QDateEdit*>(field);
-//         if(dateEdit) {
-//             QDate selectedDate = dateEdit->date();
-//             if(selectedDate.addYears(18) > QDate::currentDate()) {
-//                 isFormValid = false;
-//                 if(!label->text().contains("!")) {
-//                     label->setText(label->text()+ " <span style='color: red;'>!</span>");
-//                 }
-//             } else {
-//                 if(label->text().contains("!")) {
-//                     label->setText(label->text()+ " <span style='color: red;'>!</span>");
-//                 }
-//             }
-//             continue;
-//         }
-//     }
-
-//     return isFormValid;
-// }
-
-
-
-// Registration::~Registration() {}
-
-
 #include "registration.h"
+#include "httpclient.h"
 
 #include <QRegularExpressionValidator>
 #include <QRegularExpression>
 #include <QMessageBox>
+#include <QJsonObject>
 #include <QDate>
+
 
 Registration::Registration(QWidget *parent)
     : QWidget(parent)
@@ -284,7 +14,7 @@ Registration::Registration(QWidget *parent)
 {
     this->setFixedSize(400, 700);
     //init();
-
+    client_login = new HttpClient();
     //}
     //void Registration::init {
     centralWidget = new QWidget(this);
@@ -313,8 +43,8 @@ Registration::Registration(QWidget *parent)
 
     formLayout = new QFormLayout;
 
-    QRegularExpression nameRegex("^[A-Z][a-zA-Z]{2,}$");
-    QRegularExpression surnameRegex("^[A-Z][a-z]{1,}$");
+    QRegularExpression nameRegex("^[a-zA-Z]{2,}$");
+    QRegularExpression surnameRegex("^[a-zA-Z]{1,}$");
     QRegularExpression nicknameRegex("^[a-zA-Z][a-zA-Z0-9_]{2,}$");
     QRegularExpression emailRegex("^[\\w\\.]+@[\\w\\.]+\\.[a-z]{2,}$");
     QRegularExpression passwordRegex("^(?=(.*[A-Z]){2,})(?=(.*[a-z]){2,})(?=(.*\\d){2,})(?=(.*[!@#$%^&*(),.?\":{}|<>]){2,}).{8,}$");
@@ -322,26 +52,39 @@ Registration::Registration(QWidget *parent)
 
     nameField = new QLineEdit;
     nameField->setPlaceholderText("John");
-    nameField->setValidator(new QRegularExpressionValidator(nameRegex, this));
-
+    //nameField->setValidator(new QRegularExpressionValidator(nameRegex, this));
     surnameField = new QLineEdit;
     surnameField->setPlaceholderText("Smidth");
-    surnameField->setValidator(new QRegularExpressionValidator(surnameRegex, this));
+    //surnameField->setValidator(new QRegularExpressionValidator(surnameRegex, this));
     nicknameField = new QLineEdit;
     nicknameField->setPlaceholderText("Enter your nickname");
-    nicknameField->setValidator(new QRegularExpressionValidator(nicknameRegex, this));
+    //nicknameField->setValidator(new QRegularExpressionValidator(nicknameRegex, this));
     emailField = new QLineEdit;
     emailField->setPlaceholderText("john.smidth@yahoo.com");
-    emailField->setValidator(new QRegularExpressionValidator(emailRegex, this));
+    // emailField->setValidator(new QRegularExpressionValidator(emailRegex, this));
     passwordField = new QLineEdit;
     passwordField->setPlaceholderText("Enter your password");
-    passwordField->setValidator(new QRegularExpressionValidator(passwordRegex, this));
+    // passwordField->setValidator(new QRegularExpressionValidator(passwordRegex, this));
     confirmPasswordField = new QLineEdit;
     confirmPasswordField->setPlaceholderText("Reenter your password");
-    confirmPasswordField->setValidator(new QRegularExpressionValidator(confirmPasswordRegex, this));
-
     passwordField->setEchoMode(QLineEdit::Password);
+    // confirmPasswordField->setValidator(new QRegularExpressionValidator(confirmPasswordRegex, this));
     confirmPasswordField->setEchoMode(QLineEdit::Password);
+
+    nameLabel = new QLabel;
+    nameLabel->setText("Name:");
+    surnameLabel = new QLabel;
+    surnameLabel->setText("Last name (optional):");
+    nicknameLabel = new QLabel;
+    nicknameLabel->setText("Nickname:");
+    emailLabel = new QLabel;
+    emailLabel->setText("Email address:");
+    dateLabel = new QLabel;
+    dateLabel->setText("Date of birth:");
+    passwordLabel = new QLabel;
+    passwordLabel->setText("Password:");
+    confirmPasswordLabel = new QLabel;
+    confirmPasswordLabel->setText("Confirm password:");
 
     checkBox = new QCheckBox;
     checkBox->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
@@ -415,19 +158,115 @@ Registration::Registration(QWidget *parent)
     mainLayout->addLayout(middleLayout);
     mainLayout->addLayout(bottomLayout);
 
-    // setCentralWidget(centralWidget);
-
     centralWidget->setLayout(mainLayout);
+
+    connect(nameField, &QLineEdit::textChanged, this, [=]() {
+        QString defaultText = nameLabel->text();
+        QRegularExpressionMatch match = nameRegex.match(nameField->text());
+        if(!match.hasMatch()) {
+            if(!defaultText.contains("!")) {
+                nameLabel->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            nameLabel->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+    });
+
+    connect(surnameField, &QLineEdit::textChanged, this, [=]() {
+        QString defaultText = surnameLabel->text();
+        QRegularExpressionMatch match = surnameRegex.match(surnameField->text());
+        if(!match.hasMatch()) {
+            if(!defaultText.contains("!")) {
+                surnameLabel->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            surnameLabel->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+    });
+
+    connect(nicknameField, &QLineEdit::textChanged, this, [=]() {
+        QString defaultText = nicknameLabel->text();
+        QRegularExpressionMatch match = nicknameRegex.match(nicknameField->text());
+        if(!match.hasMatch()) {
+            if(!defaultText.contains("!")) {
+                nicknameLabel->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            nicknameLabel->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+    });
+
+    connect(emailField, &QLineEdit::textChanged, this, [=]() {
+        QString defaultText = emailLabel->text();
+        QRegularExpressionMatch match = emailRegex.match(emailField->text());
+        if(!match.hasMatch()) {
+            if(!defaultText.contains("!")) {
+                emailLabel->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            emailLabel->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+
+    });
+
+    connect(dateEdit, &QDateEdit::dateChanged, this, [=]() {
+        QString defaultText = dateLabel->text();
+        QDate selectedDate = dateEdit->date();
+        if (selectedDate.addYears(18) > QDate::currentDate()) {
+            if (!defaultText.contains("!")) {
+                dateLabel->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            dateLabel->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+    });
+
+    connect(passwordField, &QLineEdit::textChanged, this, [=]() {
+        QString defaultText = passwordLabel->text();
+        QRegularExpressionMatch match = passwordRegex.match(passwordField->text());
+        if(!match.hasMatch()) {
+            if(!defaultText.contains("!")) {
+                passwordLabel->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            passwordLabel->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+    });
+
+    connect(confirmPasswordField, &QLineEdit::textChanged, this, [=]() {
+        QString defaultText = confirmPasswordLabel->text();
+        bool isValid = confirmPasswordRegex.match(confirmPasswordField->text()).hasMatch();
+        bool isMatching = confirmPasswordField->text() == passwordField->text();
+        if(!isValid || !isMatching) {
+            if(!defaultText.contains("!")) {
+                confirmPasswordLabel->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            confirmPasswordLabel->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+    });
+
+    connect(checkBox, &QCheckBox::clicked, this, [=]() {
+        QString defaultText = termsOfUseButton->text();
+        if(!checkBox->isChecked()) {
+            if(!termsOfUseButton->text().contains(" <span style='color: red;'>!</span>")) {
+                termsOfUseButton->setText(defaultText + " <span style='color: red;'>!</span>");
+            }
+        } else {
+            termsOfUseButton->setText(defaultText.remove(" <span style='color: red;'>!</span>"));
+        }
+    });
+
 
     connect(haveAccountButton, &QPushButton::clicked, this, &Registration::handle_have_an_account_btn);
     connect(termsOfUseButton, &QPushButton::clicked, this, &Registration::handle_terms_of_use_btn);
-
     connect(prevButton, &QPushButton::clicked, this, &Registration::handle_prev_btn);
     connect(registerButton, &QPushButton::clicked, this, &Registration::handle_reg_btn);
 
+    save_texts();
 }
 
-bool Registration::checkFormValidity() {
+/*bool Registration::checkFormValidity() {
     bool isFormValid = true;
 
     for(int i = 0; i < formLayout->rowCount(); ++i) {
@@ -490,33 +329,78 @@ bool Registration::checkFormValidity() {
     }
 
     return isFormValid;
-}
+}*/
 
 void Registration::handle_reg_btn()
 {
-    // if(!checkFormValidity()){
-    //     return;
-    // }
+    bool allValid = true;
+    for(int i = 0; i < formLayout->rowCount(); ++i) {
+        QLabel* label = qobject_cast<QLabel*>(formLayout->itemAt(i, QFormLayout::LabelRole)->widget());
+        if(!label) {
+            continue;
+        }
+        if(!label->text().contains("!")) {
+            allValid = false;
+            break;
+        }
+        if (registerButton && !registerButton->isEnabled()) {
+            registerButton->setEnabled(allValid);
+        }
 
-    // registerButton->setEnabled(true);
-    emit reg_btn_signal();
-}
+        if(allValid) {
 
-void Registration::handle_prev_btn()
-{
-    emit prev_btn_signal();
-}
+            QUrl url("http://192.168.35.83:8000/register/");
+            QJsonObject jsonData;
+            jsonData["name"] = nameField->text();
+            jsonData["surname"] = surnameField->text();
+            jsonData["nickname"] = nicknameField->text();
+            jsonData["email"] = emailField->text();
+            jsonData["date_of_birth"] = dateEdit->text();
+            jsonData["password"] = passwordField->text();
 
-void Registration::handle_have_an_account_btn()
-{
-    emit have_an_account_signal();
-}
+            qDebug() << jsonData.keys();
+            qDebug() << jsonData.value("nickname");
+            qDebug() << jsonData.value("password");
 
-void Registration::handle_terms_of_use_btn()
-{
-    emit terms_of_use_signal();
-}
+            if(client_login) {
+                client_login->postRequest(url, jsonData);
+            }
+            else {
+                qDebug() << "Error";
+            }
 
 
-Registration::~Registration() {}
 
+
+            emit reg_btn_signal();
+            }
+        }
+    }
+
+    void Registration::handle_prev_btn()
+    {
+        emit prev_btn_signal();
+    }
+
+    void Registration::handle_have_an_account_btn()
+    {
+        emit have_an_account_signal();
+    }
+
+    void Registration::handle_terms_of_use_btn()
+    {
+        emit terms_of_use_signal();
+    }
+
+
+    void Registration::save_texts()
+    {
+        name_txt = nameField->text();
+        nickname_txt = nicknameField->text();
+        surname_txt = surnameField->text();
+        date_txt = dateEdit->text();
+        email_txt = emailField->text();
+        password_txt = passwordField->text();
+    }
+
+    Registration::~Registration() {}

@@ -10,6 +10,8 @@ CONFIG += c++17
 
 SOURCES += \
     chat_widget.cpp \
+    chatmessagewidget.cpp \
+    globals.cpp \
     httpclient.cpp \
     login.cpp \
     main.cpp \
@@ -21,12 +23,15 @@ SOURCES += \
     registration.cpp \
     scroll_widget.cpp \
     settings.cpp \
+    translator.cpp \
     v_chat_widget.cpp \
     verification.cpp \
     welcomepg.cpp
 
 HEADERS += \
     chat_widget.h \
+    chatmessagewidget.h \
+    globals.h \
     httpclient.h \
     login.h \
     main_page_window.h \
@@ -37,12 +42,15 @@ HEADERS += \
     registration.h \
     scroll_widget.h \
     settings.h \
+    translator.h \
     v_chat_widget.h \
     verification.h \
     welcomepg.h
 
 TRANSLATIONS += \
-    DeltaSynergy_en_US.ts
+    Translator_en_US.ts \
+    Translator_hy_AM.ts \
+    Translator_ru_RU.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 

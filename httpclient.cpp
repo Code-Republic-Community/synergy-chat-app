@@ -1,4 +1,4 @@
-#include "HttpClient.h"
+#include "httpclient.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -8,6 +8,9 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QDebug>
+#include "globals.h"
+
+extern QByteArray globalId;
 
 HttpClient::HttpClient(QObject* parent)
     : QObject(parent)
@@ -71,7 +74,12 @@ void HttpClient::onReply() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
         QByteArray responseData = reply->readAll();
+        globalId = responseData; // nor avelacrac ban
         qDebug() << "Response:" << responseData;
+
+
+        emit responseReceived(responseData);  // Emit the response data
+
         reply->deleteLater();
     }
 }

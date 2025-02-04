@@ -13,6 +13,8 @@
 #include "verification.h"
 #include "otherprofile.h"
 
+// QByteArray globalId;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -36,7 +38,6 @@ private:
 
 private:
     // void call_translations_on_pgs();
-
 private slots:
     void goToSignIn();
     void goToRegPg();
@@ -47,5 +48,6 @@ private slots:
     void goToSettings();
     void goToVerificationPg();
     void goToOtherProfilePg();
+    void change_language();
 };
 #endif // MAINWINDOW_H

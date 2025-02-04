@@ -6,6 +6,8 @@
 #include <QJsonObject>
 #include "httpclient.h"
 
+extern QByteArray globalId;
+
 Login::Login(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -48,7 +50,7 @@ void Login::init()
     m_dontHaveAnAccount->setGeometry(110, 460, 200, 150);
 
     m_register = new QLabel(this);
-    m_register->setGeometry(110, 475, 200, 150);
+    m_register->setGeometry(110, 543, 60, 20);
     m_register->setStyleSheet("color: blue; text-decoration: underline;");
     m_register->setCursor(Qt::PointingHandCursor);
 
@@ -88,8 +90,8 @@ void Login::setLanguage()
     m_dontHaveAnAccount->setText(tr("Don't have an account"));
     m_register->setText("register");
 
-    // m_nextAndPrev->setLeftButton(tr("Prev"));
-    // m_nextAndPrev->setRightButton(tr("Next"));
+    m_nextAndPrev->setLeftButton(tr("Prev"));
+    m_nextAndPrev->setRightButton(tr("Next"));
 
     m_forget->setText(tr("Both must be complementary"));
 }
@@ -110,6 +112,12 @@ void Login::forgetIcon()
     m_label1->hide();
     m_label2->hide();
 
+}
+
+void Login::saveTexts()
+{
+    m_usernameText = usernameLineEdit->text();
+    m_passwordText = passwordLineEdit->text();
 }
 
 void Login::rememberMe(bool isClicked)
@@ -133,7 +141,6 @@ void Login::mousePressEvent(QMouseEvent* event)
 
     }
 }
-
 void Login::handleNextButtonClicked()
 {
     QString username = usernameLineEdit->text();
@@ -161,41 +168,37 @@ void Login::handleNextButtonClicked()
     } else {
         m_label1->hide();
         m_label2->hide();
+
+        saveTexts();
+
+        QUrl url("http://192.168.35.83:8000/login/");
+        QJsonObject jsonData;
+        jsonData["nickname"] = m_usernameText;
+        jsonData["password"] = m_passwordText;
+        qDebug() << jsonData.keys();
+        qDebug() << jsonData.value("nickname");
+        qDebug() << jsonData.value("password");
+
+        client_login->postRequest(url, jsonData);
         emit next_btn_signal();
     }
-
-    QUrl url("http://192.168.35.83:8000/login/");
-    QJsonObject jsonData;
-    jsonData["nickname"] = "nickname2";
-    jsonData["password"] = "12341234";
-    qDebug() << jsonData.keys();
-    qDebug() << jsonData.value("nickname");
-    qDebug() << jsonData.value("password");
-
 
     // client_login->getRequest(url);
     // client_login->postRequest(url, jsonData);
     // client_login->putRequest(url, jsonData);
     // client_login->deleteRequest(url);
 
-    QString search_tmp = "http://192.168.35.83:8000/search/";
+    // QString search_tmp = "http://192.168.35.83:8000/search/";
 
-    QJsonObject jsonData2;
-    jsonData2["user_id"] = "ec569aee-05b2-42c6-8917-2448fae102d6";
-    jsonData2["search_string"] = "arxitekt0r";
-    search_tmp += jsonData2.value("user_id").toString() + "/" + jsonData2.value("search_string").toString();
-    QUrl url2(search_tmp);
-    qDebug() << jsonData2.keys();
-    qDebug() << jsonData2.value("user_id");
-    qDebug() << jsonData2.value("search_string");
-
-    client_login->getRequest(url2);
-
-
-    // QUrl fileUploadUrl("https://example.com/upload");
-    // client_login->uploadFile(fileUploadUrl, "/path/to/file.txt");
-
-    emit next_btn_signal();
+    // QJsonObject jsonData2;
+    // jsonData2["user_id"] = "ec569aee-05b2-42c6-8917-2448fae102d6";
+    // jsonData2["search_string"] = "arxitekt0r";
+    // search_tmp += jsonData2.value("user_id").toString() + "/" + jsonData2.value("search_string").toString();
+    // QUrl url2(search_tmp);
+    // qDebug() << jsonData2.keys();
+    // qDebug() << jsonData2.value("user_id");
+    // qDebug() << jsonData2.value("search_string");
+    // client_login->getRequest(url2);
 }
 
 void Login::handlePrevButtonClicked()

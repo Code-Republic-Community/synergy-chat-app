@@ -6,7 +6,7 @@ MainPageWindow::MainPageWindow(QWidget* parent):
     searchBar(new QLineEdit(this)), chat(new QLabel(this)){
 
     QPixmap searchIcon(":/pngs/searchicon.png");
-    QPixmap profileIcon(":/pngs/profileicon");
+    QPixmap profileIcon(VChatWidget::cut_photo(":/pngs/panda.jpg"));
 
     for (int i = 0; i < 30; ++i) {
         VChatWidget* chat = new VChatWidget("Avtandir3000", "@nick" + QString::number(i));

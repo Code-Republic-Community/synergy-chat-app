@@ -22,7 +22,7 @@ private:
 public:
     void add_chat(VChatWidget *new_chat);
     void show_chats();
-
+    void change_sizes(int x, int y, int w, int h);
 private:
     QVector<VChatWidget*> all_chats;
 private:

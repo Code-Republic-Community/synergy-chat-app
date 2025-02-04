@@ -11,6 +11,8 @@ class navigationPrevOrNext : public QWidget
 
 public:
     navigationPrevOrNext(QWidget *parent = nullptr);
+    void setLeftButton(QString st);
+    void setRightButton(QString st);
 
 signals:
     void nextClicked();

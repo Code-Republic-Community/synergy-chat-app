@@ -28,6 +28,8 @@ private slots:
 
 private:
     QNetworkAccessManager* manager;
+signals:
+    void responseReceived(QByteArray responseData);
 };
 
 #endif // HTTPCLIENT_H

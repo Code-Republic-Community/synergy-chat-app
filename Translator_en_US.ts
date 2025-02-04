@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en_US">
+    <context>
+        <name>Settings</name>
+        <message>
+            <source>Save</source>
+            <translation>Save</translation>
+        </message>
+        <message>
+            <source>Cancel</source>
+            <translation>Cancel</translation>
+        </message>
+        <message>
+            <source>Back</source>
+            <translation>Back</translation>
+        </message>
+        <message>
+            <source>Theme</source>
+            <translation>Theme</translation>
+        </message>
+        <message>
+            <source>Language</source>
+            <translation>Language</translation>
+        </message>
+        <message>
+            <source>Notifications</source>
+            <translation>Notifications</translation>
+        </message>
+        <message>
+            <source>Light</source>
+            <translation>Light</translation>
+        </message>
+        <message>
+            <source>Dark</source>
+            <translation>Dark</translation>
+        </message>
+        <message>
+            <source>Auto</source>
+            <translation>Auto</translation>
+        </message>
+        <message>
+            <source>English</source>
+            <translation>English</translation>
+        </message>
+        <message>
+            <source>Armenian</source>
+            <translation>Armenian</translation>
+        </message>
+        <message>
+            <source>Russian</source>
+            <translation>Russian</translation>
+        </message>
+        <message>
+            <source>Enabled</source>
+            <translation>Enabled</translation>
+        </message>
+        <message>
+            <source>Disabled</source>
+            <translation>Disabled</translation>
+        </message>
+        <name>MyProfile</name>
+        <message>
+            <source>Settings</source>
+            <translation>Settings</translation>
+        </message>
+        <message>
+            <source>Log Out</source>
+            <translation>Log Out</translation>
+        </message>
+        <message>
+            <source>Edit</source>
+            <translation>Edit</translation>
+        </message>
+        <message>
+            <source>Change</source>
+            <translation>Change</translation>
+        </message>
+        <message>
+            <source>Back</source>
+            <translation>Back</translation>
+        </message>
+        <name>OtherProfile</name>
+        <message>
+            <source>Back</source>
+            <translation>Back</translation>
+        </message>
+
+
+
+    </context>
+</TS>

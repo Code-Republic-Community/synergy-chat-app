@@ -3,7 +3,9 @@
 ScrollWidget::ScrollWidget(QWidget *parent)
     : QWidget(parent) {
     scroll = new QScrollArea(this);
-    scroll->setGeometry(50, 100, 300, 600);
+    scroll->setWidgetResizable(true);
+    change_sizes(50, 100, 300, 600);
+    // scroll->setGeometry(50, 100, 300, 600);
     scroll->setBackgroundRole(QPalette::Dark);
     scroll->setWidgetResizable(true);
 
@@ -39,6 +41,14 @@ void ScrollWidget::show_chats()
             draw_line("Unknown contacts");
         }
     }
+}
+
+void ScrollWidget::change_sizes(int x, int y, int w, int h)
+{
+    scroll->setGeometry(x, y, w, h);
+    scroll->resize(w, h);
+    scroll->setFixedSize(w, h);
+
 }
 
 void ScrollWidget::draw_line(QString text)

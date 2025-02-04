@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+extern QByteArray globalId;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -47,6 +49,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(verification_pg, &Verification::prevClicked, this, &MainWindow::goToRegPg); // comment
 
+    connect(verification_pg, &Verification::nextClicked, this, &MainWindow::goToMainPg);
+
     connect(settings_pg, &Settings::goBackSignal, this, &MainWindow::goToProfileSettingsPg);
 
     connect(chat_pg, &ChatWidget::other_profile_signal, this, &MainWindow::goToOtherProfilePg);
@@ -58,7 +62,8 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(chat_pg, &ChatWidget::go_back_signal, this, &MainWindow::goToMainPg);
-    // qDebug() << connect(chat_pg, &ChatWidget::other_profile_signal, this, &MainWindow::goToOtherProfilePg);
+
+    connect(settings_pg, &Settings::languageChanged, this, &MainWindow::change_language);
 
     this->setCentralWidget(staked_widget);
     this->setFixedSize(400, 700);
@@ -112,8 +117,21 @@ void MainWindow::goToVerificationPg()
 
 void MainWindow::goToOtherProfilePg()
 {
-    qDebug() << "Tiko";
     staked_widget->setCurrentIndex(8);
+}
+
+void MainWindow::change_language()
+{
+    // welcome_pg;
+    // login_pg->setLanguage();
+    // reg_pg-
+    // main_pg->s
+    // chat_pg->set
+    profile_settings_pg->setLanguage();
+    settings_pg->setLanguage();
+    // verification_pg->setLa
+    other_profile_pg->setLanguage();
+
 }
 
 

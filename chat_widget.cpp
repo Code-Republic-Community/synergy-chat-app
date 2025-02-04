@@ -1,3 +1,5 @@
+    // messagesFrame->setFixedSize(380, 570);
+
 #include "chat_widget.h"
 
 ChatWidget::ChatWidget(QString nick, QWidget *parent)
@@ -5,45 +7,39 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
 {
     this->setFixedSize(400, 700);
 
-    v_user = new VChatWidget("username", nick);
-    v_user->resize(200, 60);
+    v_user = new VChatWidget("username", nick, this);
+    v_user->setGeometry(120, 630, 272, 60);
 
-    QHBoxLayout *layout = new QHBoxLayout();
-    QLineEdit *line = new QLineEdit();
-    line->setPlaceholderText("Type message...");
-    line->setFixedHeight(35);
+    send_btn = new QPushButton(this);
+    send_btn->setGeometry(340, 10, 50, 55);
 
-    send_btn = new QPushButton();
-    // send_btn->setText("🟣");
-    send_btn->setFixedSize(50, 35);
 
-    layout->addWidget(line);
-    layout->addWidget(send_btn, 0, Qt::AlignLeft);
-    QFrame *messagesFrame = new QFrame(this);
-    messagesFrame->setFrameShape(QFrame::Box);
-    messagesFrame->setStyleSheet("background-color: #420242;");
-    messagesFrame->setFixedSize(380, 570);
+    scroll_widget = new ScrollWidget(this);
+    scroll_widget->change_sizes(10, 70, 380, 560);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->addLayout(layout);
-    mainLayout->addWidget(messagesFrame);
+    if (true) {
+        ChatMessageWidget *message = new ChatMessageWidget("Kargin Serial", this);
+        message->setGeometry(70, 70, 100, 100);
+    }
 
-    QHBoxLayout *for_user = new QHBoxLayout();
-
-    backButton = new QPushButton();
-    backButton->setFixedSize(100, 40);
+    backButton = new QPushButton(this);
+    backButton->setGeometry(12, 632, 100, 55);
     backButton->setStyleSheet("background-color: #5A005A; color: white; font-weight: bold; border-radius: 5px;");
 
-    for_user->addWidget(backButton);
-    for_user->addWidget(v_user);
+    line = new QLineEdit(this);
+    line->setObjectName("messageInput");
+    line->setPlaceholderText("Type message...");
+    line->setGeometry(10, 10, 325, 55);
 
     connect(v_user, &VChatWidget::clicked_vchat, this, &ChatWidget::handle_profile_signal);
     connect(backButton, &QPushButton::clicked, this, &ChatWidget::handle_go_back);
+    connect(send_btn, &QPushButton::clicked, this, &ChatWidget::sendMessage);
+    connect(line, &QLineEdit::returnPressed, this, &ChatWidget::handle_line);
 
     setLanguage();
-    mainLayout->addLayout(for_user);
-    setLayout(mainLayout);
 }
+
+
 
 void ChatWidget::setNick(QString nick)
 {
@@ -67,6 +63,48 @@ void ChatWidget::handle_go_back()
 
 void ChatWidget::setLanguage()
 {
-    send_btn->setText("🟣");
+    send_btn->setText("✉️");
     backButton->setText("Back");
+}
+
+void ChatWidget::addMessage(const ChatMessageWidget *message, bool who_is)
+{
+    // QHBoxLayout *layout = new QHBoxLayout(this);
+    // if (who_is)
+}
+
+
+void ChatWidget::sendMessage()
+{
+    QLineEdit* line = findChild<QLineEdit*>();
+    if(line && !line->text().isEmpty()) {
+        addMessageToChat(line->text());
+        line->clear();
+    }
+}
+
+void ChatWidget::addMessageToChat(const QString& message)
+{
+    // // Implementation depends on your ScrollWidget's API
+    // // Example pseudo-code:
+    // QLabel* newMsg = new QLabel(message, scroll_widget);
+    // scroll_widget->addWidget(newMsg);
+
+    // // Scroll to bottom
+    // QScrollArea* scrollArea = scroll_widget->findChild<QScrollArea*>();
+    // if(scrollArea) {
+    //     scrollArea->verticalScrollBar()->setValue(scrollArea->verticalScrollBar()->maximum());
+    // }
+}
+
+void ChatWidget::handle_line()
+{
+    QString searchText = line->text();
+    if (!searchText.isEmpty()) {
+        qDebug() << "Search query:" << searchText;
+        //chat filtration, request
+        // if (scroll_widget->s)
+        } else {
+        qDebug() << "Search query is empty";
+    }
 }

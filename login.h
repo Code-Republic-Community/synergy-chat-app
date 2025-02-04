@@ -45,6 +45,8 @@ private:
     QLabel *m_label1;
     QLabel *m_label2;
     HttpClient *client_login;
+    QString m_usernameText;
+    QString m_passwordText;
 
 signals:
     void prev_btn_signal();
@@ -57,6 +59,7 @@ private slots:
     void handleNextButtonClicked();
     void handlePrevButtonClicked();
     void forgetIcon();
+    void saveTexts();
 };
 
 #endif // LOGIN_H

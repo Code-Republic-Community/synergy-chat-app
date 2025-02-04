@@ -1,24 +1,72 @@
 #include "settings.h"
+#include "translator.h"
 #include <QPushButton>
 
 
-Settings::Settings(QWidget *parent) : QWidget(parent) {
+Settings::Settings(QWidget *parent) : QWidget(parent)
+{
 
     this ->resize(400, 700);
     this -> setFixedSize(400, 700);
+    Translator::get().set("en_US");
     init();
+
     setup();
+    setLanguage();
     connections();
     styleing();
 }
 
-void Settings::handle_back_btn()
+void Settings::setLanguage()
 {
-    emit goBackSignal();
+    save->setText(tr("Save"));
+    cancel->setText(tr("Back"));
+
+    englishText = tr("English");
+    armenianText = tr("Armenian");
+    russianText = tr("Russian");
+
+    lightText = tr("Light");
+    darkText = tr("Dark");
+    autoText = tr("Auto");
+
+    enabledText = tr("Enabled");
+    disabledText = tr("Disabled");
+
+    themeComboBox->setItemText(0, lightText);
+    themeComboBox->setItemText(1, darkText);
+    themeComboBox->setItemText(2, autoText);
+
+    notificationComboBox->setItemText(0, enabledText);
+    notificationComboBox->setItemText(1, disabledText);
+
+    languageComboBox->setItemText(0, englishText);
+    languageComboBox->setItemText(1, armenianText);
+    languageComboBox->setItemText(2, russianText);
+
+    themeLabel->setText(tr("Theme"));
+    languageLabel->setText(tr("Language"));
+    notificationLabel->setText(tr("Notifications"));
+
 }
 
 void Settings::init()
 {
+    englishText = tr("English");
+    armenianText = tr("Armenian");
+    russianText = tr("Russian");
+
+    lightText = tr("Light");
+    darkText = tr("Dark");
+    autoText = tr("Auto");
+
+    enabledText = tr("Enabled");
+    disabledText = tr("Disabled");
+
+    themeLabel = new QLabel(tr("Theme"));
+    languageLabel = new QLabel(tr("Language"));
+    notificationLabel = new QLabel(tr("Notifications"));
+
     mainLayout = new QVBoxLayout();
     formLayout = new QFormLayout();
     buttonsLayout = new QHBoxLayout();
@@ -28,8 +76,8 @@ void Settings::init()
     languageComboBox = new QComboBox();
     notificationComboBox = new QComboBox();
 
-    save = new QPushButton("Save");
-    cancel = new QPushButton("Back");
+    save = new QPushButton();
+    cancel = new QPushButton();
 }
 
 void Settings::setup()
@@ -37,13 +85,20 @@ void Settings::setup()
     mainLayout->addLayout(formLayout);
     mainLayout -> addLayout(buttonsLayout);
 
-    themeComboBox->addItems({"Light", "Dark", "Auto"});
-    languageComboBox->addItems({"English", "Armenian", "Russian"});
-    notificationComboBox->addItems({"Enabled", "Disabled"});
+    formLayout->addRow(themeLabel, themeComboBox);
+    formLayout->addRow(languageLabel, languageComboBox);
+    formLayout->addRow(notificationLabel, notificationComboBox);
 
-    formLayout->addRow("Theme", themeComboBox);
-    formLayout->addRow("Language", languageComboBox);
-    formLayout->addRow("Notifications", notificationComboBox);
+    themeComboBox->addItem(lightText);
+    themeComboBox->addItem(darkText);
+    themeComboBox->addItem(autoText);
+
+    notificationComboBox->addItem(enabledText);
+    notificationComboBox->addItem(disabledText);
+
+    languageComboBox->addItem(englishText, "en_US");
+    languageComboBox->addItem(armenianText, "hy_AM");
+    languageComboBox->addItem(russianText, "ru_RU");
 
     buttonsLayout->addStretch();
     buttonsLayout->addWidget(cancel);
@@ -60,6 +115,12 @@ void Settings::setup()
 
 void Settings::styleing()
 {
+    const int fixedLabelWidth = 100;
+
+    themeLabel->setFixedWidth(fixedLabelWidth);
+    languageLabel->setFixedWidth(fixedLabelWidth);
+    notificationLabel->setFixedWidth(fixedLabelWidth);
+
     QString comboBoxStyle = R"(
         QComboBox {
             color: #FFFFFF;
@@ -82,6 +143,7 @@ void Settings::styleing()
             color: #FFFFFF;
         }
     )";
+
 
     QString buttonStyle = R"(
         QPushButton {
@@ -131,7 +193,7 @@ void Settings::connections()
 {
     connect(themeComboBox, &QComboBox::currentIndexChanged, this, [this](){
         isEditing = true;
-        cancel->setText("Cancel");
+        cancel->setText(tr("Cancel"));
         for (auto comboBox : newSettings.keys())
         {
             newSettings[comboBox] = comboBox->currentIndex();
@@ -139,29 +201,37 @@ void Settings::connections()
     });
     connect(languageComboBox, &QComboBox::currentIndexChanged, this, [this](){
         isEditing = true;
-        cancel->setText("Cancel");
+        cancel->setText(tr("Cancel"));
         for (auto comboBox : newSettings.keys())
         {
             newSettings[comboBox] = comboBox->currentIndex();
         }
+
+
     });
     connect(notificationComboBox, &QComboBox::currentIndexChanged, this, [this](){
         isEditing = true;
-        cancel->setText("Cancel");
+        cancel->setText(tr("Cancel"));
         for (auto comboBox : newSettings.keys())
         {
             newSettings[comboBox] = comboBox->currentIndex();
         }
     });
-    connect(save, &QPushButton::clicked, this,[this](){
+    connect(save, &QPushButton::clicked, this, [this]() {
         isEditing = false;
+        cancel->setText(tr("Back"));
+        QString newLang = languageComboBox->currentData().toString();
+        QString oldLang = oldSettings.contains(languageComboBox) ?
+                              languageComboBox->itemData(oldSettings[languageComboBox]).toString() : "";
+        if (newLang != oldLang) {
+            Translator::get().set(newLang);
+            emit languageChanged();
+        }
         oldSettings = newSettings;
-        cancel ->setText("Back");
     });
     connect(cancel, &QPushButton::clicked, this,[this](){
         if(!isEditing)
         {
-            qDebug()<< "go Back Signal";
             emit goBackSignal();
         }
         else
@@ -171,7 +241,7 @@ void Settings::connections()
                 comboBox->setCurrentIndex(oldIndex);
             }
             newSettings = oldSettings;
-            cancel->setText("Back");
+            cancel->setText(tr("Back"));
             isEditing = false;
         }
     });

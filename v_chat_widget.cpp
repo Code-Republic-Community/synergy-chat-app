@@ -44,6 +44,7 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     pic->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     pic->setStyleSheet("border: 0px");
 
+    layout->setSpacing(10);
     layout->addWidget(name);
     layout->addWidget(pic);
     layout->addWidget(nick);
@@ -113,6 +114,8 @@ QPixmap VChatWidget::cut_photo(const QString &pic_path)
     }
 
     int size = 40;
+    double borderThickness = 2.2;
+
     QPixmap triangle(size, size);
     triangle.fill(Qt::transparent);
 
@@ -120,16 +123,25 @@ QPixmap VChatWidget::cut_photo(const QString &pic_path)
     painter.setRenderHint(QPainter::Antialiasing);
 
     QPainterPath path;
-    path.moveTo(size / 2, size);
-    path.lineTo(0, 0);
-    path.lineTo(size, 0);
+    path.moveTo(size / 2, size - borderThickness);
+    path.lineTo(borderThickness, borderThickness);
+    path.lineTo(size - borderThickness, borderThickness);
     path.closeSubpath();
 
     painter.setClipPath(path);
     painter.drawPixmap(0, 0, size, size, avatar);
 
+    painter.setClipping(false);
+
+    QPen pen(QColor("#8e15de"));
+    pen.setWidth(borderThickness);
+    painter.setPen(pen);
+    painter.setBrush(Qt::NoBrush);
+    painter.drawPath(path);
+
     return triangle;
 }
+
 
 void VChatWidget::handle_click()
 {
@@ -158,4 +170,3 @@ void VChatWidget::setLanguage(QString name_text, QString nick_text)
     nick->setText(nick_text);
     pic->setToolTip(tr("User Profile Picture"));
 }
-

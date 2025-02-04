@@ -35,7 +35,7 @@ private:
     QPushButton *Next;
     //navigationPrevOrNext *m_nextAndPrev;
     int chanceCnt = 3;
-private:
+public:
     void setLanguege();
     // void setTextForElements(const QString &verificationMessage, const QString &placeholder, const QString &chanceMessage, const QString &VerMss, const QString &BackMs);
 };

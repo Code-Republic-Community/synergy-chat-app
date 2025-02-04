@@ -44,7 +44,7 @@ public:
     void set_nick(QString text);
     void set_name(QString text);
     void set_user_pic(const QString &pic_path);
-    QPixmap cut_photo(const QString &pic_path);
+    static QPixmap cut_photo(const QString &pic_path);
 private:
     QTimer *timer;
     int position;

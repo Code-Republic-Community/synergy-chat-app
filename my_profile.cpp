@@ -2,6 +2,11 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QFileDialog>
+#include <QUrl>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QStringList>
+#include "httpclient.h"
 
 MyProfile::MyProfile(QWidget *parent)
     : QWidget(parent)
@@ -10,9 +15,127 @@ MyProfile::MyProfile(QWidget *parent)
     this->setFixedSize(400, 700);
     init();
     setup();
+    setLanguage();
     styling();
     connections();
+    client_login = new HttpClient();
+    connect(client_login, &HttpClient::responseReceived, this, &MyProfile::handleLoginResponse);
+    QUrl url("http://192.168.35.83:8000/login/");
+    QJsonObject jsonData;
+    jsonData["nickname"] = "arxitekt0r";
+    jsonData["password"] = "mypassword123";
+    client_login->postRequest(url, jsonData);
+
+    QString link("http://192.168.35.83:8000/profile_info/");
+    QUrl accountinfo(link + userId);
+    client_login ->getRequest(accountinfo);
+
+
 }
+
+void MyProfile::setLanguage()
+{
+    if (changePhotoButton) {
+        changePhotoButton->setText(tr("Change"));
+    }
+
+    if (goBackButton) {
+        goBackButton->setText(tr("Back"));
+    }
+
+    if (gotoSettings) {
+        gotoSettings->setText(tr("Settings"));
+    }
+
+    if (logOut) {
+        logOut->setText(tr("Log Out"));
+    }
+
+    if (editProfile) {
+        editProfile->setText(tr("Edit"));
+    }
+}
+void MyProfile::handle_update_profile_info()
+{
+    QString link("http://192.168.35.83:8000/profile_info/");
+    QUrl accountinfo(link + userId);
+
+    connect(client_login, &HttpClient::responseReceived, this, &MyProfile::handleProfileResponse);
+
+    client_login->getRequest(accountinfo);
+}
+
+void MyProfile::handleProfileResponse(QByteArray responseData)
+{
+    qDebug() << "_________________________________";
+
+    // Parse JSON response
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+    if (jsonResponse.isNull() || !jsonResponse.isObject()) {
+        qDebug() << "Invalid JSON response.";
+        return;
+    }
+
+    QJsonObject jsonObject = jsonResponse.object();
+
+    // Extract user profile information safely
+    QString surname = jsonObject.value("surname").toString();
+    QString nickname = jsonObject.value("nickname").toString();
+    QString email = jsonObject.value("email").toString();
+    QString name = jsonObject.value("name").toString();
+    QString date_of_birth = jsonObject.value("date_of_birth").toString();
+
+    // Debug: Print raw contacts field
+    qDebug() << "Raw contacts field: " << jsonObject.value("contacts");
+
+    // QStringList contactsList;
+    // QJsonValue contactsValue = jsonObject.value("contacts");
+
+    // if (contactsValue.isArray()) {
+    //     // ✅ Case 1: contacts is already a JSON array
+    //     QJsonArray contactsArray = contactsValue.toArray();
+    //     for (const QJsonValue &val : contactsArray) {
+    //         contactsList.append(val.toString());
+    //     }
+    // }
+    // else if (contactsValue.isString()) {
+    //     // ✅ Case 2: contacts is a JSON string that contains an array
+    //     QString contactsStr = contactsValue.toString();
+
+    //     // Try to parse the string as JSON
+    //     QJsonDocument contactsJson = QJsonDocument::fromJson(contactsStr.toUtf8());
+
+    //     if (!contactsJson.isNull() && contactsJson.isArray()) {
+    //         QJsonArray contactsArray = contactsJson.array();
+    //         for (const QJsonValue &val : contactsArray) {
+    //             contactsList.append(val.toString());
+    //         }
+    //     } else {
+    //         qDebug() << "Failed to parse contacts JSON array. String: " << contactsStr;
+    //     }
+    // } else {
+    //     qDebug() << "Unexpected contacts format!";
+    // }
+
+    // // Store extracted data in a QStringList
+    // QStringList profileData;
+    // profileData << name << surname << nickname << email << date_of_birth << id;
+
+    // // Debug output
+    // qDebug() << "Profile Data: " << profileData;
+    // qDebug() << "Contacts List: " << contactsList;
+
+
+    // Set values to labels
+    if (nameLabel) nameLabel->setText("Name: " + name);
+    if (surnameLabel) surnameLabel->setText("Surname: " + surname);
+    if (nicknameLabel) nicknameLabel->setText("Nickname: " + nickname);
+    if (emailLabel) emailLabel->setText("Email: " + email);
+    if (ageLabel) ageLabel->setText("Date: " + date_of_birth);
+
+}
+
+
 
 void MyProfile::init()
 {
@@ -36,7 +159,7 @@ void MyProfile::init()
     logOut = new QPushButton(this);
     editProfile = new QPushButton(this);
 
-    changePhotoButton = new QPushButton("Change", this);
+    changePhotoButton = new QPushButton(this);
     changePhotoButton->hide();
 
     oldDataMap = new QMap<int, QString>();
@@ -47,20 +170,15 @@ void MyProfile::setup()
 {
     QString defaultPhotoPath = "C:/Users/tigra/OneDrive/Pictures/user.png";
 
-    nameLabel->setText("Tigran");
-    surnameLabel->setText("Yeghyan");
-    nicknameLabel->setText("@tigranyeghyan");
-    emailLabel->setText("tigran.yeghyan.y.2004@gmail.com");
-    ageLabel->setText("28.11.2004");
+    nameLabel->setText("John");
+    surnameLabel->setText("Doe");
+    nicknameLabel->setText("@johndoe");
+    emailLabel->setText("johndoe2004@gmail.com");
+    ageLabel->setText("02.02.2004");
 
     oldDataMap->insert(0, nameLabel->text());
     oldDataMap->insert(1, surnameLabel->text());
     oldDataMap->insert(2, nicknameLabel->text());
-
-    goBackButton->setText("Back");
-    gotoSettings->setText("Settings");
-    logOut->setText("Log Out");
-    editProfile->setText("Edit");
 
     goBackButton->setGeometry(10, 10, 80, 40);
     profilePhoto->setGeometry(150, 10, 100, 100);
@@ -144,6 +262,7 @@ void MyProfile::styling()
     editProfile->setStyleSheet(buttonStyle);
     changePhotoButton->setStyleSheet(buttonStyle);
 
+
     QString photoStyle = R"(
         QLabel {
             border: 3px solid #420242;
@@ -157,6 +276,8 @@ void MyProfile::styling()
 
 void MyProfile::connections()
 {
+    connect(this, &MyProfile::idreceived, this, &MyProfile::handle_update_profile_info);
+
     connect(editProfile, &QPushButton::clicked, this, [this]() {
         if (isEditing) {
             saveChanges();
@@ -184,7 +305,7 @@ void MyProfile::connections()
             QPixmap newProfilePic(filePath);
             if (!newProfilePic.isNull()) {
                 profilePhoto->setPixmap(newProfilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                profilePhoto->setProperty("photoPath", filePath); // Store the new photo path
+                profilePhoto->setProperty("photoPath", filePath);
                 qDebug() << "Profile photo changed to:" << filePath;
             } else {
                 qDebug() << "Failed to load selected image.";
@@ -227,15 +348,15 @@ void MyProfile::toggleEditMode(bool enable)
         newDataMap->insert(1, surnameLabel->text());
         newDataMap->insert(2, nicknameLabel->text());
 
-        editProfile->setText("Save");
-        goBackButton->setText("Cancel");
+        editProfile->setText(tr("Save"));
+        goBackButton->setText(tr("Cancel"));
     } else {
         nameLabel->setText(oldDataMap->value(0));
         surnameLabel->setText(oldDataMap->value(1));
         nicknameLabel->setText(oldDataMap->value(2));
 
-        editProfile->setText("Edit");
-        goBackButton->setText("Back");
+        editProfile->setText(tr("Edit"));
+        goBackButton->setText(tr("Back"));
     }
 }
 
@@ -254,4 +375,17 @@ void MyProfile::saveChanges()
     newDataMap->insert(2, nicknameEdit->text());
 
     toggleEditMode(false);
+}
+
+void MyProfile::handleLoginResponse(QByteArray responseData) {
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+    QJsonObject jsonObject = jsonResponse.object();
+
+    if (jsonObject.contains("user_id")) {
+        userId = jsonObject["user_id"].toString();  // Convert to QString
+        qDebug() << "User ID received (QString):" << userId;
+        emit idreceived();
+    } else {
+        qDebug() << "User ID not found in response.";
+    }
 }

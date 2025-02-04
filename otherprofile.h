@@ -1,4 +1,4 @@
-    #ifndef OTHERPROFILE_H
+#ifndef OTHERPROFILE_H
 #define OTHERPROFILE_H
 
 #include <QWidget>
@@ -11,6 +11,8 @@ class OtherProfile : public QWidget
     Q_OBJECT
 public:
     explicit OtherProfile(QWidget *parent = nullptr);
+    void setLanguage();
+
 signals:
     void goBackSignal();
     void logOutSiganl();

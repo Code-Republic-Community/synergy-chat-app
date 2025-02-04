@@ -9,6 +9,7 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QMap>
+#include <QLabel>
 
 class Settings : public QWidget
 {
@@ -16,15 +17,33 @@ class Settings : public QWidget
 public:
     Settings(QWidget *parent = nullptr);
 
+    void setLanguage();
+
 signals:
     void goBackSignal();
-
-private slots:
-    void handle_back_btn();
+    void languageChanged();
+    void themeChanged();
 
 private:
     QMap<QComboBox*, int> oldSettings;
     QMap<QComboBox*, int> newSettings;
+
+private:
+    QLabel *themeLabel;
+    QLabel *languageLabel;
+    QLabel *notificationLabel;
+
+private:
+    QString englishText;
+    QString armenianText;
+    QString russianText;
+
+    QString lightText;
+    QString darkText;
+    QString autoText;
+
+    QString enabledText;
+    QString disabledText;
 
 private:
     QVBoxLayout *mainLayout;

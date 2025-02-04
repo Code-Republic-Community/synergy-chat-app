@@ -7,17 +7,26 @@
 #include <QLineEdit>
 #include <QMap>
 #include <QString>
+#include "httpclient.h"
 
 class MyProfile : public QWidget
 {
     Q_OBJECT
 public:
     explicit MyProfile(QWidget *parent = nullptr);
-
+    void setLanguage();
 signals:
     void goBackSignal();
     void logOutSiganl();
     void gotoSettingsSignal();
+    void idreceived();
+private slots:
+    void handle_update_profile_info();
+    void handleProfileResponse(QByteArray responseData);
+
+private:
+    HttpClient *client_login;
+    QString userId;
 
 private:
     QLabel *profilePhoto;
@@ -49,6 +58,8 @@ private:
     void connections();
     void toggleEditMode(bool enable);
     void saveChanges();
+
+    void handleLoginResponse(QByteArray responseData);
 
 };
 
