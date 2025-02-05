@@ -197,6 +197,10 @@
                 <source>Back</source>
                 <translation>Հետ</translation>
             </message>
+            <message>
+                <source>Type message...</source>
+                <translation>Մուտքագրեք հաղորդագրություն...</translation>
+            </message>
 
         <name>MainPageWindow</name>
             <message>

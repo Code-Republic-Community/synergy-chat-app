@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(chat_pg, &ChatWidget::go_back_signal, this, &MainWindow::goToMainPg);
 
     connect(settings_pg, &Settings::languageChanged, this, &MainWindow::change_language);
-    // connect(profile_settings_pg, &MyProfile::logOutSiganl, this, &MainWindow::login_pg);
+    connect(profile_settings_pg, &MyProfile::logOutSiganl, this, &MainWindow::goToSignIn);
     connect(welcome_pg, &WelcomePg::languageChanged, this, &MainWindow::change_language);
 
     this->setCentralWidget(staked_widget);

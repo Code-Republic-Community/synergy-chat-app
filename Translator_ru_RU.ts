@@ -197,6 +197,10 @@
                 <source>Back</source>
                 <translation>Назад</translation>
             </message>
+            <message>
+                <source>Type message...</source>
+                <translation>Введите сообщение...</translation>
+            </message>
 
         <name>MainPageWindow</name>
             <message>
