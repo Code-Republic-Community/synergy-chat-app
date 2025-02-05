@@ -2,16 +2,16 @@
 #define REGISTRATION_h
 
 //#include "navigationprevornext.h"
-#include <QMainWindow>
-#include <QPushButton>
-#include <QFormLayout>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLineEdit>
 #include <QCheckBox>
 #include <QDateEdit>
-#include <QVector>
+#include <QFormLayout>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
+#include <QMainWindow>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QVector>
 #include "httpclient.h"
 
 class Registration : public QWidget
@@ -24,35 +24,35 @@ public:
     ~Registration();
 
     bool checkFormValidity();
+
 private:
-    //navigationPrevOrNext *m_nextAndPrev;
     QWidget *centralWidget;
-    QVBoxLayout* mainLayout;
-    QVBoxLayout* topLayout;
-    QHBoxLayout* middleLayout;
-    QHBoxLayout* bottomLayout;
-    //QHBoxLayout* rowLayout;
-    QDateEdit* dateEdit;
-    QFormLayout* formLayout;
-    QLineEdit* nameField;
-    QLineEdit* surnameField;
-    QLineEdit* nicknameField;
-    QLineEdit* emailField;
-    QLineEdit* passwordField;
-    QLineEdit* confirmPasswordField;
-    QLabel* nameLabel;
-    QLabel* surnameLabel;
-    QLabel* nicknameLabel;
-    QLabel* emailLabel;
-    QLabel* dateLabel;
-    QLabel* passwordLabel;
-    QLabel* confirmPasswordLabel;
-    QCheckBox* checkBox;
-    QPushButton* termsOfUseButton;
-    QPushButton* haveAccountButton;
-    QPushButton* prevButton;
-    QPushButton* registerButton;
-    QLabel* topLabel;
+    QVBoxLayout *mainLayout;
+    QVBoxLayout *topLayout;
+    QHBoxLayout *middleLayout;
+    QHBoxLayout *bottomLayout;
+
+    QDateEdit *dateEdit;
+    QFormLayout *formLayout;
+    QLineEdit *nameField;
+    QLineEdit *surnameField;
+    QLineEdit *nicknameField;
+    QLineEdit *emailField;
+    QLineEdit *passwordField;
+    QLineEdit *confirmPasswordField;
+    QLabel *nameLabel;
+    QLabel *surnameLabel;
+    QLabel *nicknameLabel;
+    QLabel *emailLabel;
+    QLabel *dateLabel;
+    QLabel *passwordLabel;
+    QLabel *confirmPasswordLabel;
+    QCheckBox *checkBox;
+    QPushButton *termsOfUseButton;
+    QPushButton *haveAccountButton;
+    QPushButton *prevButton;
+    QPushButton *registerButton;
+    QLabel *topLabel;
     HttpClient *client_login;
     QString name_txt;
     QString nickname_txt;
@@ -74,6 +74,7 @@ private slots:
     void handle_have_an_account_btn();
     void handle_reg_btn();
     void handle_prev_btn();
+
 private:
     void save_texts();
 };

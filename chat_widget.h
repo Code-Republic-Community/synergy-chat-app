@@ -13,6 +13,7 @@
 #include "scroll_widget.h"
 #include <QScrollArea>
 #include "chatmessagewidget.h"
+#include "httpclient.h"
 
 class ChatWidget : public QWidget{
     Q_OBJECT
@@ -31,6 +32,7 @@ private:
     QScrollArea *scroll;
     QLineEdit *line;
     QWidget *contentWidget;
+    HttpClient *chat_client;
     int x;
     int y;
 

@@ -89,6 +89,18 @@
             </message>
 
         <name>WelcomePg</name>
+        <message>
+            <source>English</source>
+            <translation>Անգլերեն</translation>
+        </message>
+        <message>
+            <source>Armenian</source>
+            <translation>Հայերեն</translation>
+        </message>
+        <message>
+            <source>Russian</source>
+            <translation>Ռուսերեն</translation>
+        </message>
             <message>
                 <source>Welcome to app's name</source>
                 <translation>Բարի գալուստ</translation>
@@ -213,12 +225,24 @@
             </message>
             <name>Registration</name>
                         <message>
+                            <source>John</source>
+                            <translation>John</translation>
+                        </message>
+                        <message>
+                            <source>Doe</source>
+                            <translation>Doe</translation>
+                        </message>
+                        <message>
+                            <source>johndoe@example.com</source>
+                            <translation>johndoe@example.com</translation>
+                        </message>
+                        <message>
                             <source>Registration</source>
                             <translation>Գրանցում</translation>
                         </message>
                         <message>
-                            <source>Enter your nickname</source>
-                            <translation>Մուտքագրեք մականունը</translation>
+                            <source>johndoe123</source>
+                            <translation>johndoe123</translation>
                         </message>
                         <message>
                             <source>Enter your password</source>
@@ -229,32 +253,32 @@
                             <translation>Կրկին մուտքագրեք գաղտնաբառը</translation>
                         </message>
                         <message>
-                            <source>First name: </source>
-                            <translation>Անուն: </translation>
+                            <source>First name</source>
+                            <translation>Անուն</translation>
                         </message>
                         <message>
-                            <source>Last name (optional): </source>
-                            <translation>Ազգանուն (ոչ պարտադիր): </translation>
+                            <source>Last name (optional)</source>
+                            <translation>Ազգանուն (ոչ պարտադիր)</translation>
                         </message>
                         <message>
-                            <source>Nickname: </source>
-                            <translation>Մականուն: </translation>
+                            <source>Nickname</source>
+                            <translation>Մականուն</translation>
                         </message>
                         <message>
-                            <source>Email address: </source>
-                            <translation>Էլ. փոստի հասցե: </translation>
+                            <source>Email Address</source>
+                            <translation>Էլ. փոստի հասցե</translation>
                         </message>
                         <message>
-                            <source>Date of birth: </source>
-                            <translation>Ծննդյան ամսաթիվ: </translation>
+                            <source>Date of Birth</source>
+                            <translation>Ծննդյան ամսաթիվ</translation>
                         </message>
                         <message>
-                            <source>Password: </source>
-                            <translation>Գաղտնաբառ: </translation>
+                            <source>Password</source>
+                            <translation>Գաղտնաբառ</translation>
                         </message>
                         <message>
-                            <source>Confirm password: </source>
-                            <translation>Հաստատեք գաղտնաբառը: </translation>
+                            <source>Confirm password</source>
+                            <translation>Հաստատեք գաղտնաբառը</translation>
                         </message>
                         <message>
                             <source>Terms of use</source>
@@ -262,7 +286,7 @@
                         </message>
                         <message>
                             <source>Already have an account?</source>
-                            <translation>Արդեն ունե՞ք հաշիվ:</translation>
+                            <translation>Արդեն ունե՞ք հաշիվ</translation>
                         </message>
                         <message>
                             <source>Back</source>

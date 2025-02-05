@@ -89,6 +89,18 @@
             </message>
 
         <name>WelcomePg</name>
+        <message>
+            <source>English</source>
+            <translation>English</translation>
+        </message>
+        <message>
+            <source>Armenian</source>
+            <translation>Armenian</translation>
+        </message>
+        <message>
+            <source>Russian</source>
+            <translation>Russian</translation>
+        </message>
             <message>
                 <source>Welcome to app's name</source>
                 <translation>Welcome to app's name</translation>
@@ -211,14 +223,27 @@
         <translation>search...</translation>
     </message>
 
-<name>Registration</name>
+        <name>Registration</name>
+            <message>
+                <source>John</source>
+                <translation>John</translation>
+            </message>
+            <message>
+                <source>Doe</source>
+                <translation>Doe</translation>
+            </message>
+            <message>
+                <source>johndoe@example.com</source>
+                <translation>johndoe@example.com</translation>
+            </message>
+
             <message>
                 <source>Registration</source>
                 <translation>Registration</translation>
             </message>
             <message>
-                <source>Enter your nickname</source>
-                <translation>Enter your nickname</translation>
+                <source>johndoe123</source>
+                <translation>johndoe123</translation>
             </message>
             <message>
                 <source>Enter your password</source>
@@ -229,32 +254,32 @@
                 <translation>Reenter your password</translation>
             </message>
             <message>
-                <source>First name: </source>
-                <translation>First name: </translation>
+                <source>First name</source>
+                <translation>First name</translation>
             </message>
             <message>
-                <source>Last name (optional): </source>
-                <translation>Last name (optional): </translation>
+                <source>Last name (optional)</source>
+                <translation>Last name (optional)</translation>
             </message>
             <message>
-                <source>Nickname: </source>
-                <translation>Nickname: </translation>
+                <source>Nickname</source>
+                <translation>Nickname</translation>
             </message>
             <message>
-                <source>Email address: </source>
-                <translation>Email address: </translation>
+                <source>Email Address</source>
+                <translation>Email Address</translation>
             </message>
             <message>
-                <source>Date of birth: </source>
-                <translation>Date of birth: </translation>
+                <source>Date of Birth</source>
+                <translation>Date of Birth</translation>
             </message>
             <message>
-                <source>Password: </source>
-                <translation>Password: </translation>
+                <source>Password</source>
+                <translation>Password</translation>
             </message>
             <message>
-                <source>Confirm password: </source>
-                <translation>Confirm password: </translation>
+                <source>Confirm password</source>
+                <translation>Confirm password</translation>
             </message>
             <message>
                 <source>Terms of use</source>

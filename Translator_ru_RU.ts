@@ -91,6 +91,18 @@
             </message>
 
         <name>WelcomePg</name>
+        <message>
+            <source>English</source>
+            <translation>Английский</translation>
+        </message>
+        <message>
+            <source>Armenian</source>
+            <translation>Армянский</translation>
+        </message>
+        <message>
+            <source>Russian</source>
+            <translation>Русский</translation>
+        </message>
             <message>
                 <source>Welcome to app's name</source>
                 <translation>Добро пожаловать</translation>
@@ -213,12 +225,24 @@
             </message>
             <name>Registration</name>
                         <message>
+                            <source>John</source>
+                            <translation>John</translation>
+                        </message>
+                        <message>
+                            <source>Doe</source>
+                            <translation>Doe</translation>
+                        </message>
+                        <message>
+                            <source>johndoe@example.com</source>
+                            <translation>johndoe@example.com</translation>
+                        </message>
+                        <message>
                             <source>Registration</source>
                             <translation>Регистрация</translation>
                         </message>
                         <message>
-                            <source>Enter your nickname</source>
-                            <translation>Введите ваш никнейм</translation>
+                            <source>johndoe123</source>
+                            <translation>johndoe123</translation>
                         </message>
                         <message>
                             <source>Enter your password</source>
@@ -229,35 +253,35 @@
                             <translation>Повторно введите ваш пароль</translation>
                         </message>
                         <message>
-                            <source>First name: </source>
-                            <translation>Имя: </translation>
+                            <source>first_name</source>
+                            <translation>Имя</translation>
                         </message>
                         <message>
-                            <source>Last name (optional): </source>
-                            <translation>Фамилия (необязательно): </translation>
+                            <source>last_name</source>
+                            <translation>Фамилия (необязательно)</translation>
                         </message>
                         <message>
-                            <source>Nickname: </source>
-                            <translation>Никнейм: </translation>
+                            <source>nickname</source>
+                            <translation>Никнейм</translation>
                         </message>
                         <message>
-                            <source>Email address: </source>
-                            <translation>Адрес электронной почты: </translation>
+                            <source>Email Address</source>
+                            <translation>Адрес электронной почты</translation>
                         </message>
                         <message>
-                            <source>Date of birth: </source>
-                            <translation>Дата рождения: </translation>
+                            <source>Date of Birth</source>
+                            <translation>Дата рождения</translation>
                         </message>
                         <message>
-                            <source>Password: </source>
-                            <translation>Пароль: </translation>
+                            <source>Password</source>
+                            <translation>Пароль</translation>
                         </message>
                         <message>
-                            <source>Confirm password: </source>
-                            <translation>Подтвердите пароль: </translation>
+                            <source>Confirm password</source>
+                            <translation>Подтвердите пароль</translation>
                         </message>
                         <message>
-                            <source>Terms of use</source>
+                            <source>terms</source>
                             <translation>Условия использования</translation>
                         </message>
                         <message>
@@ -272,8 +296,5 @@
                             <source>Register</source>
                             <translation>Зарегистрироваться</translation>
                         </message>
-
-
-
     </context>
 </TS>

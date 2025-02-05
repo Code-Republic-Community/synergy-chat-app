@@ -10,6 +10,7 @@
 #include <QTimer>
 #include "navigationPrevOrNext.h"//
 #include "httpclient.h"
+#include "globals.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

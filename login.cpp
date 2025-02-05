@@ -7,6 +7,7 @@
 #include "httpclient.h"
 
 extern QByteArray globalId;
+extern QByteArray globalResponse;
 
 Login::Login(QWidget *parent)
     : QMainWindow(parent)
@@ -171,7 +172,7 @@ void Login::handleNextButtonClicked()
 
         saveTexts();
 
-        QUrl url("http://192.168.35.83:8000/login/");
+        QUrl url("http://127.0.0.1:8000/login/"); // http://192.168.35.83:8000/login/
         QJsonObject jsonData;
         jsonData["nickname"] = m_usernameText;
         jsonData["password"] = m_passwordText;
@@ -180,6 +181,7 @@ void Login::handleNextButtonClicked()
         qDebug() << jsonData.value("password");
 
         client_login->postRequest(url, jsonData);
+        qDebug() << globalResponse;
         emit next_btn_signal();
     }
 
