@@ -1,8 +1,6 @@
     // messagesFrame->setFixedSize(380, 570);
 
 #include "chat_widget.h"
-extern QByteArray globalId;
-
 
 ChatWidget::ChatWidget(QString nick, QWidget *parent)
     : QWidget(parent)
@@ -78,7 +76,7 @@ void ChatWidget::setLanguage()
 void ChatWidget::sendMessage(bool isOutgoing)
 {
     QString url_path = "http://127.0.0.1:8000/sendMessage/";
-    url_path += globalId;
+    // url_path += globalId;
     QUrl url(url_path);
     QJsonObject jsonData;
     jsonData["sender"] = "115310f3-4d6e-4897-a15a-dd62bea31204";

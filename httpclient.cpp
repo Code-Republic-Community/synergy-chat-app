@@ -9,9 +9,6 @@
 #include <QFile>
 #include <QDebug>
 
-extern QByteArray globalId;
-extern QByteArray globalResponse;
-
 HttpClient::HttpClient(QObject* parent)
     : QObject(parent)
 {
@@ -72,8 +69,7 @@ void HttpClient::onReply() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
         QByteArray responseData = reply->readAll();
-        globalResponse = responseData;
-        qDebug() << "Response:" << globalResponse;
+        qDebug() << "Response:" << responseData;
 
         emit responseReceived(responseData);
         reply->deleteLater();

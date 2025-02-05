@@ -35,7 +35,7 @@ Registration::Registration(QWidget *parent)
     QRegularExpression nameRegex("^[a-zA-Z]{2,}$");
     QRegularExpression surnameRegex("^[a-zA-Z]{1,}$");
     QRegularExpression nicknameRegex("^[a-zA-Z][a-zA-Z0-9_]{2,}$");
-    QRegularExpression emailRegex("^[\\w\\.]+@[\\w\\.]+\\.[a-z]{2,}$");
+    QRegularExpression emailRegex(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
     QRegularExpression passwordRegex("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$");
     QRegularExpression confirmPasswordRegex("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$");
 
@@ -78,7 +78,7 @@ Registration::Registration(QWidget *parent)
 
     dateEdit = new QDateEdit;
     dateEdit->setCalendarPopup(true);
-    dateEdit->setDisplayFormat("dd/MM/yyyy");
+    dateEdit->setDisplayFormat("yyyy-MM-dd");
     dateEdit->setMaximumDate(QDate::currentDate().addYears(-18));
 
     formLayout->addRow(nameLabel, nameField);
@@ -224,48 +224,31 @@ Registration::Registration(QWidget *parent)
 void Registration::handle_reg_btn()
 {
     bool allValid = true;
-    for (int i = 0; i < formLayout->rowCount(); ++i) {
-        QLabel *label = qobject_cast<QLabel *>(
-            formLayout->itemAt(i, QFormLayout::LabelRole)->widget());
-        if (!label) {
-            continue;
-        }
-        if (!label->text().contains("!"))
-        {
-            allValid = false;
-            break;
-        }
-        if (registerButton && !registerButton->isEnabled())
-        {
-            registerButton->setEnabled(allValid);
-        }
+    if (allValid) {
+        QUrl url("http://127.0.0.1:8000/register/");
+        QJsonObject jsonData;
+        jsonData["name"] = nameField->text();
+        jsonData["surname"] = surnameField->text();
+        jsonData["nickname"] = nicknameField->text();
+        jsonData["email"] = emailField->text();
+        jsonData["date_of_birth"] = dateEdit->text();
+        jsonData["password"] = passwordField->text();
 
-        if (allValid) {
-            QUrl url("http://127.0.0.1:8000/register/");
-            QJsonObject jsonData;
-            jsonData["name"] = nameField->text();
-            jsonData["surname"] = surnameField->text();
-            jsonData["nickname"] = nicknameField->text();
-            jsonData["email"] = emailField->text();
-            jsonData["date_of_birth"] = dateEdit->text();
-            jsonData["password"] = passwordField->text();
+        qDebug() << jsonData.keys();
+        qDebug() << jsonData.value("name");
+        qDebug() << jsonData.value("nickname");
+        qDebug() << jsonData.value("password");
+        qDebug() << jsonData.value("surname");
+        qDebug() << jsonData.value("email");
+        qDebug() << jsonData.value("date_of_birth");
 
-            qDebug() << jsonData.keys();
-            qDebug() << jsonData.value("name");
-            qDebug() << jsonData.value("nickname");
-            qDebug() << jsonData.value("password");
-            qDebug() << jsonData.value("surname");
-            qDebug() << jsonData.value("email");
-            qDebug() << jsonData.value("date_of_birth");
+        // if (globalResponse != "") {
+            client_login->postRequest(url, jsonData);
+        // } else {
+            // qDebug() << "Error";
+        // }
 
-            if (globalResponse != "") {
-                client_login->postRequest(url, jsonData);
-            } else {
-                qDebug() << "Error";
-            }
-
-            emit reg_btn_signal();
-        }
+        emit reg_btn_signal();
     }
 }
 

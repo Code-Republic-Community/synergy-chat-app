@@ -5,9 +5,8 @@
 #include <QMessageBox>
 #include <QJsonObject>
 #include "httpclient.h"
-
-extern QByteArray globalId;
-extern QByteArray globalResponse;
+#include <QJsonDocument>
+#include "globals.h"
 
 Login::Login(QWidget *parent)
     : QMainWindow(parent)
@@ -70,6 +69,7 @@ void Login::init()
     connect(m_rememberMe, &QCheckBox::toggled, this, &Login::rememberMe);
     connect(m_nextAndPrev, &navigationPrevOrNext::nextClicked, this, &Login::handleNextButtonClicked);
     connect(m_nextAndPrev, &navigationPrevOrNext::prevClicked, this, &Login::handlePrevButtonClicked);
+    connect(client_login, &HttpClient::responseReceived, this, &Login::handleUserId);
 }
 
 void Login::setLanguage()
@@ -112,13 +112,26 @@ void Login::forgetIcon()
 
     m_label1->hide();
     m_label2->hide();
-
 }
 
 void Login::saveTexts()
 {
     m_usernameText = usernameLineEdit->text();
     m_passwordText = passwordLineEdit->text();
+}
+
+void Login::handleUserId(QByteArray responseData)
+{
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+    QJsonObject jsonObject = jsonResponse.object();
+
+    if (jsonObject.contains("user_id")) {
+        Globals::getInstance().setUserID(jsonObject["user_id"].toString());
+        qDebug() << Globals::getInstance().getUserId();
+        emit idreceived();
+    } else {
+        qDebug() << "User ID not found in response.";
+    }
 }
 
 void Login::rememberMe(bool isClicked)
@@ -181,7 +194,6 @@ void Login::handleNextButtonClicked()
         qDebug() << jsonData.value("password");
 
         client_login->postRequest(url, jsonData);
-        qDebug() << globalResponse;
         emit next_btn_signal();
     }
 

@@ -11,6 +11,7 @@
 #include "navigationPrevOrNext.h"//
 #include "httpclient.h"
 #include "globals.h"
+#include <QJsonDocument>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -53,6 +54,7 @@ signals:
     void prev_btn_signal();
     void next_btn_signal();
     void register_signal();
+    void idreceived();
 
 private slots:
     void rememberMe(bool isClicked);
@@ -61,6 +63,7 @@ private slots:
     void handlePrevButtonClicked();
     void forgetIcon();
     void saveTexts();
+    void handleUserId(QByteArray responseData);
 };
 
 #endif // LOGIN_H

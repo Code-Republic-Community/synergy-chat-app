@@ -30,6 +30,7 @@ private:
     QNetworkAccessManager* manager;
 signals:
     void responseReceived(QByteArray responseData);
+    void userIdReceived(QString data);
 };
 
 #endif // HTTPCLIENT_H
