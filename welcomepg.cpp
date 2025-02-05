@@ -1,7 +1,7 @@
 #include "welcomepg.h"
-
+#include "translator.h"
 WelcomePg::WelcomePg(QWidget *parent)
-    : QMainWindow(parent)
+    : QWidget(parent)
     , welcome_label(new QLabel(this))
     , text_tras(new QLabel(this))
 {
@@ -10,10 +10,8 @@ WelcomePg::WelcomePg(QWidget *parent)
     conecting();
 }
 
-void
-WelcomePg::init(){
+void WelcomePg::init(){
     QWidget *central = new QWidget(this);
-    this->setCentralWidget(central);
     QVBoxLayout *layout = new QVBoxLayout(central);
     welcome_label->setAlignment(Qt::AlignCenter);
     // welcome_label->setGeometry(0, 20, 200, 30);
@@ -33,55 +31,48 @@ WelcomePg::init(){
     signIn->setGeometry(100, 300, 200, 80);
     signIn->setStyleSheet("font-size: 20px; font-weight: bold;");
 
-    webPg = new QPushButton(this);
-    webPg->setGeometry(20, 600, 80, 60);
-    webPg->setStyleSheet("font-size: 15px;");
-
+    languageComboBox = new QComboBox(this);
+    languageComboBox->addItem(tr("English"), "en_US");
+    languageComboBox->addItem(tr("Armenian"), "hy_AM");
+    languageComboBox->addItem(tr("Russian"), "ru_RU");
+    languageComboBox->setGeometry(20, 600, 100, 30);
     about = new QPushButton(this);
-    about->setGeometry(300, 600, 80, 60);
+    about->setGeometry(280, 600, languageComboBox->width(), languageComboBox->height());
     about->setStyleSheet("font-size: 15px;");
 
-    setLaguage();
+    setLayout(layout);
+    setLanguage();
 }
 
-void
-WelcomePg::conecting(){
+void WelcomePg::conecting(){
     connect(signIn, &QPushButton::clicked, this, &WelcomePg::onSignInClicked);
     connect(signUp, &QPushButton::clicked, this, &WelcomePg::onSignUpClicked);
-    connect(about, &QPushButton::clicked, this, [this]() { QMessageBox::information(this, "About", "What is Lorem Ipsum?Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");});
-    connect(webPg, &QPushButton::clicked, this,  [this]() { //hide();
-        QDialog *dialog = new QDialog(this);
-        dialog->setWindowTitle("Web Page");
-        dialog->resize(400, 700);
-        dialog->show();});
+    connect(about, &QPushButton::clicked, this, [this]() { QMessageBox::information(this, "About", "A cross-platform desktop chat application built with Qt, offering real-time messaging and a clean, user-friendly interface.");});
+    connect(languageComboBox, &QComboBox::currentIndexChanged, this, [this](int index){
+        QString newLang = languageComboBox->itemData(index).toString();
+        Translator::get().set(newLang);
+        emit languageChanged();
+    });
+
 }
 
-void
-WelcomePg::setLaguage(){
-    welcome_label->setText(tr("Welcome to app's name"));
+void WelcomePg::setLanguage(){
+    welcome_label->setText(tr("Synergy"));
     text_tras->setText(tr("What is Lorem Ipsum?"));
     signUp->setText(tr("Sign up"));
     signIn->setText(tr("Sign in"));
-    webPg->setText(tr("Web page"));
     about->setText(tr("About"));
 
 }
 
-void
-WelcomePg::onSignInClicked(){
+void WelcomePg::onSignInClicked(){
     emit signInClicked();
 }
 
-void
-WelcomePg::onSignUpClicked(){
+void WelcomePg::onSignUpClicked(){
     emit signUpClicked();
 }
 
 WelcomePg::~WelcomePg() {
-    delete welcome_label;
-    delete text_tras;
-    delete signUp;
-    delete signIn;
-    delete webPg;
-    delete about;
+
 }

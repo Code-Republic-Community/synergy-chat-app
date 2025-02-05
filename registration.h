@@ -53,7 +53,6 @@ private:
     QPushButton* prevButton;
     QPushButton* registerButton;
     QLabel* topLabel;
-    QLabel* smallText;
     HttpClient *client_login;
     QString name_txt;
     QString nickname_txt;
@@ -62,6 +61,8 @@ private:
     QString email_txt;
     QString password_txt;
 
+public:
+    void setLanguage();
 signals:
     void terms_of_use_signal();
     void have_an_account_signal();
@@ -69,7 +70,6 @@ signals:
     void prev_btn_signal();
 
 private slots:
-
     void handle_terms_of_use_btn();
     void handle_have_an_account_btn();
     void handle_reg_btn();

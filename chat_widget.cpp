@@ -6,6 +6,8 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     : QWidget(parent)
 {
     this->setFixedSize(400, 700);
+    y = 20;
+    x = 200;
 
     v_user = new VChatWidget("username", nick, this);
     v_user->setGeometry(120, 630, 272, 60);
@@ -14,21 +16,22 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     send_btn->setGeometry(340, 10, 50, 55);
 
 
-    scroll_widget = new ScrollWidget(this);
-    scroll_widget->change_sizes(10, 70, 380, 560);
+    scroll = new QScrollArea(this);
+    scroll->setGeometry(10, 70, 380, 560);
+    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    if (true) {
-        ChatMessageWidget *message = new ChatMessageWidget("Kargin Serial", this);
-        message->setGeometry(70, 70, 100, 100);
-    }
+    contentWidget = new QWidget();
+    contentWidget->setGeometry(0, 0, 380, 560);
+
+    scroll->setWidget(contentWidget);
 
     backButton = new QPushButton(this);
     backButton->setGeometry(12, 632, 100, 55);
-    backButton->setStyleSheet("background-color: #5A005A; color: white; font-weight: bold; border-radius: 5px;");
+    backButton->setStyleSheet("background-color: #8e15de; color: white; font-weight: bold; border-radius: 5px;");
 
     line = new QLineEdit(this);
     line->setObjectName("messageInput");
-    line->setPlaceholderText("Type message...");
     line->setGeometry(10, 10, 325, 55);
 
     connect(v_user, &VChatWidget::clicked_vchat, this, &ChatWidget::handle_profile_signal);
@@ -43,6 +46,7 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
 
 void ChatWidget::setNick(QString nick)
 {
+    clearMessages();
     v_user->set_nick(nick);
 }
 
@@ -63,39 +67,41 @@ void ChatWidget::handle_go_back()
 
 void ChatWidget::setLanguage()
 {
-    send_btn->setText("✉️");
-    backButton->setText("Back");
+    send_btn->setText(tr("✉️"));
+    backButton->setText(tr("Back"));
+    line->setPlaceholderText(tr("Type message..."));
 }
 
-void ChatWidget::addMessage(const ChatMessageWidget *message, bool who_is)
+void ChatWidget::sendMessage(bool isOutgoing)
 {
-    // QHBoxLayout *layout = new QHBoxLayout(this);
-    // if (who_is)
+    addMessage(line->text(), isOutgoing);
+    line->clear();
 }
 
-
-void ChatWidget::sendMessage()
+void ChatWidget::addMessage(const QString& message_text, bool isOutgoing)
 {
-    QLineEdit* line = findChild<QLineEdit*>();
-    if(line && !line->text().isEmpty()) {
-        addMessageToChat(line->text());
-        line->clear();
+    ChatMessageWidget *message = new ChatMessageWidget(message_text, contentWidget);
+    if (isOutgoing) {
+        message->setGeometry(20, y, message->width() + 20, message->height() + 20);
+    } else {
+        message->setGeometry(380 - message->width() - 40, y, message->width() + 20, message->height() + 20);
     }
+    y += message->height();
+    int newContentHeight = y + message->height() + 20;
+    message->show();
+    contentWidget->setMinimumHeight(newContentHeight);
 }
 
-void ChatWidget::addMessageToChat(const QString& message)
+void ChatWidget::clearMessages()
 {
-    // // Implementation depends on your ScrollWidget's API
-    // // Example pseudo-code:
-    // QLabel* newMsg = new QLabel(message, scroll_widget);
-    // scroll_widget->addWidget(newMsg);
-
-    // // Scroll to bottom
-    // QScrollArea* scrollArea = scroll_widget->findChild<QScrollArea*>();
-    // if(scrollArea) {
-    //     scrollArea->verticalScrollBar()->setValue(scrollArea->verticalScrollBar()->maximum());
-    // }
+    QList<QWidget*> children = contentWidget->findChildren<QWidget*>();
+    for (QWidget *child : children) {
+        child->deleteLater();
+    }
+    y = 20;
+    contentWidget->setMinimumHeight(0);
 }
+
 
 void ChatWidget::handle_line()
 {

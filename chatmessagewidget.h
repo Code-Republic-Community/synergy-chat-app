@@ -19,6 +19,8 @@ private:
     QLabel* messageLabel;
     QLabel* timeLabel;
     QVBoxLayout* layout;
+public:
+    void setAlignment(Qt::Alignment alignment);
 };
 
 #endif // CHATMESSAGEWIDGET_H

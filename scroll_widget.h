@@ -7,6 +7,8 @@
 #include <QVBoxLayout>
 #include "v_chat_widget.h"
 #include <QVector>
+#include "chatmessagewidget.h"
+#include <QScrollBar>
 
 class MainPageWindow;
 
@@ -23,6 +25,7 @@ public:
     void add_chat(VChatWidget *new_chat);
     void show_chats();
     void change_sizes(int x, int y, int w, int h);
+    QWidget* getContentWidget() const;
 private:
     QVector<VChatWidget*> all_chats;
 private:

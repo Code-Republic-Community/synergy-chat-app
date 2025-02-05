@@ -59,7 +59,7 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     timer = nullptr;
     position = 0;
 
-    pic->setPixmap(cut_photo(":/pngs/panda"));
+    pic->setPixmap(cut_photo(":/pngs/panda", 40));
     pic->setFixedSize(40, 40);
     pic->setStyleSheet("border: 0px;");
 
@@ -104,7 +104,7 @@ void VChatWidget::set_name(QString text)
     name->setText(text);
 }
 
-QPixmap VChatWidget::cut_photo(const QString &pic_path)
+QPixmap VChatWidget::cut_photo(const QString &pic_path, int size)
 {
     QPixmap avatar(pic_path);
 
@@ -113,7 +113,6 @@ QPixmap VChatWidget::cut_photo(const QString &pic_path)
         std::exit(0);
     }
 
-    int size = 40;
     double borderThickness = 2.2;
 
     QPixmap triangle(size, size);
@@ -141,6 +140,7 @@ QPixmap VChatWidget::cut_photo(const QString &pic_path)
 
     return triangle;
 }
+
 
 
 void VChatWidget::handle_click()

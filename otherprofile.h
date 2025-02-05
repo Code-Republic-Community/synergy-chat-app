@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QPixmap>
+#include "v_chat_widget.h"
 
 class OtherProfile : public QWidget
 {

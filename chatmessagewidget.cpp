@@ -16,6 +16,7 @@ ChatMessageWidget::ChatMessageWidget(const QString& text, QWidget* parent)
     layout->addWidget(timeLabel);
 
     setMessage(text);
+    messageLabel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
 }
 
 void ChatMessageWidget::setMessage(const QString& text) {
@@ -23,4 +24,15 @@ void ChatMessageWidget::setMessage(const QString& text) {
     timeLabel->setText(QDateTime::currentDateTime().toString("hh:mm"));
 
     adjustSize();
+}
+
+void ChatMessageWidget::setAlignment(Qt::Alignment alignment)
+{
+    layout->setAlignment(Qt::Alignment(alignment));
+
+    if(alignment & Qt::AlignRight) {
+        messageLabel->setStyleSheet("background-color: #8e15de; color: white;");
+    } else {
+        messageLabel->setStyleSheet("background-color: #e0e0e0; color: black;");
+    }
 }

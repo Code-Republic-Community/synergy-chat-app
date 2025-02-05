@@ -168,7 +168,7 @@ void MyProfile::init()
 
 void MyProfile::setup()
 {
-    QString defaultPhotoPath = "C:/Users/tigra/OneDrive/Pictures/user.png";
+    QString defaultPhotoPath = ":/pngs/panda.jpg";
 
     nameLabel->setText("John");
     surnameLabel->setText("Doe");
@@ -198,7 +198,7 @@ void MyProfile::setup()
     logOut->setGeometry(210, 640, 170, 40);
     changePhotoButton->setGeometry(260, 70, 120, 40);
 
-    QPixmap profilePic(defaultPhotoPath);
+    QPixmap profilePic(VChatWidget::cut_photo(defaultPhotoPath, 100));
     if (!profilePic.isNull()) {
         profilePhoto->setPixmap(profilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
@@ -262,15 +262,6 @@ void MyProfile::styling()
     editProfile->setStyleSheet(buttonStyle);
     changePhotoButton->setStyleSheet(buttonStyle);
 
-
-    QString photoStyle = R"(
-        QLabel {
-            border: 3px solid #420242;
-            border-radius: 50px;
-        }
-    )";
-
-    profilePhoto->setStyleSheet(photoStyle);
     profilePhoto->setAlignment(Qt::AlignCenter);
 }
 
@@ -304,8 +295,7 @@ void MyProfile::connections()
         if (!filePath.isEmpty()) {
             QPixmap newProfilePic(filePath);
             if (!newProfilePic.isNull()) {
-                profilePhoto->setPixmap(newProfilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                profilePhoto->setProperty("photoPath", filePath);
+                profilePhoto->setPixmap(VChatWidget::cut_photo(filePath, 100));
                 qDebug() << "Profile photo changed to:" << filePath;
             } else {
                 qDebug() << "Failed to load selected image.";

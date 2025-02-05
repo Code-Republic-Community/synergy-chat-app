@@ -8,9 +8,9 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QDebug>
-#include "globals.h"
 
 extern QByteArray globalId;
+extern QByteArray globalResponse;
 
 HttpClient::HttpClient(QObject* parent)
     : QObject(parent)
@@ -59,13 +59,11 @@ void HttpClient::uploadFile(const QUrl& url, const QString& filePath) {
     filePart.setHeader(QNetworkRequest::ContentDispositionHeader,
                        QVariant("form-data; name=\"file\"; filename=\"" + file->fileName() + "\""));
     filePart.setBodyDevice(file);
-    // Set the file's parent so it is deleted with multiPart.
     file->setParent(multiPart);
     multiPart->append(filePart);
 
     QNetworkRequest request(url);
     QNetworkReply* reply = manager->post(request, multiPart);
-    // Ensure multiPart is cleaned up when the reply is finished.
     multiPart->setParent(reply);
     connect(reply, &QNetworkReply::finished, this, &HttpClient::onReply);
 }
@@ -74,12 +72,10 @@ void HttpClient::onReply() {
     QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
     if (reply) {
         QByteArray responseData = reply->readAll();
-        globalId = responseData; // nor avelacrac ban
-        qDebug() << "Response:" << responseData;
+        globalResponse = responseData;
+        qDebug() << "Response:" << globalResponse;
 
-
-        emit responseReceived(responseData);  // Emit the response data
-
+        emit responseReceived(responseData);
         reply->deleteLater();
     }
 }

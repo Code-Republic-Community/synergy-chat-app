@@ -18,7 +18,7 @@ class MainPageWindow : public QWidget
 public:
     MainPageWindow(QWidget* parent = nullptr);
     ~MainPageWindow() = default;
-
+    void setLanguage();
 private:
     ScrollWidget* scroll_widget;
     QPushButton* SearchButton;

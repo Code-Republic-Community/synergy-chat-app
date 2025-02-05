@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 extern QByteArray globalId;
+// extern QByteArray globalRespsone;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,7 +32,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(welcome_pg, &WelcomePg::signUpClicked, this, &MainWindow::goToRegPg);
 
     connect(login_pg, &Login::prev_btn_signal, this, &MainWindow::goToWelcomePg);
-    connect(login_pg, &Login::next_btn_signal, this, &MainWindow::goToMainPg);
+
+    // if (globalRepsone == "") {
+        connect(login_pg, &Login::next_btn_signal, this, &MainWindow::goToMainPg);
+    // }
 
     connect(reg_pg, &Registration::prev_btn_signal, this, &MainWindow::goToWelcomePg);
 
@@ -64,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(chat_pg, &ChatWidget::go_back_signal, this, &MainWindow::goToMainPg);
 
     connect(settings_pg, &Settings::languageChanged, this, &MainWindow::change_language);
+    // connect(profile_settings_pg, &MyProfile::logOutSiganl, this, &MainWindow::login_pg);
+    connect(welcome_pg, &WelcomePg::languageChanged, this, &MainWindow::change_language);
 
     this->setCentralWidget(staked_widget);
     this->setFixedSize(400, 700);
@@ -122,16 +128,15 @@ void MainWindow::goToOtherProfilePg()
 
 void MainWindow::change_language()
 {
-    // welcome_pg;
-    // login_pg->setLanguage();
-    // reg_pg-
-    // main_pg->s
-    // chat_pg->set
+    welcome_pg->setLanguage();
+    login_pg->setLanguage();
+    reg_pg->setLanguage();
+    main_pg->setLanguage();
+    chat_pg->setLanguage();
     profile_settings_pg->setLanguage();
     settings_pg->setLanguage();
-    // verification_pg->setLa
+    verification_pg->setLanguege();
     other_profile_pg->setLanguage();
-
 }
 
 

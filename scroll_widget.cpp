@@ -81,6 +81,9 @@ void ScrollWidget::draw_line(QString text)
     lineLayout->addWidget(lineRight);
 
     contentLayout->addWidget(lineContainer);
+    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
 }
 
 
@@ -93,4 +96,9 @@ VChatWidget* ScrollWidget::search(QString text)
         }
     }
     return nullptr;
+}
+
+
+QWidget* ScrollWidget::getContentWidget() const {
+    return scroll_content;
 }

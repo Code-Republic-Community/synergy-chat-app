@@ -8,9 +8,9 @@
 #include <QWidget>
 #include <QMessageBox>
 #include <QDialog>
-#include "registration.h"
+#include <QComboBox>
 
-class WelcomePg : public QMainWindow
+class WelcomePg : public QWidget
 {
     Q_OBJECT
 
@@ -20,6 +20,7 @@ public:
 signals:
     void signInClicked();
     void signUpClicked();
+    void languageChanged();
 private slots:
     void onSignInClicked();
     void onSignUpClicked();
@@ -28,12 +29,12 @@ private:
     QLabel* text_tras;
     QPushButton* signUp;
     QPushButton* signIn;
-    QPushButton* webPg;
     QPushButton* about;
+    QComboBox* languageComboBox;
 private:
     void init();
     void conecting();
 public:
-    void setLaguage();
+    void setLanguage();
 };
 #endif // WELCOMEPG_H

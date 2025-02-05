@@ -8,9 +8,10 @@
 #include <QDate>
 
 
+extern QByteArray globalResponse;
+
 Registration::Registration(QWidget *parent)
     : QWidget(parent)
-
 {
     this->setFixedSize(400, 700);
     //init();
@@ -28,18 +29,12 @@ Registration::Registration(QWidget *parent)
     topLabel->move(150, 200);
     topLabel->setAlignment(Qt::AlignCenter);
 
-    smallText = new QLabel("<p style='font-size: 10px;'>A Binary Search Tree (or BST) is a data structure used in computer science for organizing and storing data in a sorted manner. This hierarchical structure allows for efficient searching, insertion, and deletion operations on the data stored in the tree.</p>");
-    smallText->setWordWrap(true);
-    smallText->setAlignment(Qt::AlignHCenter);
-    smallText->adjustSize();
-
     topLayout = new QVBoxLayout;
     middleLayout = new QHBoxLayout;
     bottomLayout = new QHBoxLayout;
 
     topLayout->addWidget(topLabel, 0, Qt::AlignTop | Qt::AlignHCenter);
     topLayout->addSpacerItem(new QSpacerItem(10, 20, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    topLayout->addWidget(smallText, 0, Qt::AlignTop | Qt::AlignHCenter);
 
     formLayout = new QFormLayout;
 
@@ -359,10 +354,14 @@ void Registration::handle_reg_btn()
             jsonData["password"] = passwordField->text();
 
             qDebug() << jsonData.keys();
+            qDebug() << jsonData.value("name");
             qDebug() << jsonData.value("nickname");
             qDebug() << jsonData.value("password");
+            qDebug() << jsonData.value("surname");
+            qDebug() << jsonData.value("email");
+            qDebug() << jsonData.value("date_of_birth");
 
-            if(client_login) {
+            if(globalResponse != "") {
                 client_login->postRequest(url, jsonData);
             }
             else {
@@ -391,6 +390,30 @@ void Registration::handle_reg_btn()
     {
         emit terms_of_use_signal();
     }
+
+
+    void Registration::setLanguage()
+    {
+        topLabel->setText(tr("Registration"));
+
+        nicknameField->setPlaceholderText(tr("Enter your nickname"));
+        passwordField->setPlaceholderText(tr("Enter your password"));
+        confirmPasswordField->setPlaceholderText(tr("Reenter your password"));
+
+        nameLabel->setText(tr("First name: "));
+        surnameLabel->setText(tr("Last name (optional): "));
+        nicknameLabel->setText(tr("Nickname: "));
+        emailLabel->setText(tr("Email address: "));
+        dateLabel->setText(tr("Date of birth: "));
+        passwordLabel->setText(tr("Password: "));
+        confirmPasswordLabel->setText(tr("Confirm password: "));
+
+        termsOfUseButton->setText(tr("Terms of use"));
+        haveAccountButton->setText(tr("Already have an account?"));
+        prevButton->setText(tr("Back"));
+        registerButton->setText(tr("Register"));
+    }
+
 
 
     void Registration::save_texts()

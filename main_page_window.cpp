@@ -6,7 +6,7 @@ MainPageWindow::MainPageWindow(QWidget* parent):
     searchBar(new QLineEdit(this)), chat(new QLabel(this)){
 
     QPixmap searchIcon(":/pngs/searchicon.png");
-    QPixmap profileIcon(VChatWidget::cut_photo(":/pngs/panda.jpg"));
+    QPixmap profileIcon(VChatWidget::cut_photo(":/pngs/panda.jpg", 40));
 
     for (int i = 0; i < 30; ++i) {
         VChatWidget* chat = new VChatWidget("Avtandir3000", "@nick" + QString::number(i));
@@ -30,7 +30,6 @@ MainPageWindow::MainPageWindow(QWidget* parent):
                                 "}");
 
     searchBar->setGeometry(70, 10, 265, 50);
-    searchBar->setPlaceholderText("search...");
     searchBar->setStyleSheet("QLineEdit {"
                              "    border: 2px solid #8e15de;"
                              "    border-radius: 10px;"
@@ -48,7 +47,6 @@ MainPageWindow::MainPageWindow(QWidget* parent):
                              "    background-color: #f5f5f5;"
                              "}");
 
-    chat->setText("CHATS");
     chat->setGeometry(170, 30, 100, 100);
     chat->setStyleSheet("color: #8e15de; font-size: 16px; font-family: 'Century Gothic', sans-serif; font-weight: bold;");
 
@@ -69,6 +67,13 @@ MainPageWindow::MainPageWindow(QWidget* parent):
     connect(ProfileButton, &QPushButton::clicked, this, &MainPageWindow::handleProfileButton);
     connect(SearchButton, &QPushButton::clicked, this, &MainPageWindow::handleSearchButton);
     connect(searchBar, &QLineEdit::returnPressed, this, &MainPageWindow::handleSearch);
+    setLanguage();
+}
+
+void MainPageWindow::setLanguage()
+{
+    chat->setText(tr("Chats"));
+    searchBar->setPlaceholderText(tr("search..."));
 }
 
 void MainPageWindow::handle_vchat_click(QString nickname)

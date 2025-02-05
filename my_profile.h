@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QString>
 #include "httpclient.h"
+#include "v_chat_widget.h"
 
 class MyProfile : public QWidget
 {

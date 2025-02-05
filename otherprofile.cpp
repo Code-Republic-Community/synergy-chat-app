@@ -44,7 +44,7 @@ void OtherProfile::setup()
 
     QPixmap profilePic("");
     if (!profilePic.isNull()) {
-        profilePhoto->setPixmap(profilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        profilePhoto->setPixmap(VChatWidget::cut_photo(":/resources/default_profile.png", 100)); // stex petqa lini back ic ekac nkary
     } else {
         qDebug() << "Failed to load profile photo. Using default.";
         profilePhoto->setPixmap(QPixmap(":/resources/default_profile.png").scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
