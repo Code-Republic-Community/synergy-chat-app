@@ -245,8 +245,12 @@
                             <translation>johndoe123</translation>
                         </message>
                         <message>
+                            <source>Enter your nickname</source>
+                            <translation>Մուտքագրեք ձեր օգտանունը</translation>
+                        </message>
+                        <message>
                             <source>Enter your password</source>
-                            <translation>Մուտքագրեք գաղտնաբառը</translation>
+                            <translation>Մուտքագրեք ձեր գաղտնաբառը</translation>
                         </message>
                         <message>
                             <source>Reenter your password</source>
@@ -262,7 +266,7 @@
                         </message>
                         <message>
                             <source>Nickname</source>
-                            <translation>Մականուն</translation>
+                            <translation>Օգտանուն</translation>
                         </message>
                         <message>
                             <source>Email Address</source>

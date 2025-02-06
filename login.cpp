@@ -28,7 +28,8 @@ void Login::init()
 
     m_underLoginText = new QLabel(this);
     m_underLoginText->setWordWrap(true);
-    m_underLoginText->setGeometry(90, 170, 300, 100);
+    m_underLoginText->setAlignment(Qt::AlignCenter);
+    m_underLoginText->setGeometry(50, 150, 300, 60);
 
     m_usernameLabel = new QLabel(this);
     m_usernameLabel->setGeometry(125, 310, 150, 30);
@@ -76,9 +77,8 @@ void Login::setLanguage()
 {
     m_loginLabel->setText(tr("Login"));
 
-    m_underLoginText->setText(tr("Welcome to the Login Page.\nEnter your username and password.\n"
-                                 "If you don't have an account, you can register by clicking 'Register'.\n"
-                                 "Your information is safe with us."));
+    m_underLoginText->setText(tr("Enter your username and password.\n"
+                                 "If you don't have an account, register below."));
 
     m_usernameLabel->setText(tr("Username"));
     usernameLineEdit->setPlaceholderText(tr("Username"));
@@ -185,7 +185,7 @@ void Login::handleNextButtonClicked()
 
         saveTexts();
 
-        QUrl url("http://127.0.0.1:8000/login/"); // http://192.168.35.83:8000/login/
+        QUrl url("https://synergy-iauu.onrender.com/login/");
         QJsonObject jsonData;
         jsonData["nickname"] = m_usernameText;
         jsonData["password"] = m_passwordText;

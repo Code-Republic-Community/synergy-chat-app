@@ -53,13 +53,14 @@ private:
     QPushButton *prevButton;
     QPushButton *registerButton;
     QLabel *topLabel;
-    HttpClient *client_login;
+    HttpClient *client_registration;
     QString name_txt;
     QString nickname_txt;
     QString surname_txt;
     QString date_txt;
     QString email_txt;
     QString password_txt;
+    bool valids[8];
 
 public:
     void setLanguage();
@@ -68,13 +69,14 @@ signals:
     void have_an_account_signal();
     void reg_btn_signal();
     void prev_btn_signal();
+    void idreceived();
 
 private slots:
     void handle_terms_of_use_btn();
     void handle_have_an_account_btn();
     void handle_reg_btn();
     void handle_prev_btn();
-
+    void handleUserId(QByteArray responseData);
 private:
     void save_texts();
 };

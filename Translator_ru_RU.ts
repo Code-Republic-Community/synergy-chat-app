@@ -245,6 +245,10 @@
                             <translation>johndoe123</translation>
                         </message>
                         <message>
+                            <source>Enter your nickname</source>
+                            <translation>Введите ваш никнейм</translation>
+                        </message>
+                        <message>
                             <source>Enter your password</source>
                             <translation>Введите ваш пароль</translation>
                         </message>
@@ -253,15 +257,15 @@
                             <translation>Повторно введите ваш пароль</translation>
                         </message>
                         <message>
-                            <source>first_name</source>
+                            <source>First name</source>
                             <translation>Имя</translation>
                         </message>
                         <message>
-                            <source>last_name</source>
+                            <source>Last name (optional)</source>
                             <translation>Фамилия (необязательно)</translation>
                         </message>
                         <message>
-                            <source>nickname</source>
+                            <source>Nickname</source>
                             <translation>Никнейм</translation>
                         </message>
                         <message>
@@ -281,7 +285,7 @@
                             <translation>Подтвердите пароль</translation>
                         </message>
                         <message>
-                            <source>terms</source>
+                            <source>Terms of use</source>
                             <translation>Условия использования</translation>
                         </message>
                         <message>

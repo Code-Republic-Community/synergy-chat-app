@@ -1,11 +1,14 @@
 #include "verification.h"
+#include <QUrl>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include "globals.h"
 
 Verification::Verification(QWidget *parent)
     : QWidget(parent)
 {
     this->setFixedSize(400, 700);
-
-
+    client_verification = new HttpClient();
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignCenter);
 
@@ -27,6 +30,7 @@ Verification::Verification(QWidget *parent)
 
     code->setMaxLength(7);
     connect(code, &QLineEdit::textEdited, this, [this](const QString &text) {
+        original_code = text;
         static QString currentText;
         QString Text = text;
         Text.remove(QRegularExpression("[^\\d]"));
@@ -145,8 +149,7 @@ void Verification::setLanguege()
 //}
 
 
-void
-Verification::onPrevClicked()
+void Verification::onPrevClicked()
 {
     qDebug() << "Previous button clicked!";
     chanceCnt = 3;
@@ -155,33 +158,38 @@ Verification::onPrevClicked()
     emit prevClicked();
 }
 
-void
-Verification::onNextClicked()
+void Verification::onNextClicked()
 {
-    if(!code || !chance){
-        qDebug() << "Error code or chance is null";
-        return;
-    }
-    QString enteredCode = code->text();
-    //  int chanceCnt = 3;
-    QString correctCode = "123-456";
-    if (enteredCode == correctCode) {
-        qDebug() << "Code is correct!";
-        Next->setEnabled(true);
-    } else {
-        chanceCnt--;
-        if (chanceCnt > 0) {
-            chance->setText("You have " + QString::number(chanceCnt) + " chance");
-        } else {
-            chance->setText("No more chances!");
-            Next->setEnabled(false);
-        }
-        qDebug() << "Incorrect code " << chanceCnt;
-    }
+    connect(client_verification, &HttpClient::responseReceived, this, &Verification::handle_data);
+    QUrl url("https://synergy-iauu.onrender.com/verify/");
+    QJsonObject jsonData;
+    jsonData["user_id"] = Globals::getInstance().getUserId();
+    jsonData["verification_code"] = original_code.toInt();
 
-    qDebug() << "Next button clicked!";
-    emit nextClicked();
+    client_verification->postRequest(url, jsonData);
 }
+
+void Verification::handle_data(QByteArray responseData)
+{
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+    QJsonObject jsonObject = jsonResponse.object();
+    static int chance = 3;
+    if (chance <= 0) {
+        emit prevClicked();
+    } else {
+        if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Verification successful") {
+            qDebug() << "Verification successful!";
+            emit nextClicked();
+        } else if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Invalid verification code") {
+            qDebug() << "Invalid verification code";
+            --chance;
+        } else {
+            --chance;
+            qDebug() << "NEMA";
+        }
+    }
+}
+
 
 Verification::~Verification() {
     delete verificationtxt;
