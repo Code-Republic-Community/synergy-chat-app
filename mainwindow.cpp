@@ -83,11 +83,15 @@ MainWindow::~MainWindow() {}
 void MainWindow::goToSignIn()
 {
     staked_widget->setCurrentIndex(1);
+    reg_pg->clear_fields();
+    verification_pg->clear_fields();
 }
 
 void MainWindow::goToRegPg()
 {
     staked_widget->setCurrentIndex(2);
+    login_pg->clear_fields();
+    verification_pg->clear_fields();
 }
 
 void MainWindow::goToWelcomePg()
@@ -98,8 +102,10 @@ void MainWindow::goToWelcomePg()
 void MainWindow::goToMainPg()
 {
     staked_widget->setCurrentIndex(3);
+    reg_pg->clear_fields();
+    verification_pg->clear_fields();
+    login_pg->clear_fields();
 }
-
 
 void MainWindow::goToChatPg(QString nick)
 {

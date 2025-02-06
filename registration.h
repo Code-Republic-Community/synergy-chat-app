@@ -24,7 +24,7 @@ public:
     ~Registration();
 
     bool checkFormValidity();
-
+    void clear_fields();
 private:
     QWidget *centralWidget;
     QVBoxLayout *mainLayout;

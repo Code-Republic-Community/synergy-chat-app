@@ -1,7 +1,7 @@
 #include "main_page_window.h"
-#include "globals.h"
-#include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include "globals.h"
 
 MainPageWindow::MainPageWindow(QWidget *parent)
     : QWidget(parent)
@@ -90,6 +90,7 @@ void MainPageWindow::handleProfileButton()
 
 void MainPageWindow::handleIdReceiving()
 {
+    // disconnect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_contact);
     connect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_contact);
     QString link("https://synergy-iauu.onrender.com/profile_info/");
     QUrl accountinfo(link + Globals::getInstance().getUserId());
@@ -112,7 +113,6 @@ void MainPageWindow::handle_contact(QByteArray responseData)
         return;
     }
 
-    // Convert the stringified JSON array into a QJsonArray
     QJsonDocument contactsDoc = QJsonDocument::fromJson(contactsValue.toString().toUtf8());
     if (!contactsDoc.isArray()) {
         qDebug() << "Failed to parse contacts as a JSON array!";
@@ -127,6 +127,7 @@ void MainPageWindow::handle_contact(QByteArray responseData)
             nicknames.append(value.toString());
         }
     }
+    contacts.clear();
     contacts = nicknames;
     qDebug() << "Extracted nicknames: " << contacts;
     emit received_contacts();
@@ -135,24 +136,21 @@ void MainPageWindow::handle_contact(QByteArray responseData)
 void MainPageWindow::fill_contacts()
 {
     scroll_widget->clear_chats();
-    for (int i = 0; i < contacts.size(); ++i) {
+    qDebug()<< "contact size = "<<contacts.size();
+    for (int i = 0; i < contacts.size(); ++i)
+    {
         VChatWidget *chat = new VChatWidget("Avtandir3000", "@" + contacts[i]);
         connect(chat, &VChatWidget::clicked_vchat, this, &MainPageWindow::handle_vchat_click);
         scroll_widget->add_chat(chat);
     }
-    qDebug() << contacts;
     scroll_widget->show_chats();
 }
-
-
-
 
 void MainPageWindow::handleSearchButton()
 {
     qDebug() << "search button";
     handleSearch();
 }
-
 
 void MainPageWindow::handleSearch()
 {
@@ -161,7 +159,7 @@ void MainPageWindow::handleSearch()
         qDebug() << "Search query:" << searchText;
         //chat filtration, request
         // if (scroll_widget->s)
-        } else {
+    } else {
         qDebug() << "Search query is empty";
     }
 }

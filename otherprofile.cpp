@@ -17,8 +17,8 @@ OtherProfile::OtherProfile(QWidget *parent)
 
 void OtherProfile::setLanguage()
 {
-    qDebug()<< "Setting text in Other Proffile";
-    goBackButton ->setText(tr("Back"));
+    qDebug() << "Setting text in Other Proffile";
+    goBackButton->setText(tr("Back"));
 }
 
 void OtherProfile::init()
@@ -45,7 +45,8 @@ void OtherProfile::setup()
 
     QPixmap profilePic("");
     if (!profilePic.isNull()) {
-        profilePhoto->setPixmap(VChatWidget::cut_photo(":/pngs/panda.jpg", 100)); // stex petqa lini back ic ekac nkary
+        profilePhoto->setPixmap(
+            VChatWidget::cut_photo(":/pngs/panda.jpg", 100)); // stex petqa lini back ic ekac nkary
     } else {
         qDebug() << "Failed to load profile photo. Using default.";
         profilePhoto->setPixmap(VChatWidget::cut_photo(":/pngs/panda.jpg", 100));
@@ -90,8 +91,5 @@ void OtherProfile::styling()
 
 void OtherProfile::connections()
 {
-    connect(goBackButton, &QPushButton::clicked, this, [this]() {
-        emit goBackSignal();
-    });
-
+    connect(goBackButton, &QPushButton::clicked, this, [this]() { emit goBackSignal(); });
 }

@@ -1,21 +1,21 @@
 #ifndef CHAT_WIDGET_H
 #define CHAT_WIDGET_H
 
-#include <QWidget>
-#include <QLabel>
 #include <QFrame>
-#include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QPushButton>
-#include "v_chat_widget.h"
-#include "scroll_widget.h"
 #include <QScrollArea>
+#include <QVBoxLayout>
+#include <QWidget>
 #include "chatmessagewidget.h"
 #include "httpclient.h"
+#include "scroll_widget.h"
+#include "v_chat_widget.h"
 
-class ChatWidget : public QWidget{
+class ChatWidget : public QWidget
+{
     Q_OBJECT
 public:
     ChatWidget(QString nick, QWidget *parent = nullptr);
@@ -24,6 +24,7 @@ public:
     void setNick(QString nick);
     QString getNick() const;
     void setLanguage();
+
 private:
     QPushButton *send_btn;
     VChatWidget *v_user;
@@ -37,7 +38,7 @@ private:
     int y;
 
 private:
-    void addMessage(const QString& message, bool isOutgoing);
+    void addMessage(const QString &message, bool isOutgoing);
     void clearMessages();
 signals:
     void other_profile_signal(QString nick);

@@ -15,7 +15,7 @@ Registration::Registration(QWidget *parent)
     for (int i = 0; i < 8; ++i) {
         valids[i] = false;
     }
-    valids[2] = true;
+    valids[1] = true;
     client_registration = new HttpClient();
     centralWidget = new QWidget(this);
     centralWidget->resize(this->size());
@@ -86,6 +86,8 @@ Registration::Registration(QWidget *parent)
     dateEdit->setCalendarPopup(true);
     dateEdit->setDisplayFormat("yyyy-MM-dd");
     dateEdit->setMaximumDate(QDate::currentDate().addYears(-18));
+    dateEdit->setStyleSheet("");
+
 
     formLayout->addRow(nameLabel, nameField);
 
@@ -115,7 +117,6 @@ Registration::Registration(QWidget *parent)
     prevButton = new QPushButton();
 
     registerButton = new QPushButton();
-
 
     bottomLayout->addWidget(prevButton);
     bottomLayout->addWidget(registerButton);
@@ -212,7 +213,6 @@ Registration::Registration(QWidget *parent)
             confirmPasswordField->setStyleSheet("");
         }
     });
-
 
     connect(haveAccountButton,
             &QPushButton::clicked,
@@ -316,25 +316,18 @@ void Registration::handleUserId(QByteArray responseData)
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
 
-
-    if (jsonObject.contains("user_id"))
-    {
+    if (jsonObject.contains("user_id")) {
         Globals::getInstance().setUserID(jsonObject["user_id"].toString());
         qDebug() << Globals::getInstance().getUserId();
         emit idreceived();
         emit reg_btn_signal();
-    }
-    else if(jsonObject.contains("detail"))
-    {
-        if(jsonResponse["detail"].toString() == "Nickname already in use")
-        {
-            qDebug()<<"Debug" <<"Nickname already in use";
+    } else if (jsonObject.contains("detail")) {
+        if (jsonResponse["detail"].toString() == "Nickname already in use") {
+            qDebug() << "Debug" << "Nickname already in use";
             nicknameField->setStyleSheet("QLineEdit { border: 2px solid red; }");
             emailField->setStyleSheet("");
-        }
-        else if(jsonResponse["detail"].toString() == "Email already in use")
-        {
-            qDebug()<<"Debug" <<"Email already in use";
+        } else if (jsonResponse["detail"].toString() == "Email already in use") {
+            qDebug() << "Debug" << "Email already in use";
             emailField->setStyleSheet("QLineEdit { border: 2px solid red; }");
             nicknameField->setStyleSheet("");
         }
@@ -342,3 +335,19 @@ void Registration::handleUserId(QByteArray responseData)
 }
 
 Registration::~Registration() {}
+
+void Registration::clear_fields()
+{
+    nameField->setText("");
+    nameField->setStyleSheet("");
+    surnameField->setText("");
+    surnameField->setStyleSheet("");
+    emailField->setText("");
+    emailField->setStyleSheet("");
+    nicknameField->setText("");
+    nicknameField->setStyleSheet("");
+    passwordField->setText("");
+    passwordField->setStyleSheet("");
+    confirmPasswordField->setText("");
+    confirmPasswordField->setStyleSheet("");
+}

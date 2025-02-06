@@ -20,6 +20,7 @@ public:
     explicit Login(QWidget *parent = nullptr);
     void init();
     void setLanguage();
+    void clear_fields();
     ~Login();
 
 private:
@@ -44,7 +45,7 @@ private:
     QString m_passwordText;
 
 private:
-    void saveCredentials(const QString& userId, const QString& username, const QString& password);
+    void saveCredentials(const QString &userId, const QString &username, const QString &password);
 
     void clearCredentials();
 public slots:
@@ -63,7 +64,6 @@ private slots:
     void saveTexts();
     void handleUserId(QByteArray responseData);
     //load account login password
-
 };
 
 #endif // LOGIN_H

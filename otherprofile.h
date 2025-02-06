@@ -1,10 +1,10 @@
 #ifndef OTHERPROFILE_H
 #define OTHERPROFILE_H
 
-#include <QWidget>
 #include <QLabel>
-#include <QPushButton>
 #include <QPixmap>
+#include <QPushButton>
+#include <QWidget>
 #include "v_chat_widget.h"
 
 class OtherProfile : public QWidget

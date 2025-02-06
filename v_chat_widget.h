@@ -1,19 +1,20 @@
 #ifndef V_CHAT_WIDGET_H
 #define V_CHAT_WIDGET_H
 
-#include <QWidget>
-#include <QLabel>
-#include <QPixmap>
-#include <QHBoxLayout>
+#include <QBitmap>
 #include <QFrame>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPainter>
+#include <QPainterPath>
+#include <QPixmap>
+#include <QPushButton>
 #include <QString>
 #include <QTimer>
-#include <QPainterPath>
-#include <QBitmap>
-#include <QPainter>
-#include <QPushButton>
+#include <QWidget>
 
-class VChatWidget : public QPushButton {
+class VChatWidget : public QPushButton
+{
     Q_OBJECT
 public:
     VChatWidget(QString name_text, QString nick_text, QWidget *parent = nullptr);
@@ -45,6 +46,7 @@ public:
     void set_name(QString text);
     void set_user_pic(const QString &pic_path);
     static QPixmap cut_photo(const QString &pic_path, int size);
+
 private:
     QTimer *timer;
     int position;

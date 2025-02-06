@@ -1,4 +1,4 @@
-    // messagesFrame->setFixedSize(380, 570);
+// messagesFrame->setFixedSize(380, 570);
 
 #include "chat_widget.h"
 
@@ -16,7 +16,6 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     send_btn = new QPushButton(this);
     send_btn->setGeometry(340, 10, 50, 55);
 
-
     scroll = new QScrollArea(this);
     scroll->setGeometry(10, 70, 380, 560);
     scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -29,7 +28,8 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
 
     backButton = new QPushButton(this);
     backButton->setGeometry(12, 632, 100, 55);
-    backButton->setStyleSheet("background-color: #8e15de; color: white; font-weight: bold; border-radius: 5px;");
+    backButton->setStyleSheet(
+        "background-color: #8e15de; color: white; font-weight: bold; border-radius: 5px;");
 
     line = new QLineEdit(this);
     line->setObjectName("messageInput");
@@ -42,8 +42,6 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
 
     setLanguage();
 }
-
-
 
 void ChatWidget::setNick(QString nick)
 {
@@ -91,13 +89,16 @@ void ChatWidget::sendMessage(bool isOutgoing)
     }
 }
 
-void ChatWidget::addMessage(const QString& message_text, bool isOutgoing)
+void ChatWidget::addMessage(const QString &message_text, bool isOutgoing)
 {
     ChatMessageWidget *message = new ChatMessageWidget(message_text, contentWidget);
     if (isOutgoing) {
         message->setGeometry(20, y, message->width() + 20, message->height() + 20);
     } else {
-        message->setGeometry(380 - message->width() - 40, y, message->width() + 20, message->height() + 20);
+        message->setGeometry(380 - message->width() - 40,
+                             y,
+                             message->width() + 20,
+                             message->height() + 20);
     }
     y += message->height();
     int newContentHeight = y + message->height() + 20;
@@ -107,14 +108,13 @@ void ChatWidget::addMessage(const QString& message_text, bool isOutgoing)
 
 void ChatWidget::clearMessages()
 {
-    QList<QWidget*> children = contentWidget->findChildren<QWidget*>();
+    QList<QWidget *> children = contentWidget->findChildren<QWidget *>();
     for (QWidget *child : children) {
         child->deleteLater();
     }
     y = 20;
     contentWidget->setMinimumHeight(0);
 }
-
 
 void ChatWidget::handle_line()
 {
@@ -123,7 +123,7 @@ void ChatWidget::handle_line()
         qDebug() << "Search query:" << searchText;
         //chat filtration, request
         // if (scroll_widget->s)
-        } else {
+    } else {
         qDebug() << "Search query is empty";
     }
 }

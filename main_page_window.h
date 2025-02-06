@@ -6,12 +6,12 @@
 #include <QLineEdit>
 #include <QPixmap>
 #include <QPushButton>
+#include <QStringList>
 #include <QVector>
 #include <QWidget>
+#include "httpclient.h"
 #include "scroll_widget.h"
 #include "v_chat_widget.h"
-#include "httpclient.h"
-#include <QStringList>
 
 class MainPageWindow : public QWidget
 {
@@ -38,6 +38,7 @@ public slots:
     void handleSearchButton();
     void handleProfileButton();
     void handleIdReceiving();
+
 private slots:
     void handle_contact(QByteArray responseData);
     void fill_contacts();

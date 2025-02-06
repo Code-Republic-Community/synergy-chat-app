@@ -1,8 +1,9 @@
 #include "navigationPrevOrNext.h"
-#include <QPushButton>
 #include <QDebug>
+#include <QPushButton>
 
-navigationPrevOrNext::navigationPrevOrNext(QWidget *parent) : QWidget(parent)
+navigationPrevOrNext::navigationPrevOrNext(QWidget *parent)
+    : QWidget(parent)
 {
     m_prev = new QPushButton(this);
     m_next = new QPushButton(this);
