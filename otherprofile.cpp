@@ -1,6 +1,7 @@
 #include "otherprofile.h"
 #include <QDebug>
 #include <QPixmap>
+#include "v_chat_widget.h"
 
 OtherProfile::OtherProfile(QWidget *parent)
     : QWidget(parent)
@@ -44,10 +45,10 @@ void OtherProfile::setup()
 
     QPixmap profilePic("");
     if (!profilePic.isNull()) {
-        profilePhoto->setPixmap(VChatWidget::cut_photo(":/resources/default_profile.png", 100)); // stex petqa lini back ic ekac nkary
+        profilePhoto->setPixmap(VChatWidget::cut_photo(":/pngs/panda.jpg", 100)); // stex petqa lini back ic ekac nkary
     } else {
         qDebug() << "Failed to load profile photo. Using default.";
-        profilePhoto->setPixmap(QPixmap(":/resources/default_profile.png").scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        profilePhoto->setPixmap(VChatWidget::cut_photo(":/pngs/panda.jpg", 100));
     }
 }
 
@@ -85,18 +86,6 @@ void OtherProfile::styling()
     )";
 
     goBackButton->setStyleSheet(buttonStyle);
-
-    QString photoStyle = R"(
-        QLabel {
-            border: 3px solid #420242;
-            border-radius: 50px;
-        }
-    )";
-
-    profilePhoto->setStyleSheet(photoStyle);
-    profilePhoto->setAlignment(Qt::AlignCenter);
-
-    this->setStyleSheet("background-color: #000000;");
 }
 
 void OtherProfile::connections()

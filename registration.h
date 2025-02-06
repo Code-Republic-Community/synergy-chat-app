@@ -77,6 +77,7 @@ private slots:
     void handle_reg_btn();
     void handle_prev_btn();
     void handleUserId(QByteArray responseData);
+
 private:
     void save_texts();
 };

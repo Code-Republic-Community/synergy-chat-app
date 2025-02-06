@@ -1,23 +1,140 @@
 #include "login.h"
-#include <QPushButton>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QJsonObject>
-#include "httpclient.h"
-#include <QJsonDocument>
+#include <QPushButton>
+#include <QFile>
+#include <QTextStream>
+#include <QStandardPaths>
 #include "globals.h"
+#include "httpclient.h"
+#include <QDir>
 
 Login::Login(QWidget *parent)
-    : QMainWindow(parent)
+    : QWidget(parent)
 {
     init();
+    setLanguage();
 }
+
+void Login::saveCredentials(const QString& userId, const QString& username, const QString& password)
+{
+    qDebug() << "Save Credentials";
+
+    // Define the full path of the credentials file
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Synergy/credentials.txt";
+    QString folderPath = QFileInfo(path).absolutePath();  // Get the folder path
+
+    // Create the folder if it doesn't exist
+    QDir dir;
+    if (!dir.exists(folderPath)) {
+        if (dir.mkpath(folderPath)) {
+            qDebug() << "Created folder:" << folderPath;
+        } else {
+            qDebug() << "Failed to create folder";
+            return;  // Exit if the folder cannot be created
+        }
+    }
+
+    // Create and open the file
+    QFile file(path);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << userId << "\n" << username << "\n" << password;
+        qDebug() << "Saving Credentials" << userId << "\n" << username << "\n" << password;
+        file.close();
+        qDebug() << "Credentials Saved Successfully";
+    } else {
+        qDebug() << "Failed to open file for writing";
+    }
+}
+
+
+void Login::loadCredentials()
+{
+    qDebug() << "Load Credentials";
+
+    // Define the full path of the credentials file
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Synergy/credentials.txt";
+    QString folderPath = QFileInfo(path).absolutePath();  // Get the folder path
+
+    // Ensure the folder exists
+    QDir dir;
+    if (!dir.exists(folderPath)) {
+        if (dir.mkpath(folderPath)) {
+            qDebug() << "Created folder:" << folderPath;
+        } else {
+            qDebug() << "Failed to create folder";
+            return;  // Exit if folder cannot be created
+        }
+    }
+
+    // Open the file and load credentials
+    QFile file(path);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream in(&file);
+        QString userId = in.readLine();
+        Globals::getInstance().setUserID(userId);  // Set the user ID in the Globals class
+        QString username = in.readLine();
+        usernameLineEdit->setText(username);  // Set the username in the username line edit
+        QString password = in.readLine();
+        passwordLineEdit->setText(password);  // Set the password in the password line edit
+        file.close();
+
+        qDebug() << "From File User ID = " << userId;
+        qDebug() << "From File Username = " << username;
+        qDebug() << "From File Password = " << password;
+        remember = true;
+        m_rememberMe->setCheckState(Qt::Checked);
+        emit idreceived();  // Emit signal for user ID received
+        emit next_btn_signal(); // Emit signal to proceed to next step
+        emit m_nextAndPrev->nextClicked();
+    }
+    else
+    {
+        qDebug() << "Failed to open file for reading";
+    }
+}
+
+
+void Login::clearCredentials()
+{
+    qDebug() << "Clear Credentials";
+
+    // Define the full path of the credentials file
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Synergy/credentials.txt";
+    QFile file(path);
+
+    // Ensure the folder exists before removing the file
+    QString folderPath = QFileInfo(path).absolutePath();
+    QDir dir;
+    if (!dir.exists(folderPath)) {
+        qDebug() << "Folder does not exist, no need to remove file.";
+        return;  // Exit if folder doesn't exist, no need to remove the file
+    }
+
+
+    // Delete the credentials file if it exists
+    if (file.exists()) {
+        if (file.remove()) {
+            qDebug() << "Credentials file removed successfully.";
+        } else {
+            qDebug() << "Failed to remove credentials file.";
+        }
+    }
+    else {
+        qDebug() << "Credentials file does not exist.";
+    }
+}
+
 
 void Login::init()
 {
     setFixedSize(400, 700);
-
+    remember = false;
     client_login = new HttpClient();
 
     m_loginLabel = new QLabel(this);
@@ -55,7 +172,6 @@ void Login::init()
     m_register->setStyleSheet("color: blue; text-decoration: underline;");
     m_register->setCursor(Qt::PointingHandCursor);
 
-    //Next and Prev buttons
     m_nextAndPrev = new navigationPrevOrNext(this);
     m_nextAndPrev->setGeometry(175, 565, 400, 100);
 
@@ -64,12 +180,11 @@ void Login::init()
     m_forget->setStyleSheet("color: red;");
     m_forget->hide();
 
-    forgetIcon();
     setLanguage();
 
     connect(m_rememberMe, &QCheckBox::toggled, this, &Login::rememberMe);
     connect(m_nextAndPrev, &navigationPrevOrNext::nextClicked, this, &Login::handleNextButtonClicked);
-    connect(m_nextAndPrev, &navigationPrevOrNext::prevClicked, this, &Login::handlePrevButtonClicked);
+    connect(m_nextAndPrev,  &navigationPrevOrNext::prevClicked, this, &Login::handlePrevButtonClicked);
     connect(client_login, &HttpClient::responseReceived, this, &Login::handleUserId);
 }
 
@@ -97,23 +212,6 @@ void Login::setLanguage()
     m_forget->setText(tr("Both must be complementary"));
 }
 
-void Login::forgetIcon()
-{
-    m_label1 = new QLabel(this);
-    m_label2 = new QLabel(this);
-
-    m_label1 = new QLabel("❌", this);
-    m_label1->setStyleSheet("color: red;");
-    m_label2 = new QLabel("❌", this);
-    m_label2->setStyleSheet("color: red;");
-
-    m_label1->setGeometry(197, 322, 10, 10);
-    m_label2->setGeometry(192, 392, 10, 10);
-
-    m_label1->hide();
-    m_label2->hide();
-}
-
 void Login::saveTexts()
 {
     m_usernameText = usernameLineEdit->text();
@@ -128,63 +226,84 @@ void Login::handleUserId(QByteArray responseData)
     if (jsonObject.contains("user_id")) {
         Globals::getInstance().setUserID(jsonObject["user_id"].toString());
         qDebug() << Globals::getInstance().getUserId();
+        if(remember)
+        {
+            saveCredentials(Globals::getInstance().getUserId(), usernameLineEdit->text(), passwordLineEdit->text());
+        }
+        else
+        {
+            clearCredentials();
+        }
         emit idreceived();
-    } else {
+        emit next_btn_signal();
+    }
+    else
+    {
         qDebug() << "User ID not found in response.";
+        usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+        passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
     }
 }
+
 
 void Login::rememberMe(bool isClicked)
 {
     qDebug() << "Checkbox toggled: " << isClicked;
-
-    if(isClicked) {
-        // Remember login and password logic
-    } else {
-        //  Do not remember
+    if (isClicked)
+    {
+        remember = true;
+    }
+    else
+    {
+        remember = false;
+        clearCredentials();
     }
 }
 
-void Login::mousePressEvent(QMouseEvent* event)
+void Login::mousePressEvent(QMouseEvent *event)
 {
     if (m_register->underMouse()) {
         qDebug() << "Register link clicked!";
         emit register_signal();
     }
-    if(event) {
+    if (event) {
 
     }
 }
 void Login::handleNextButtonClicked()
 {
+
     QString username = usernameLineEdit->text();
     QString password = passwordLineEdit->text();
-    if (username.isEmpty() && password.isEmpty()) {
-        m_label1->show();
-        m_label2->show();
+    if (username.isEmpty() && password.isEmpty())
+    {
+        usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+        passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         m_forget->show();
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
-
-    } else if(username.isEmpty()) {
-        m_label1->show();
-        m_label2->hide();
+    }
+    else if (username.isEmpty())
+    {
+        usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+        passwordLineEdit->setStyleSheet("");
         m_forget->show();
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
-
-    } else if(password.isEmpty()) {
-        m_label2->show();
-        m_label1->hide();
+    }
+    else if (password.isEmpty())
+    {
+        usernameLineEdit->setStyleSheet("");
+        passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         m_forget->show();
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
-    } else {
-        m_label1->hide();
-        m_label2->hide();
-
+    }
+    else
+    {
+        usernameLineEdit->setStyleSheet("");
+        passwordLineEdit->setStyleSheet("");
         saveTexts();
-
         QUrl url("https://synergy-iauu.onrender.com/login/");
         QJsonObject jsonData;
         jsonData["nickname"] = m_usernameText;
@@ -194,25 +313,8 @@ void Login::handleNextButtonClicked()
         qDebug() << jsonData.value("password");
 
         client_login->postRequest(url, jsonData);
-        emit next_btn_signal();
+
     }
-
-    // client_login->getRequest(url);
-    // client_login->postRequest(url, jsonData);
-    // client_login->putRequest(url, jsonData);
-    // client_login->deleteRequest(url);
-
-    // QString search_tmp = "http://192.168.35.83:8000/search/";
-
-    // QJsonObject jsonData2;
-    // jsonData2["user_id"] = "ec569aee-05b2-42c6-8917-2448fae102d6";
-    // jsonData2["search_string"] = "arxitekt0r";
-    // search_tmp += jsonData2.value("user_id").toString() + "/" + jsonData2.value("search_string").toString();
-    // QUrl url2(search_tmp);
-    // qDebug() << jsonData2.keys();
-    // qDebug() << jsonData2.value("user_id");
-    // qDebug() << jsonData2.value("search_string");
-    // client_login->getRequest(url2);
 }
 
 void Login::handlePrevButtonClicked()

@@ -1,11 +1,12 @@
 #include "my_profile.h"
 #include <QDebug>
-#include <QPixmap>
 #include <QFileDialog>
-#include <QUrl>
-#include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QPixmap>
 #include <QStringList>
+#include <QUrl>
+#include "globals.h"
 #include "httpclient.h"
 
 MyProfile::MyProfile(QWidget *parent)
@@ -14,58 +15,18 @@ MyProfile::MyProfile(QWidget *parent)
     this->resize(400, 700);
     this->setFixedSize(400, 700);
     init();
+    connections();
     setup();
     setLanguage();
     styling();
-    connections();
-    client_login = new HttpClient();
-    connect(client_login, &HttpClient::responseReceived, this, &MyProfile::handleLoginResponse);
-    QUrl url("http://192.168.35.83:8000/login/");
-    QJsonObject jsonData;
-    jsonData["nickname"] = "arxitekt0r";
-    jsonData["password"] = "mypassword123";
-    client_login->postRequest(url, jsonData);
 
-    QString link("http://192.168.35.83:8000/profile_info/");
-    QUrl accountinfo(link + userId);
-    client_login ->getRequest(accountinfo);
-
-
+    connect(client_donwnload_profile_data, &HttpClient::responseReceived, this, &MyProfile::handleProfileUpdate);
+    QString link("https://synergy-iauu.onrender.com/profile_info/");
+    QUrl accountinfo(link + Globals::getInstance().getUserId());
+    client_donwnload_profile_data->getRequest(accountinfo);
 }
 
-void MyProfile::setLanguage()
-{
-    if (changePhotoButton) {
-        changePhotoButton->setText(tr("Change"));
-    }
-
-    if (goBackButton) {
-        goBackButton->setText(tr("Back"));
-    }
-
-    if (gotoSettings) {
-        gotoSettings->setText(tr("Settings"));
-    }
-
-    if (logOut) {
-        logOut->setText(tr("Log Out"));
-    }
-
-    if (editProfile) {
-        editProfile->setText(tr("Edit"));
-    }
-}
-void MyProfile::handle_update_profile_info()
-{
-    QString link("http://192.168.35.83:8000/profile_info/");
-    QUrl accountinfo(link + userId);
-
-    connect(client_login, &HttpClient::responseReceived, this, &MyProfile::handleProfileResponse);
-
-    client_login->getRequest(accountinfo);
-}
-
-void MyProfile::handleProfileResponse(QByteArray responseData)
+void MyProfile::handleProfileUpdate(QByteArray responseData)
 {
     qDebug() << "_________________________________";
 
@@ -85,7 +46,6 @@ void MyProfile::handleProfileResponse(QByteArray responseData)
     QString name = jsonObject.value("name").toString();
     QString date_of_birth = jsonObject.value("date_of_birth").toString();
 
-    // Debug: Print raw contacts field
     qDebug() << "Raw contacts field: " << jsonObject.value("contacts");
 
     // QStringList contactsList;
@@ -117,28 +77,66 @@ void MyProfile::handleProfileResponse(QByteArray responseData)
     //     qDebug() << "Unexpected contacts format!";
     // }
 
-    // // Store extracted data in a QStringList
-    // QStringList profileData;
-    // profileData << name << surname << nickname << email << date_of_birth << id;
-
-    // // Debug output
-    // qDebug() << "Profile Data: " << profileData;
-    // qDebug() << "Contacts List: " << contactsList;
-
-
     // Set values to labels
-    if (nameLabel) nameLabel->setText("Name: " + name);
-    if (surnameLabel) surnameLabel->setText("Surname: " + surname);
-    if (nicknameLabel) nicknameLabel->setText("Nickname: " + nickname);
-    if (emailLabel) emailLabel->setText("Email: " + email);
-    if (ageLabel) ageLabel->setText("Date: " + date_of_birth);
-
+    if (nameLabel)
+    {
+        nameLabel->setText("Name: " + name);
+    }
+    if (surnameLabel)
+    {
+        surnameLabel->setText(tr("Surname: ") + surname);
+    }
+    if (nicknameLabel)
+    {
+        nicknameLabel->setText(tr("Nickname: ")+ nickname);
+    }
+    if (emailLabel)
+    {
+        emailLabel->setText(tr("Email: ") + email);
+    }
+    if (ageLabel)
+    {
+        ageLabel->setText("Date of Birth: " + date_of_birth);
+    }
+    oldDataMap = newDataMap;
 }
 
+void MyProfile::handleIdReceiving()
+{
+    connect(client_donwnload_profile_data, &HttpClient::responseReceived, this, &MyProfile::handleProfileUpdate);
+    QString link("https://synergy-iauu.onrender.com/profile_info/");
+    QUrl accountinfo(link + Globals::getInstance().getUserId());
+    client_donwnload_profile_data->getRequest(accountinfo);
+}
+void MyProfile::setLanguage()
+{
+    if (changePhotoButton) {
+        changePhotoButton->setText(tr("Change"));
+    }
+
+    if (goBackButton) {
+        goBackButton->setText(tr("Back"));
+    }
+
+    if (gotoSettings) {
+        gotoSettings->setText(tr("Settings"));
+    }
+
+    if (logOut) {
+        logOut->setText(tr("Log Out"));
+    }
+
+    if (editProfile) {
+        editProfile->setText(tr("Edit"));
+    }
+}
 
 
 void MyProfile::init()
 {
+    client_donwnload_profile_data = new HttpClient();
+
+
     profilePhoto = new QLabel(this);
     nameLabel = new QLabel(this);
     surnameLabel = new QLabel(this);
@@ -200,10 +198,13 @@ void MyProfile::setup()
 
     QPixmap profilePic(VChatWidget::cut_photo(defaultPhotoPath, 100));
     if (!profilePic.isNull()) {
-        profilePhoto->setPixmap(profilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        profilePhoto->setPixmap(
+            profilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else {
         qDebug() << "Failed to load default profile photo.";
     }
+
+
 }
 
 void MyProfile::styling()
@@ -267,7 +268,6 @@ void MyProfile::styling()
 
 void MyProfile::connections()
 {
-    connect(this, &MyProfile::idreceived, this, &MyProfile::handle_update_profile_info);
 
     connect(editProfile, &QPushButton::clicked, this, [this]() {
         if (isEditing) {
@@ -277,11 +277,12 @@ void MyProfile::connections()
         }
     });
 
+
     connect(goBackButton, &QPushButton::clicked, this, [this]() {
         if (isEditing) {
             toggleEditMode(false);
         } else {
-            qDebug()<< "go back siganl";
+            qDebug() << "go back siganl";
             emit goBackSignal();
         }
     });
@@ -306,12 +307,12 @@ void MyProfile::connections()
     });
 
     connect(logOut, &QPushButton::clicked, this, [this]() {
-        qDebug()<< "log out siganl";
+        qDebug() << "log out siganl";
         emit logOutSiganl();
     });
 
     connect(gotoSettings, &QPushButton::clicked, this, [this]() {
-        qDebug()<< "go to settings siganl";
+        qDebug() << "go to settings siganl";
         emit gotoSettingsSignal();
     });
 }
@@ -365,17 +366,4 @@ void MyProfile::saveChanges()
     newDataMap->insert(2, nicknameEdit->text());
 
     toggleEditMode(false);
-}
-
-void MyProfile::handleLoginResponse(QByteArray responseData) {
-    QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
-    QJsonObject jsonObject = jsonResponse.object();
-
-    if (jsonObject.contains("user_id")) {
-        userId = jsonObject["user_id"].toString();  // Convert to QString
-        qDebug() << "User ID received (QString):" << userId;
-        emit idreceived();
-    } else {
-        qDebug() << "User ID not found in response.";
-    }
 }

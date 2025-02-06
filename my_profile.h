@@ -1,12 +1,12 @@
 #ifndef MYPROFILE_H
 #define MYPROFILE_H
 
-#include <QWidget>
 #include <QLabel>
-#include <QPushButton>
 #include <QLineEdit>
 #include <QMap>
+#include <QPushButton>
 #include <QString>
+#include <QWidget>
 #include "httpclient.h"
 #include "v_chat_widget.h"
 
@@ -20,13 +20,12 @@ signals:
     void goBackSignal();
     void logOutSiganl();
     void gotoSettingsSignal();
-    void idreceived();
 private slots:
-    void handle_update_profile_info();
-    void handleProfileResponse(QByteArray responseData);
-
+    void handleProfileUpdate(QByteArray responseData);
+public slots:
+    void handleIdReceiving();
 private:
-    HttpClient *client_login;
+    HttpClient *client_donwnload_profile_data;
     QString userId;
 
 private:
@@ -59,9 +58,6 @@ private:
     void connections();
     void toggleEditMode(bool enable);
     void saveChanges();
-
-    void handleLoginResponse(QByteArray responseData);
-
 };
 
 #endif // MYPROFILE_H

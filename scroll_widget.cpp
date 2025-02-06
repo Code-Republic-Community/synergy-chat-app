@@ -102,3 +102,10 @@ VChatWidget* ScrollWidget::search(QString text)
 QWidget* ScrollWidget::getContentWidget() const {
     return scroll_content;
 }
+
+
+void ScrollWidget::clear_chats()
+{
+    all_chats.clear();
+}
+

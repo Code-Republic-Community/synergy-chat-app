@@ -23,6 +23,7 @@ private:
     QWidget* scroll_content;
 public:
     void add_chat(VChatWidget *new_chat);
+    void clear_chats();
     void show_chats();
     void change_sizes(int x, int y, int w, int h);
     QWidget* getContentWidget() const;

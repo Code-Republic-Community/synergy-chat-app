@@ -1,12 +1,12 @@
 #include "registration.h"
-#include "httpclient.h"
 #include <QDate>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include "globals.h"
-#include <QJsonDocument>
+#include "httpclient.h"
 
 Registration::Registration(QWidget *parent)
     : QWidget(parent)
@@ -40,8 +40,10 @@ Registration::Registration(QWidget *parent)
     QRegularExpression surnameRegex("^[a-zA-Z]{1,}$");
     QRegularExpression nicknameRegex("^[a-zA-Z][a-zA-Z0-9_]{2,}$");
     QRegularExpression emailRegex(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
-    QRegularExpression passwordRegex("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$");
-    QRegularExpression confirmPasswordRegex("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$");
+    QRegularExpression passwordRegex(
+        "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$");
+    QRegularExpression confirmPasswordRegex(
+        "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{6,}$");
 
     nameField = new QLineEdit;
     surnameField = new QLineEdit;
@@ -112,47 +114,40 @@ Registration::Registration(QWidget *parent)
 
     prevButton = new QPushButton();
 
-
     registerButton = new QPushButton();
 
 
     bottomLayout->addWidget(prevButton);
     bottomLayout->addWidget(registerButton);
     bottomLayout->setAlignment(Qt::AlignHCenter);
-    mainLayout ->addStretch();
+    mainLayout->addStretch();
     mainLayout->addLayout(topLayout);
-    mainLayout ->addStretch();
+    mainLayout->addStretch();
     mainLayout->addLayout(middleLayout);
     mainLayout->addStretch();
     mainLayout->addLayout(bottomLayout);
-    mainLayout ->addStretch();
+    mainLayout->addStretch();
     centralWidget->setLayout(mainLayout);
 
     connect(client_registration, &HttpClient::responseReceived, this, &Registration::handleUserId);
 
     connect(nameField, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = nameRegex.match(nameField->text());
-        if (match.hasMatch())
-        {
+        if (match.hasMatch()) {
             valids[0] = true;
             nameField->setStyleSheet("");
-        }
-        else
-        {
+        } else {
             valids[0] = false;
-            nameField-> setStyleSheet("QLineEdit { border: 2px solid red; }");
+            nameField->setStyleSheet("QLineEdit { border: 2px solid red; }");
         }
     });
 
     connect(surnameField, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = surnameRegex.match(surnameField->text());
-        if (match.hasMatch())
-        {
+        if (match.hasMatch()) {
             valids[1] = true;
             surnameField->setStyleSheet("");
-        }
-        else
-        {
+        } else {
             valids[1] = false;
             surnameField->setStyleSheet("QLineEdit { border: 2px solid red; }");
         }
@@ -160,41 +155,32 @@ Registration::Registration(QWidget *parent)
 
     connect(nicknameField, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = nicknameRegex.match(nicknameField->text());
-        if (match.hasMatch())
-        {
+        if (match.hasMatch()) {
             valids[2] = true;
-            nicknameField ->setStyleSheet("");
-        }
-        else
-        {
+            nicknameField->setStyleSheet("");
+        } else {
             valids[2] = false;
-            nicknameField ->setStyleSheet("QLineEdit { border: 2px solid red; }");
+            nicknameField->setStyleSheet("QLineEdit { border: 2px solid red; }");
         }
     });
 
     connect(emailField, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = emailRegex.match(emailField->text());
-        if (match.hasMatch())
-        {
+        if (match.hasMatch()) {
             valids[3] = true;
-            emailField ->setStyleSheet("");
-        }
-        else
-        {
+            emailField->setStyleSheet("");
+        } else {
             valids[3] = false;
-            emailField -> setStyleSheet("QLineEdit { border: 2px solid red; }");
+            emailField->setStyleSheet("QLineEdit { border: 2px solid red; }");
         }
     });
 
     connect(dateEdit, &QDateEdit::dateChanged, this, [=]() {
         QDate selectedDate = dateEdit->date();
-        if (selectedDate.addYears(18) <= QDate::currentDate())
-        {
+        if (selectedDate.addYears(18) <= QDate::currentDate()) {
             valids[4] = true;
             dateLabel->setStyleSheet("");
-        }
-        else
-        {
+        } else {
             valids[4] = false;
             dateLabel->setStyleSheet("QLineEdit { border: 2px solid red; }");
         }
@@ -202,17 +188,14 @@ Registration::Registration(QWidget *parent)
 
     connect(passwordField, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = passwordRegex.match(passwordField->text());
-        if (match.hasMatch())
-        {
+        if (match.hasMatch()) {
             valids[5] = true;
             passwordField->setStyleSheet("");
-            qDebug()<<"password is ok";
-        }
-        else
-        {
+            qDebug() << "password is ok";
+        } else {
             valids[5] = false;
             passwordField->setStyleSheet("QLineEdit { border: 2px solid red; }");
-            qDebug()<<"password is  not ok";
+            qDebug() << "password is  not ok";
         }
     });
 
@@ -222,17 +205,19 @@ Registration::Registration(QWidget *parent)
         if (!isValid || !isMatching) {
             valids[6] = false;
             confirmPasswordField->setStyleSheet("QLineEdit { border: 2px solid red; }");
-            qDebug()<<"confirm password is not ok";
-        }
-        else if(isValid && isMatching)
-        {
+            qDebug() << "confirm password is not ok";
+        } else if (isValid && isMatching) {
             valids[6] = true;
-            qDebug()<<"confirm password is ok";
+            qDebug() << "confirm password is ok";
             confirmPasswordField->setStyleSheet("");
         }
     });
 
-    connect(haveAccountButton, &QPushButton::clicked, this, &Registration::handle_have_an_account_btn);
+
+    connect(haveAccountButton,
+            &QPushButton::clicked,
+            this,
+            &Registration::handle_have_an_account_btn);
     connect(termsOfUseButton, &QPushButton::clicked, this, &Registration::handle_terms_of_use_btn);
     connect(prevButton, &QPushButton::clicked, this, &Registration::handle_prev_btn);
     connect(registerButton, &QPushButton::clicked, this, &Registration::handle_reg_btn);
@@ -246,7 +231,6 @@ Registration::Registration(QWidget *parent)
     setLanguage();
     save_texts();
 }
-
 
 void Registration::handle_reg_btn()
 {
@@ -275,13 +259,7 @@ void Registration::handle_reg_btn()
         qDebug() << jsonData.value("email");
         qDebug() << jsonData.value("date_of_birth");
 
-        // if (globalResponse != "") {
-            client_registration->postRequest(url, jsonData);
-        // } else {
-            // qDebug() << "Error";
-        // }
-
-        emit reg_btn_signal();
+        client_registration->postRequest(url, jsonData);
     }
 }
 
@@ -333,20 +311,34 @@ void Registration::save_texts()
     password_txt = passwordField->text();
 }
 
-
 void Registration::handleUserId(QByteArray responseData)
 {
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
 
-    if (jsonObject.contains("user_id")) {
+
+    if (jsonObject.contains("user_id"))
+    {
         Globals::getInstance().setUserID(jsonObject["user_id"].toString());
         qDebug() << Globals::getInstance().getUserId();
         emit idreceived();
-    } else {
-        qDebug() << "User ID not found in response.";
+        emit reg_btn_signal();
+    }
+    else if(jsonObject.contains("detail"))
+    {
+        if(jsonResponse["detail"].toString() == "Nickname already in use")
+        {
+            qDebug()<<"Debug" <<"Nickname already in use";
+            nicknameField->setStyleSheet("QLineEdit { border: 2px solid red; }");
+            emailField->setStyleSheet("");
+        }
+        else if(jsonResponse["detail"].toString() == "Email already in use")
+        {
+            qDebug()<<"Debug" <<"Email already in use";
+            emailField->setStyleSheet("QLineEdit { border: 2px solid red; }");
+            nicknameField->setStyleSheet("");
+        }
     }
 }
 
 Registration::~Registration() {}
-

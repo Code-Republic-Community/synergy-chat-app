@@ -3,17 +3,15 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
-#include "welcomepg.h"
-#include "login.h"
-#include "registration.h"
-#include "main_page_window.h"
 #include "chat_widget.h"
+#include "login.h"
+#include "main_page_window.h"
 #include "my_profile.h"
+#include "otherprofile.h"
+#include "registration.h"
 #include "settings.h"
 #include "verification.h"
-#include "otherprofile.h"
-
-// QByteArray globalId;
+#include "welcomepg.h"
 
 class MainWindow : public QMainWindow
 {
@@ -36,8 +34,6 @@ private:
     Verification *verification_pg;
     OtherProfile *other_profile_pg;
 
-private:
-    // void call_translations_on_pgs();
 private slots:
     void goToSignIn();
     void goToRegPg();

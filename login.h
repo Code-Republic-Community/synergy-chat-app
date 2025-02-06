@@ -1,25 +1,18 @@
 #ifndef LOGIN_H
 #define LOGIN_H
 
-#include <QMainWindow>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QLabel>
 #include <QCheckBox>
-#include <QMouseEvent>
-#include <QTimer>
-#include "navigationPrevOrNext.h"//
-#include "httpclient.h"
-#include "globals.h"
 #include <QJsonDocument>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMainWindow>
+#include <QMouseEvent>
+#include <QPushButton>
+#include <QTimer>
+#include "httpclient.h"
+#include "navigationPrevOrNext.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class Login;
-}
-QT_END_NAMESPACE
-
-class Login : public QMainWindow
+class Login : public QWidget
 {
     Q_OBJECT
 
@@ -30,6 +23,7 @@ public:
     ~Login();
 
 private:
+    bool remember;
     QLabel *m_loginLabel;
     QFont m_fontForLogin;
     QLineEdit *usernameLineEdit;
@@ -44,12 +38,17 @@ private:
     QLabel *m_register;
     navigationPrevOrNext *m_nextAndPrev;
     QLabel *m_forget;
-    QLabel *m_label1;
-    QLabel *m_label2;
+
     HttpClient *client_login;
     QString m_usernameText;
     QString m_passwordText;
 
+private:
+    void saveCredentials(const QString& userId, const QString& username, const QString& password);
+
+    void clearCredentials();
+public slots:
+    void loadCredentials();
 signals:
     void prev_btn_signal();
     void next_btn_signal();
@@ -58,12 +57,13 @@ signals:
 
 private slots:
     void rememberMe(bool isClicked);
-    void mousePressEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent *event);
     void handleNextButtonClicked();
     void handlePrevButtonClicked();
-    void forgetIcon();
     void saveTexts();
     void handleUserId(QByteArray responseData);
+    //load account login password
+
 };
 
 #endif // LOGIN_H

@@ -1,8 +1,5 @@
 #include "mainwindow.h"
 
-extern QByteArray globalId;
-// extern QByteArray globalRespsone;
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -17,31 +14,37 @@ MainWindow::MainWindow(QWidget *parent)
     other_profile_pg = new OtherProfile();
 
     staked_widget = new QStackedWidget();
-    staked_widget->addWidget(welcome_pg); // 0
-    staked_widget->addWidget(login_pg); // 1
-    staked_widget->addWidget(reg_pg); // 2
-    staked_widget->addWidget(main_pg); // 3
-    staked_widget->addWidget(chat_pg); // 4
+    staked_widget->addWidget(welcome_pg);          // 0
+    staked_widget->addWidget(login_pg);            // 1
+    staked_widget->addWidget(reg_pg);              // 2
+    staked_widget->addWidget(main_pg);             // 3
+    staked_widget->addWidget(chat_pg);             // 4
     staked_widget->addWidget(profile_settings_pg); // 5
-    staked_widget->addWidget(settings_pg); // 6
-    staked_widget->addWidget(verification_pg); // 7
-    staked_widget->addWidget(other_profile_pg); // 8
+    staked_widget->addWidget(settings_pg);         // 6
+    staked_widget->addWidget(verification_pg);     // 7
+    staked_widget->addWidget(other_profile_pg);    // 8
 
-
+    connect(welcome_pg, &WelcomePg::signInClicked, login_pg, &Login::loadCredentials);
     connect(welcome_pg, &WelcomePg::signInClicked, this, &MainWindow::goToSignIn);
     connect(welcome_pg, &WelcomePg::signUpClicked, this, &MainWindow::goToRegPg);
 
+    connect(login_pg, &Login::idreceived, profile_settings_pg, &MyProfile::handleIdReceiving);
+    connect(reg_pg, &Registration::idreceived, profile_settings_pg, &MyProfile::handleIdReceiving);
+    connect(login_pg, &Login::idreceived, main_pg, &MainPageWindow::handleIdReceiving);
+    connect(reg_pg, &Registration::idreceived, main_pg, &MainPageWindow::handleIdReceiving);
+
     connect(login_pg, &Login::prev_btn_signal, this, &MainWindow::goToWelcomePg);
 
-    // if (globalRepsone == "") {
-        connect(login_pg, &Login::next_btn_signal, this, &MainWindow::goToMainPg);
-    // }
+    connect(login_pg, &Login::next_btn_signal, this, &MainWindow::goToMainPg);
 
     connect(reg_pg, &Registration::prev_btn_signal, this, &MainWindow::goToWelcomePg);
 
     connect(main_pg, &MainPageWindow::vchat_clicked_from_main_pg, this, &MainWindow::goToChatPg);
 
-    connect(main_pg, &MainPageWindow::profile_button_signal, this, &MainWindow::goToProfileSettingsPg);
+    connect(main_pg,
+            &MainPageWindow::profile_button_signal,
+            this,
+            &MainWindow::goToProfileSettingsPg);
 
     connect(profile_settings_pg, &MyProfile::gotoSettingsSignal, this, &MainWindow::goToSettings);
 
@@ -87,18 +90,21 @@ void MainWindow::goToRegPg()
     staked_widget->setCurrentIndex(2);
 }
 
-void MainWindow::goToWelcomePg() {
+void MainWindow::goToWelcomePg()
+{
     staked_widget->setCurrentIndex(0);
 }
 
-void MainWindow::goToMainPg() {
+void MainWindow::goToMainPg()
+{
     staked_widget->setCurrentIndex(3);
 }
+
 
 void MainWindow::goToChatPg(QString nick)
 {
     // if (staked_widget->indexOf(chat_pg) != -1) {
-        // staked_widget->removeWidget(chat_pg);
+    // staked_widget->removeWidget(chat_pg);
     // }
     // chat_pg = new ChatWidget(nick);
     // staked_widget->insertWidget(4, chat_pg);
@@ -138,5 +144,3 @@ void MainWindow::change_language()
     verification_pg->setLanguege();
     other_profile_pg->setLanguage();
 }
-
-
