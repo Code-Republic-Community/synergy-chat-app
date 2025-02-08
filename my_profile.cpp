@@ -19,18 +19,12 @@ MyProfile::MyProfile(QWidget *parent)
     setup();
     setLanguage();
     styling();
-
-    connect(client_donwnload_profile_data, &HttpClient::responseReceived, this, &MyProfile::handleProfileUpdate);
-    QString link("https://synergy-iauu.onrender.com/profile_info/");
-    QUrl accountinfo(link + Globals::getInstance().getUserId());
-    client_donwnload_profile_data->getRequest(accountinfo);
 }
 
 void MyProfile::handleProfileUpdate(QByteArray responseData)
 {
-    qDebug() << "_________________________________";
+    qDebug() << "________________MYProfile request_________________";
 
-    // Parse JSON response
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     if (jsonResponse.isNull() || !jsonResponse.isObject()) {
         qDebug() << "Invalid JSON response.";
@@ -39,63 +33,25 @@ void MyProfile::handleProfileUpdate(QByteArray responseData)
 
     QJsonObject jsonObject = jsonResponse.object();
 
-    // Extract user profile information safely
     QString surname = jsonObject.value("surname").toString();
     QString nickname = jsonObject.value("nickname").toString();
     QString email = jsonObject.value("email").toString();
     QString name = jsonObject.value("name").toString();
     QString date_of_birth = jsonObject.value("date_of_birth").toString();
 
-    qDebug() << "Raw contacts field: " << jsonObject.value("contacts");
-
-    // QStringList contactsList;
-    // QJsonValue contactsValue = jsonObject.value("contacts");
-
-    // if (contactsValue.isArray()) {
-    //     // ✅ Case 1: contacts is already a JSON array
-    //     QJsonArray contactsArray = contactsValue.toArray();
-    //     for (const QJsonValue &val : contactsArray) {
-    //         contactsList.append(val.toString());
-    //     }
-    // }
-    // else if (contactsValue.isString()) {
-    //     // ✅ Case 2: contacts is a JSON string that contains an array
-    //     QString contactsStr = contactsValue.toString();
-
-    //     // Try to parse the string as JSON
-    //     QJsonDocument contactsJson = QJsonDocument::fromJson(contactsStr.toUtf8());
-
-    //     if (!contactsJson.isNull() && contactsJson.isArray()) {
-    //         QJsonArray contactsArray = contactsJson.array();
-    //         for (const QJsonValue &val : contactsArray) {
-    //             contactsList.append(val.toString());
-    //         }
-    //     } else {
-    //         qDebug() << "Failed to parse contacts JSON array. String: " << contactsStr;
-    //     }
-    // } else {
-    //     qDebug() << "Unexpected contacts format!";
-    // }
-
-    // Set values to labels
-    if (nameLabel)
-    {
+    if (nameLabel) {
         nameLabel->setText("Name: " + name);
     }
-    if (surnameLabel)
-    {
+    if (surnameLabel) {
         surnameLabel->setText(tr("Surname: ") + surname);
     }
-    if (nicknameLabel)
-    {
-        nicknameLabel->setText(tr("Nickname: ")+ nickname);
+    if (nicknameLabel) {
+        nicknameLabel->setText(tr("Nickname: ") + nickname);
     }
-    if (emailLabel)
-    {
+    if (emailLabel) {
         emailLabel->setText(tr("Email: ") + email);
     }
-    if (ageLabel)
-    {
+    if (ageLabel) {
         ageLabel->setText("Date of Birth: " + date_of_birth);
     }
     oldDataMap = newDataMap;
@@ -103,7 +59,10 @@ void MyProfile::handleProfileUpdate(QByteArray responseData)
 
 void MyProfile::handleIdReceiving()
 {
-    connect(client_donwnload_profile_data, &HttpClient::responseReceived, this, &MyProfile::handleProfileUpdate);
+    connect(client_donwnload_profile_data,
+            &HttpClient::responseReceived,
+            this,
+            &MyProfile::handleProfileUpdate);
     QString link("https://synergy-iauu.onrender.com/profile_info/");
     QUrl accountinfo(link + Globals::getInstance().getUserId());
     client_donwnload_profile_data->getRequest(accountinfo);
@@ -131,11 +90,9 @@ void MyProfile::setLanguage()
     }
 }
 
-
 void MyProfile::init()
 {
     client_donwnload_profile_data = new HttpClient();
-
 
     profilePhoto = new QLabel(this);
     nameLabel = new QLabel(this);
@@ -203,8 +160,6 @@ void MyProfile::setup()
     } else {
         qDebug() << "Failed to load default profile photo.";
     }
-
-
 }
 
 void MyProfile::styling()
@@ -268,7 +223,6 @@ void MyProfile::styling()
 
 void MyProfile::connections()
 {
-
     connect(editProfile, &QPushButton::clicked, this, [this]() {
         if (isEditing) {
             saveChanges();
@@ -276,7 +230,6 @@ void MyProfile::connections()
             toggleEditMode(true);
         }
     });
-
 
     connect(goBackButton, &QPushButton::clicked, this, [this]() {
         if (isEditing) {

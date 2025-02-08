@@ -1,13 +1,12 @@
 #include "settings.h"
-#include "translator.h"
 #include <QPushButton>
+#include "translator.h"
 
-
-Settings::Settings(QWidget *parent) : QWidget(parent)
+Settings::Settings(QWidget *parent)
+    : QWidget(parent)
 {
-
-    this ->resize(400, 700);
-    this -> setFixedSize(400, 700);
+    this->resize(400, 700);
+    this->setFixedSize(400, 700);
     Translator::get().set("en_US");
     init();
 
@@ -47,7 +46,6 @@ void Settings::setLanguage()
     themeLabel->setText(tr("Theme"));
     languageLabel->setText(tr("Language"));
     notificationLabel->setText(tr("Notifications"));
-
 }
 
 void Settings::init()
@@ -71,7 +69,6 @@ void Settings::init()
     formLayout = new QFormLayout();
     buttonsLayout = new QHBoxLayout();
 
-
     themeComboBox = new QComboBox();
     languageComboBox = new QComboBox();
     notificationComboBox = new QComboBox();
@@ -83,7 +80,7 @@ void Settings::init()
 void Settings::setup()
 {
     mainLayout->addLayout(formLayout);
-    mainLayout -> addLayout(buttonsLayout);
+    mainLayout->addLayout(buttonsLayout);
 
     formLayout->addRow(themeLabel, themeComboBox);
     formLayout->addRow(languageLabel, languageComboBox);
@@ -144,7 +141,6 @@ void Settings::styleing()
         }
     )";
 
-
     QString buttonStyle = R"(
         QPushButton {
             border: 1px solid #420242;
@@ -191,29 +187,24 @@ void Settings::styleing()
 
 void Settings::connections()
 {
-    connect(themeComboBox, &QComboBox::currentIndexChanged, this, [this](){
+    connect(themeComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         isEditing = true;
         cancel->setText(tr("Cancel"));
-        for (auto comboBox : newSettings.keys())
-        {
+        for (auto comboBox : newSettings.keys()) {
             newSettings[comboBox] = comboBox->currentIndex();
         }
     });
-    connect(languageComboBox, &QComboBox::currentIndexChanged, this, [this](){
+    connect(languageComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         isEditing = true;
         cancel->setText(tr("Cancel"));
-        for (auto comboBox : newSettings.keys())
-        {
+        for (auto comboBox : newSettings.keys()) {
             newSettings[comboBox] = comboBox->currentIndex();
         }
-
-
     });
-    connect(notificationComboBox, &QComboBox::currentIndexChanged, this, [this](){
+    connect(notificationComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         isEditing = true;
         cancel->setText(tr("Cancel"));
-        for (auto comboBox : newSettings.keys())
-        {
+        for (auto comboBox : newSettings.keys()) {
             newSettings[comboBox] = comboBox->currentIndex();
         }
     });
@@ -221,21 +212,19 @@ void Settings::connections()
         isEditing = false;
         cancel->setText(tr("Back"));
         QString newLang = languageComboBox->currentData().toString();
-        QString oldLang = oldSettings.contains(languageComboBox) ?
-                              languageComboBox->itemData(oldSettings[languageComboBox]).toString() : "";
+        QString oldLang = oldSettings.contains(languageComboBox)
+                              ? languageComboBox->itemData(oldSettings[languageComboBox]).toString()
+                              : "";
         if (newLang != oldLang) {
             Translator::get().set(newLang);
             emit languageChanged();
         }
         oldSettings = newSettings;
     });
-    connect(cancel, &QPushButton::clicked, this,[this](){
-        if(!isEditing)
-        {
+    connect(cancel, &QPushButton::clicked, this, [this]() {
+        if (!isEditing) {
             emit goBackSignal();
-        }
-        else
-        {
+        } else {
             for (auto comboBox : oldSettings.keys()) {
                 int oldIndex = oldSettings[comboBox];
                 comboBox->setCurrentIndex(oldIndex);

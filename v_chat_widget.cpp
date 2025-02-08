@@ -1,30 +1,26 @@
 #include "v_chat_widget.h"
 
 VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
-    : QPushButton(parent) {
+    : QPushButton(parent)
+{
     // this->setFixedSize(300, 60);
     this->setMinimumSize(200, 60);
     this->setMaximumSize(300, 60);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
-
     QFrame *container = new QFrame();
     container->setStyleSheet(
         // "background-color: black;"
         "border: 0px solid white;"
-        "border-radius: 10px;"
-        );
+        "border-radius: 10px;");
     container->setFixedSize(200, 60);
     container->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-
 
     QHBoxLayout *layout = new QHBoxLayout(container);
     layout->setAlignment(Qt::AlignCenter);
     layout->setContentsMargins(5, 5, 5, 5);
     layout->setSpacing(5);
-
 
     name = new QLabel();
     name->setStyleSheet("color: white; font-size: 12px; border: none;");
@@ -67,13 +63,6 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
     connect(this, &QPushButton::clicked, this, &VChatWidget::handle_click);
 }
 
-
-// void VChatWidget::mousePressEvent(QMouseEvent *event) {
-//     qDebug() << "its worked";
-//     emit clicked_vchat(this);
-// }
-
-
 void VChatWidget::scroll_long_text(QString text)
 {
     if (!timer) {
@@ -88,7 +77,8 @@ void VChatWidget::scroll_long_text(QString text)
 
 void VChatWidget::update_text()
 {
-    if (!name) return;
+    if (!name)
+        return;
 
     int visibleText = qMin(10, scroll_text.length());
     name->setText(scroll_text.mid(position, visibleText));
@@ -141,26 +131,23 @@ QPixmap VChatWidget::cut_photo(const QString &pic_path, int size)
     return triangle;
 }
 
-
-
 void VChatWidget::handle_click()
 {
     emit clicked_vchat(this->get_nick());
 }
-
 
 void VChatWidget::set_nick(QString text)
 {
     nick->setText(text);
 }
 
-
-QString VChatWidget::get_nick() const {
+QString VChatWidget::get_nick() const
+{
     return this->nick->text();
 }
 
-
-QString VChatWidget::get_name() const {
+QString VChatWidget::get_name() const
+{
     return this->name->text();
 }
 

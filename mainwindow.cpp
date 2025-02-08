@@ -41,10 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(main_pg, &MainPageWindow::vchat_clicked_from_main_pg, this, &MainWindow::goToChatPg);
 
-    connect(main_pg,
-            &MainPageWindow::profile_button_signal,
-            this,
-            &MainWindow::goToProfileSettingsPg);
+    connect(main_pg, &MainPageWindow::profile_button_signal, this, &MainWindow::goToProfileSettingsPg);
 
     connect(profile_settings_pg, &MyProfile::gotoSettingsSignal, this, &MainWindow::goToSettings);
 
@@ -74,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(profile_settings_pg, &MyProfile::logOutSiganl, this, &MainWindow::goToSignIn);
     connect(welcome_pg, &WelcomePg::languageChanged, this, &MainWindow::change_language);
 
+    connect(reg_pg, &Registration::email_obt_signal, verification_pg, &Verification::handleEmail);
+
     this->setCentralWidget(staked_widget);
     this->setFixedSize(400, 700);
 }
@@ -83,11 +82,15 @@ MainWindow::~MainWindow() {}
 void MainWindow::goToSignIn()
 {
     staked_widget->setCurrentIndex(1);
+    reg_pg->clear_fields();
+    verification_pg->clear_fields();
 }
 
 void MainWindow::goToRegPg()
 {
     staked_widget->setCurrentIndex(2);
+    login_pg->clear_fields();
+    verification_pg->clear_fields();
 }
 
 void MainWindow::goToWelcomePg()
@@ -98,8 +101,10 @@ void MainWindow::goToWelcomePg()
 void MainWindow::goToMainPg()
 {
     staked_widget->setCurrentIndex(3);
+    reg_pg->clear_fields();
+    verification_pg->clear_fields();
+    // login_pg->clear_fields();
 }
-
 
 void MainWindow::goToChatPg(QString nick)
 {

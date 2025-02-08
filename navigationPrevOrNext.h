@@ -1,9 +1,9 @@
 #ifndef NAVIGATIONPREVORNEXT_H
 #define NAVIGATIONPREVORNEXT_H
 
-#include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QWidget>
 
 class navigationPrevOrNext : public QWidget
 {

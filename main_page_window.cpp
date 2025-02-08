@@ -1,7 +1,7 @@
 #include "main_page_window.h"
-#include "globals.h"
-#include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include "globals.h"
 
 MainPageWindow::MainPageWindow(QWidget *parent)
     : QWidget(parent)
@@ -112,7 +112,6 @@ void MainPageWindow::handle_contact(QByteArray responseData)
         return;
     }
 
-    // Convert the stringified JSON array into a QJsonArray
     QJsonDocument contactsDoc = QJsonDocument::fromJson(contactsValue.toString().toUtf8());
     if (!contactsDoc.isArray()) {
         qDebug() << "Failed to parse contacts as a JSON array!";
@@ -127,6 +126,7 @@ void MainPageWindow::handle_contact(QByteArray responseData)
             nicknames.append(value.toString());
         }
     }
+    contacts.clear();
     contacts = nicknames;
     qDebug() << "Extracted nicknames: " << contacts;
     emit received_contacts();
@@ -135,17 +135,64 @@ void MainPageWindow::handle_contact(QByteArray responseData)
 void MainPageWindow::fill_contacts()
 {
     scroll_widget->clear_chats();
-    for (int i = 0; i < contacts.size(); ++i) {
-        VChatWidget *chat = new VChatWidget("Avtandir3000", "@" + contacts[i]);
-        connect(chat, &VChatWidget::clicked_vchat, this, &MainPageWindow::handle_vchat_click);
-        scroll_widget->add_chat(chat);
+    qDebug() << "contact size = " << contacts.size();
+    for (int i = 0; i < user_contacts.size(); ++i) {
+        connect(user_contacts[i], &VChatWidget::clicked_vchat, this, &MainPageWindow::handle_vchat_click);
+        scroll_widget->add_chat(user_contacts[i]);
     }
-    qDebug() << contacts;
+
     scroll_widget->show_chats();
 }
 
+void MainPageWindow::handle_search_data(QByteArray responseData)
+{
+    disconnect(client_main_page,
+               &HttpClient::responseReceived,
+               this,
+               &MainPageWindow::handle_search_data);
 
+    scroll_widget->hide_chats();
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+    if (!jsonDoc.isObject()) {
+        qWarning() << "Invalid JSON response";
+        return;
+    }
 
+    QJsonObject jsonObject = jsonDoc.object();
+
+    if (jsonObject.contains("matched_contacts") && jsonObject["matched_contacts"].isArray()) {
+        QJsonArray matchedContacts = jsonObject["matched_contacts"].toArray();
+        if (!matchedContacts.isEmpty()) {
+            for (const QJsonValue &val : matchedContacts) {
+                user_contacts.append(new VChatWidget("USERNAME", val.toString()));
+            }
+        }
+    }
+
+    if (jsonObject.contains("matched_other_users") && jsonObject["matched_other_users"].isArray()) {
+        QJsonArray usersArray = jsonObject["matched_other_users"].toArray();
+        if (!usersArray.isEmpty()) {
+            for (const QJsonValue &val : usersArray) {
+                QString nick = val.toString();
+                qDebug() << "HESASAA" << nick;
+                unkown_contacts.append(new VChatWidget("USERNAME", val["nickname"].toString()));
+            }
+        }
+        for (const QJsonValue &userValue : usersArray) {
+            if (userValue.isObject()) {
+                QJsonObject userObj = userValue.toObject();
+                qDebug() << "User ID:" << userObj["id"].toString();
+                qDebug() << "Name:" << userObj["name"].toString();
+                qDebug() << "Surname:" << userObj["surname"].toString();
+                qDebug() << "Nickname:" << userObj["nickname"].toString();
+                qDebug() << "Email:" << userObj["email"].toString();
+                qDebug() << "Date of Birth:" << userObj["date_of_birth"].toString();
+            }
+        }
+    } else {
+        qWarning() << "No matched users found in response";
+    }
+}
 
 void MainPageWindow::handleSearchButton()
 {
@@ -153,17 +200,23 @@ void MainPageWindow::handleSearchButton()
     handleSearch();
 }
 
-
 void MainPageWindow::handleSearch()
 {
     QString searchText = searchBar->text();
     if (!searchText.isEmpty()) {
         qDebug() << "Search query:" << searchText;
-        //chat filtration, request
-        // if (scroll_widget->s)
-        } else {
+        QString searchLink = "https://synergy-iauu.onrender.com/search/"
+                             + Globals::getInstance().getUserId() + "/" + searchText;
+        connect(client_main_page,
+                &HttpClient::responseReceived,
+                this,
+                &MainPageWindow::handle_search_data,
+                Qt::UniqueConnection);
+        client_main_page->getRequest(searchLink);
+    } else {
         qDebug() << "Search query is empty";
     }
+    fill_contacts();
 }
 
 void MainPageWindow::keyPressEvent(QKeyEvent *event)

@@ -1,7 +1,8 @@
 #include "scroll_widget.h"
 
 ScrollWidget::ScrollWidget(QWidget *parent)
-    : QWidget(parent) {
+    : QWidget(parent)
+{
     scroll = new QScrollArea(this);
     scroll->setWidgetResizable(true);
     change_sizes(50, 100, 300, 600);
@@ -15,13 +16,6 @@ ScrollWidget::ScrollWidget(QWidget *parent)
     contentLayout->setSpacing(2);
     contentLayout->setContentsMargins(0, 0, 0, 0);
 
-    // for (int i = 0; i < 30; ++i) {
-    //     VChatWidget* chat = new VChatWidget("Avtandir3000", "@nick");
-    //     add_chat(chat);
-    // }
-
-    // show_chats();
-
     scroll_content->setLayout(contentLayout);
     scroll->setWidget(scroll_content);
 }
@@ -33,13 +27,17 @@ void ScrollWidget::add_chat(VChatWidget *new_chat)
 
 void ScrollWidget::show_chats()
 {
+    contentLayout->setAlignment(Qt::AlignTop);
     for (int i = 0; i < all_chats.size(); ++i) {
         contentLayout->addWidget(all_chats[i]);
         all_chats[i]->scroll_long_text(all_chats[i]->get_name());
+    }
+}
 
-        if (i == 10) {
-            draw_line("Unknown contacts");
-        }
+void ScrollWidget::hide_chats() {
+    for (int i = 0; i < all_chats.size(); ++i) {
+        contentLayout->removeWidget(all_chats[i]);
+        all_chats[i]->setParent(nullptr);
     }
 }
 
@@ -48,7 +46,6 @@ void ScrollWidget::change_sizes(int x, int y, int w, int h)
     scroll->setGeometry(x, y, w, h);
     scroll->resize(w, h);
     scroll->setFixedSize(w, h);
-
 }
 
 void ScrollWidget::draw_line(QString text)
@@ -83,12 +80,9 @@ void ScrollWidget::draw_line(QString text)
     contentLayout->addWidget(lineContainer);
     scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
 }
 
-
-
-VChatWidget* ScrollWidget::search(QString text)
+VChatWidget *ScrollWidget::search(QString text)
 {
     for (auto item : all_chats) {
         if (item->get_nick() == text) {
@@ -98,14 +92,16 @@ VChatWidget* ScrollWidget::search(QString text)
     return nullptr;
 }
 
-
-QWidget* ScrollWidget::getContentWidget() const {
+QWidget *ScrollWidget::getContentWidget() const
+{
     return scroll_content;
 }
 
-
 void ScrollWidget::clear_chats()
 {
-    all_chats.clear();
+    for (auto chat : all_chats) {
+        delete chat;
+        chat = nullptr;
+    }
+    all_chats.resize(0);
 }
-

@@ -1,7 +1,6 @@
 #ifndef REGISTRATION_h
 #define REGISTRATION_h
 
-//#include "navigationprevornext.h"
 #include <QCheckBox>
 #include <QDateEdit>
 #include <QFormLayout>
@@ -24,7 +23,7 @@ public:
     ~Registration();
 
     bool checkFormValidity();
-
+    void clear_fields();
 private:
     QWidget *centralWidget;
     QVBoxLayout *mainLayout;
@@ -53,6 +52,7 @@ private:
     QPushButton *prevButton;
     QPushButton *registerButton;
     QLabel *topLabel;
+    QLabel *smallText;
     HttpClient *client_registration;
     QString name_txt;
     QString nickname_txt;
@@ -70,6 +70,7 @@ signals:
     void reg_btn_signal();
     void prev_btn_signal();
     void idreceived();
+    void email_obt_signal(QString email);
 
 private slots:
     void handle_terms_of_use_btn();

@@ -6,12 +6,12 @@
 #include <QLineEdit>
 #include <QPixmap>
 #include <QPushButton>
+#include <QStringList>
 #include <QVector>
 #include <QWidget>
+#include "httpclient.h"
 #include "scroll_widget.h"
 #include "v_chat_widget.h"
-#include "httpclient.h"
-#include <QStringList>
 
 class MainPageWindow : public QWidget
 {
@@ -28,7 +28,8 @@ private:
     QPushButton *ProfileButton;
     QLineEdit *searchBar;
     QLabel *chat;
-    QVector<VChatWidget *> all_vchats; // tmp
+    QVector<VChatWidget *> user_contacts;
+    QVector<VChatWidget *> unkown_contacts;
     HttpClient *client_main_page;
     QStringList contacts;
 public slots:
@@ -38,9 +39,11 @@ public slots:
     void handleSearchButton();
     void handleProfileButton();
     void handleIdReceiving();
+
 private slots:
     void handle_contact(QByteArray responseData);
     void fill_contacts();
+    void handle_search_data(QByteArray responseData);
 signals:
     void vchat_clicked_from_main_pg(QString nickname);
     void profile_button_signal();

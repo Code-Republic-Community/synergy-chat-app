@@ -24,6 +24,7 @@ private slots:
     void handleProfileUpdate(QByteArray responseData);
 public slots:
     void handleIdReceiving();
+
 private:
     HttpClient *client_donwnload_profile_data;
     QString userId;

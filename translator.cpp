@@ -14,8 +14,6 @@ Translator &Translator::get()
 void Translator::set(QString lang)
 {
     QString path = QString(":/i18n/Translator_%1.qm").arg(lang);
-    if(!translator.load(path))
-    {
-
+    if (!translator.load(path)) {
     }
 }

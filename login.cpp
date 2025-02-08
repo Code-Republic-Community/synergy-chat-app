@@ -1,16 +1,16 @@
 #include "login.h"
+#include <QDir>
+#include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QFile>
-#include <QTextStream>
 #include <QStandardPaths>
+#include <QTextStream>
 #include "globals.h"
 #include "httpclient.h"
-#include <QDir>
 
 Login::Login(QWidget *parent)
     : QWidget(parent)
@@ -19,13 +19,14 @@ Login::Login(QWidget *parent)
     setLanguage();
 }
 
-void Login::saveCredentials(const QString& userId, const QString& username, const QString& password)
+void Login::saveCredentials(const QString &userId, const QString &username, const QString &password)
 {
     qDebug() << "Save Credentials";
 
     // Define the full path of the credentials file
-    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Synergy/credentials.txt";
-    QString folderPath = QFileInfo(path).absolutePath();  // Get the folder path
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+                   + "/Synergy/credentials.txt";
+    QString folderPath = QFileInfo(path).absolutePath(); // Get the folder path
 
     // Create the folder if it doesn't exist
     QDir dir;
@@ -34,7 +35,7 @@ void Login::saveCredentials(const QString& userId, const QString& username, cons
             qDebug() << "Created folder:" << folderPath;
         } else {
             qDebug() << "Failed to create folder";
-            return;  // Exit if the folder cannot be created
+            return; // Exit if the folder cannot be created
         }
     }
 
@@ -51,14 +52,14 @@ void Login::saveCredentials(const QString& userId, const QString& username, cons
     }
 }
 
-
 void Login::loadCredentials()
 {
     qDebug() << "Load Credentials";
 
     // Define the full path of the credentials file
-    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Synergy/credentials.txt";
-    QString folderPath = QFileInfo(path).absolutePath();  // Get the folder path
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+                   + "/Synergy/credentials.txt";
+    QString folderPath = QFileInfo(path).absolutePath(); // Get the folder path
 
     // Ensure the folder exists
     QDir dir;
@@ -67,21 +68,20 @@ void Login::loadCredentials()
             qDebug() << "Created folder:" << folderPath;
         } else {
             qDebug() << "Failed to create folder";
-            return;  // Exit if folder cannot be created
+            return; // Exit if folder cannot be created
         }
     }
 
     // Open the file and load credentials
     QFile file(path);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&file);
         QString userId = in.readLine();
-        Globals::getInstance().setUserID(userId);  // Set the user ID in the Globals class
+        Globals::getInstance().setUserID(userId); // Set the user ID in the Globals class
         QString username = in.readLine();
-        usernameLineEdit->setText(username);  // Set the username in the username line edit
+        usernameLineEdit->setText(username); // Set the username in the username line edit
         QString password = in.readLine();
-        passwordLineEdit->setText(password);  // Set the password in the password line edit
+        passwordLineEdit->setText(password); // Set the password in the password line edit
         file.close();
 
         qDebug() << "From File User ID = " << userId;
@@ -89,23 +89,21 @@ void Login::loadCredentials()
         qDebug() << "From File Password = " << password;
         remember = true;
         m_rememberMe->setCheckState(Qt::Checked);
-        emit idreceived();  // Emit signal for user ID received
+        emit idreceived();      // Emit signal for user ID received
         emit next_btn_signal(); // Emit signal to proceed to next step
         emit m_nextAndPrev->nextClicked();
-    }
-    else
-    {
+    } else {
         qDebug() << "Failed to open file for reading";
     }
 }
-
 
 void Login::clearCredentials()
 {
     qDebug() << "Clear Credentials";
 
     // Define the full path of the credentials file
-    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Synergy/credentials.txt";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+                   + "/Synergy/credentials.txt";
     QFile file(path);
 
     // Ensure the folder exists before removing the file
@@ -113,9 +111,8 @@ void Login::clearCredentials()
     QDir dir;
     if (!dir.exists(folderPath)) {
         qDebug() << "Folder does not exist, no need to remove file.";
-        return;  // Exit if folder doesn't exist, no need to remove the file
+        return; // Exit if folder doesn't exist, no need to remove the file
     }
-
 
     // Delete the credentials file if it exists
     if (file.exists()) {
@@ -124,12 +121,10 @@ void Login::clearCredentials()
         } else {
             qDebug() << "Failed to remove credentials file.";
         }
-    }
-    else {
+    } else {
         qDebug() << "Credentials file does not exist.";
     }
 }
-
 
 void Login::init()
 {
@@ -183,8 +178,14 @@ void Login::init()
     setLanguage();
 
     connect(m_rememberMe, &QCheckBox::toggled, this, &Login::rememberMe);
-    connect(m_nextAndPrev, &navigationPrevOrNext::nextClicked, this, &Login::handleNextButtonClicked);
-    connect(m_nextAndPrev,  &navigationPrevOrNext::prevClicked, this, &Login::handlePrevButtonClicked);
+    connect(m_nextAndPrev,
+            &navigationPrevOrNext::nextClicked,
+            this,
+            &Login::handleNextButtonClicked);
+    connect(m_nextAndPrev,
+            &navigationPrevOrNext::prevClicked,
+            this,
+            &Login::handlePrevButtonClicked);
     connect(client_login, &HttpClient::responseReceived, this, &Login::handleUserId);
 }
 
@@ -212,6 +213,15 @@ void Login::setLanguage()
     m_forget->setText(tr("Both must be complementary"));
 }
 
+void Login::clear_fields()
+{
+    usernameLineEdit->setText("");
+    usernameLineEdit->setStyleSheet("");
+    passwordLineEdit->setText("");
+    passwordLineEdit->setStyleSheet("");
+    m_rememberMe->setCheckState(Qt::Unchecked);
+}
+
 void Login::saveTexts()
 {
     m_usernameText = usernameLineEdit->text();
@@ -226,35 +236,28 @@ void Login::handleUserId(QByteArray responseData)
     if (jsonObject.contains("user_id")) {
         Globals::getInstance().setUserID(jsonObject["user_id"].toString());
         qDebug() << Globals::getInstance().getUserId();
-        if(remember)
-        {
-            saveCredentials(Globals::getInstance().getUserId(), usernameLineEdit->text(), passwordLineEdit->text());
-        }
-        else
-        {
+        if (remember) {
+            saveCredentials(Globals::getInstance().getUserId(),
+                            usernameLineEdit->text(),
+                            passwordLineEdit->text());
+        } else {
             clearCredentials();
         }
         emit idreceived();
         emit next_btn_signal();
-    }
-    else
-    {
+    } else {
         qDebug() << "User ID not found in response.";
         usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
     }
 }
 
-
 void Login::rememberMe(bool isClicked)
 {
     qDebug() << "Checkbox toggled: " << isClicked;
-    if (isClicked)
-    {
+    if (isClicked) {
         remember = true;
-    }
-    else
-    {
+    } else {
         remember = false;
         clearCredentials();
     }
@@ -267,40 +270,31 @@ void Login::mousePressEvent(QMouseEvent *event)
         emit register_signal();
     }
     if (event) {
-
     }
 }
 void Login::handleNextButtonClicked()
 {
-
     QString username = usernameLineEdit->text();
     QString password = passwordLineEdit->text();
-    if (username.isEmpty() && password.isEmpty())
-    {
+    if (username.isEmpty() && password.isEmpty()) {
         usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         m_forget->show();
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
-    }
-    else if (username.isEmpty())
-    {
+    } else if (username.isEmpty()) {
         usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         passwordLineEdit->setStyleSheet("");
         m_forget->show();
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
-    }
-    else if (password.isEmpty())
-    {
+    } else if (password.isEmpty()) {
         usernameLineEdit->setStyleSheet("");
         passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         m_forget->show();
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
-    }
-    else
-    {
+    } else {
         usernameLineEdit->setStyleSheet("");
         passwordLineEdit->setStyleSheet("");
         saveTexts();
@@ -313,7 +307,6 @@ void Login::handleNextButtonClicked()
         qDebug() << jsonData.value("password");
 
         client_login->postRequest(url, jsonData);
-
     }
 }
 

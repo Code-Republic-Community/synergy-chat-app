@@ -31,10 +31,12 @@ private:
     QPushButton *signIn;
     QPushButton *about;
     QComboBox *languageComboBox;
+
 private:
     QString englishText;
     QString armenianText;
     QString russianText;
+
 private:
     void init();
     void conecting();

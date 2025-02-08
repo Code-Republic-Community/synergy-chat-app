@@ -1,15 +1,15 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QWidget>
-#include <QString>
 #include <QComboBox>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QMap>
 #include <QLabel>
+#include <QMap>
+#include <QPushButton>
+#include <QString>
+#include <QVBoxLayout>
+#include <QWidget>
 
 class Settings : public QWidget
 {
@@ -25,8 +25,8 @@ signals:
     void themeChanged();
 
 private:
-    QMap<QComboBox*, int> oldSettings;
-    QMap<QComboBox*, int> newSettings;
+    QMap<QComboBox *, int> oldSettings;
+    QMap<QComboBox *, int> newSettings;
 
 private:
     QLabel *themeLabel;
