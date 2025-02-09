@@ -33,9 +33,9 @@ private slots:
     void handle_data(QByteArray responseData);
 public slots:
     void handleEmail(QString email);
+
 private:
     QString maskEmail(const QString &email);
-
 
 private:
     inline static int chanceleft = 3;

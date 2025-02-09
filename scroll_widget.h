@@ -23,7 +23,7 @@ private:
     QScrollArea *scroll;
     QVBoxLayout *contentLayout;
     QWidget *scroll_content;
-
+    QWidget *lineContainer;
 public:
     void add_chat(VChatWidget *new_chat);
     void clear_chats();
@@ -34,11 +34,20 @@ public:
 
 private:
     QVector<VChatWidget *> all_chats;
+    QVector<VChatWidget*> matched_contacts;
+    QVector<VChatWidget*> matched_other_users;
+public:
+    void add_matched_contact(VChatWidget* chat);
+    void add_matched_other_users(VChatWidget* chat);
+    void clear_search_chats();
+    void show_search_chats();
+    void hide_search_chats();
+
+
 
 public:
     void draw_line(QString text);
-private:
-    VChatWidget *search(QString text);
+
 };
 
 #endif // SCROLL_WIDGET_H

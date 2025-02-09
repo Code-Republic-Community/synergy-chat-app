@@ -10,7 +10,7 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     y = 20;
     x = 200;
 
-    v_user = new VChatWidget("username", nick, this);
+    v_user = new VChatWidget("name", nick, "surname",  this);
     v_user->setGeometry(120, 630, 272, 60);
 
     send_btn = new QPushButton(this);

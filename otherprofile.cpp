@@ -1,7 +1,9 @@
 #include "otherprofile.h"
 #include <QDebug>
 #include <QPixmap>
+#include <QJsonDocument>
 #include "v_chat_widget.h"
+#include "globals.h"
 
 OtherProfile::OtherProfile(QWidget *parent)
     : QWidget(parent)
@@ -21,8 +23,33 @@ void OtherProfile::setLanguage()
     goBackButton->setText(tr("Back"));
 }
 
+void OtherProfile::handleDataFromChat(QString nick)
+{
+    disconnect(client_other_profile, &HttpClient::responseReceived, nullptr, nullptr);
+
+    connect(client_other_profile, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+        if (!jsonDoc.isObject()) {
+            qDebug() << "Invalid JSON response in get_contacts_info_and_show";
+            return;
+        }
+
+        QJsonObject jsonObject = jsonDoc.object();
+        QString name = jsonObject.value("name").toString();
+        QString surname = jsonObject.value("surname").toString();
+        QString nickname = jsonObject.value("nickname").toString();
+        nameLabel->setText(name);
+        surnameLabel->setText(surname);
+        nicknameLabel->setText("@" + nickname);
+    });
+    QString contactInfoGetRequestLink = "https://synergy-iauu.onrender.com/getContactInfo/"
+                                        + Globals::getInstance().getUserId() + "/" + nick;
+    client_other_profile->getRequest(contactInfoGetRequestLink);
+}
+
 void OtherProfile::init()
 {
+    client_other_profile = new HttpClient;
     profilePhoto = new QLabel(this);
     nameLabel = new QLabel(this);
     surnameLabel = new QLabel(this);
@@ -44,10 +71,13 @@ void OtherProfile::setup()
     nicknameLabel->setGeometry(20, 210, 360, 30);
 
     QPixmap profilePic("");
-    if (!profilePic.isNull()) {
+    if (!profilePic.isNull())
+    {
         profilePhoto->setPixmap(
             VChatWidget::cut_photo(":/pngs/panda.jpg", 100)); // stex petqa lini back ic ekac nkary
-    } else {
+    }
+    else
+    {
         qDebug() << "Failed to load profile photo. Using default.";
         profilePhoto->setPixmap(VChatWidget::cut_photo(":/pngs/panda.jpg", 100));
     }

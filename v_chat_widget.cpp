@@ -1,8 +1,11 @@
 #include "v_chat_widget.h"
 
-VChatWidget::VChatWidget(QString name_text, QString nick_text, QWidget *parent)
+VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_text, QWidget *parent)
     : QPushButton(parent)
 {
+    contact_name = name_text;
+    contact_nickname = nick_text;
+    contact_surname = surname_text;
     // this->setFixedSize(300, 60);
     this->setMinimumSize(200, 60);
     this->setMaximumSize(300, 60);
@@ -92,6 +95,7 @@ void VChatWidget::update_text()
 void VChatWidget::set_name(QString text)
 {
     name->setText(text);
+    contact_name = text;
 }
 
 QPixmap VChatWidget::cut_photo(const QString &pic_path, int size)
@@ -138,22 +142,28 @@ void VChatWidget::handle_click()
 
 void VChatWidget::set_nick(QString text)
 {
-    nick->setText(text);
+    nick->setText("@" + text);
+    contact_nickname = text;
 }
 
 QString VChatWidget::get_nick() const
 {
-    return this->nick->text();
+    return contact_nickname;
 }
 
 QString VChatWidget::get_name() const
 {
-    return this->name->text();
+    return contact_name;
+}
+
+QString VChatWidget::get_surname() const
+{
+    return contact_surname;
 }
 
 void VChatWidget::setLanguage(QString name_text, QString nick_text)
 {
     name->setText(name_text);
-    nick->setText(nick_text);
+    nick->setText("@" + nick_text);
     pic->setToolTip(tr("User Profile Picture"));
 }

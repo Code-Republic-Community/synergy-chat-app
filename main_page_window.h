@@ -26,24 +26,45 @@ private:
     ScrollWidget *scroll_widget;
     QPushButton *SearchButton;
     QPushButton *ProfileButton;
-    QLineEdit *searchBar;
+    QLineEdit *searchBar;    
     QLabel *chat;
-    QVector<VChatWidget *> user_contacts;
-    QVector<VChatWidget *> unkown_contacts;
     HttpClient *client_main_page;
-    QStringList contacts;
-public slots:
-    void handleSearch();
-    void handle_vchat_click(QString);
-    void keyPressEvent(QKeyEvent *event);
-    void handleSearchButton();
-    void handleProfileButton();
-    void handleIdReceiving();
 
+//for search box
+    QStringList matched_contacts_list;
+    QStringList matched_other_users_list;
+    QVector<VChatWidget*> matched_contacts;
+    QVector<VChatWidget*> matched_other_users;
+
+
+// esqany login ylneluc contactnery stanalu u cuyc talu hamar
+private:
+    QVector<VChatWidget*> contacts;
+    QStringList contacts_nicknames_to_get_account_info;
 private slots:
     void handle_contact(QByteArray responseData);
-    void fill_contacts();
+    void get_contacts_info_and_show();
+public slots:
+    void handleIdReceiving();
+// /////////////////////////////////////////////////////////
+public slots:
+    void clearDataOnLogout();
+
+private slots:
+    void handleSearch();
     void handle_search_data(QByteArray responseData);
+signals:
+    void found_users_by_search(bool yes_or_not);
+    void contact_successfully_added_to_scrollWidget();
+    void matched_contact_or_other_user_added_successfully(bool contact_or_otherUser);
+private slots:
+    void vchat_clicked_from_search_pg(QString nickname);
+
+public slots:
+    void handle_vchat_click(QString);
+    void keyPressEvent(QKeyEvent *event);
+    void handleProfileButton();
+
 signals:
     void vchat_clicked_from_main_pg(QString nickname);
     void profile_button_signal();

@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(main_pg, &MainPageWindow::vchat_clicked_from_main_pg, this, &MainWindow::goToChatPg);
 
+
     connect(main_pg, &MainPageWindow::profile_button_signal, this, &MainWindow::goToProfileSettingsPg);
 
     connect(profile_settings_pg, &MyProfile::gotoSettingsSignal, this, &MainWindow::goToSettings);
@@ -51,13 +52,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(reg_pg, &Registration::reg_btn_signal, this, &MainWindow::goToVerificationPg);
 
-    connect(verification_pg, &Verification::prevClicked, this, &MainWindow::goToRegPg); // comment
+    connect(verification_pg, &Verification::prevClicked, this, &MainWindow::goToRegPg);
 
     connect(verification_pg, &Verification::nextClicked, this, &MainWindow::goToMainPg);
 
     connect(settings_pg, &Settings::goBackSignal, this, &MainWindow::goToProfileSettingsPg);
 
     connect(chat_pg, &ChatWidget::other_profile_signal, this, &MainWindow::goToOtherProfilePg);
+    connect(chat_pg, &ChatWidget::other_profile_signal, other_profile_pg, &OtherProfile::handleDataFromChat);
 
     connect(reg_pg, &Registration::have_an_account_signal, this, &MainWindow::goToSignIn);
 
@@ -67,8 +69,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(chat_pg, &ChatWidget::go_back_signal, this, &MainWindow::goToMainPg);
 
+
     connect(settings_pg, &Settings::languageChanged, this, &MainWindow::change_language);
+
     connect(profile_settings_pg, &MyProfile::logOutSiganl, this, &MainWindow::goToSignIn);
+    connect(profile_settings_pg, &MyProfile::logOutSiganl, main_pg, &MainPageWindow::clearDataOnLogout);
+
     connect(welcome_pg, &WelcomePg::languageChanged, this, &MainWindow::change_language);
 
     connect(reg_pg, &Registration::email_obt_signal, verification_pg, &Verification::handleEmail);
@@ -96,6 +102,8 @@ void MainWindow::goToRegPg()
 void MainWindow::goToWelcomePg()
 {
     staked_widget->setCurrentIndex(0);
+    reg_pg->clear_fields();
+    verification_pg->clear_fields();
 }
 
 void MainWindow::goToMainPg()

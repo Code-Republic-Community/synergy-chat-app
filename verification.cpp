@@ -25,7 +25,6 @@ Verification::Verification(QWidget *parent)
     code->setMaxLength(7);
     layout->addWidget(code, 1, Qt::AlignHCenter);
 
-
     code->setMaxLength(7);
     connect(code, &QLineEdit::textEdited, this, [this](const QString &text) {
         original_code = text;
@@ -56,13 +55,11 @@ Verification::Verification(QWidget *parent)
     chance->setAlignment(Qt::AlignCenter);
     layout->addWidget(chance);
 
-
     Back = new QPushButton(this);
     Next = new QPushButton(this);
     Back->setGeometry(20, 600, 90, 40);
     Next->setGeometry(300, 600, 90, 40);
     Next->setStyleSheet("background-color: green;");
-
 
     connect(Back, &QPushButton::clicked, this, &Verification::onPrevClicked);
     connect(Next, &QPushButton::clicked, this, &Verification::onNextClicked);
@@ -79,7 +76,6 @@ void Verification::setLanguege()
     Next->setText(tr("Verify"));
     Back->setText(tr("Back"));
 }
-
 
 void Verification::onPrevClicked()
 {
@@ -99,35 +95,28 @@ void Verification::onNextClicked()
     client_verification->postRequest(url, jsonData);
 }
 
-
 void Verification::handle_data(QByteArray responseData)
 {
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
-    if (chanceleft <= 0)
-    {
-        chance->setText(tr("You have") + QString::number(chanceleft) +  tr("chances"));
+    if (chanceleft <= 0) {
+        chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
         emit prevClicked();
-    }
-    else
-    {
-        if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Verification successful")
-        {
+    } else {
+        if (jsonObject.contains("message")
+            && jsonResponse["message"].toString() == "Verification successful") {
             qDebug() << "Verification successful!";
             emit nextClicked();
-        }
-        else if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Invalid verification code")
-        {
+        } else if (jsonObject.contains("message")
+                   && jsonResponse["message"].toString() == "Invalid verification code") {
             --chanceleft;
             qDebug() << "Invalid verification code";
-            chance->setText(tr("You have") + QString::number(chanceleft) +  tr("chances"));
+            chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
             clear_fields();
-        }
-        else
-        {
+        } else {
             --chanceleft;
             qDebug() << "NEMA";
-            chance->setText(tr("You have") + QString::number(chanceleft) +  tr("chances"));
+            chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
             clear_fields();
         }
     }
@@ -147,15 +136,16 @@ void Verification::clear_fields()
     code->setText("");
 }
 
-QString Verification::maskEmail(const QString &email) {
+QString Verification::maskEmail(const QString &email)
+{
     if (email.isEmpty()) {
         return "Invalid Email";
     }
 
     int atIndex = 0;
 
-    for(int i = 0; i < email.length(); ++i){
-        if(email[i] == "@"){
+    for (int i = 0; i < email.length(); ++i) {
+        if (email[i] == "@") {
             atIndex = i;
             break;
         }

@@ -5,7 +5,7 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QWidget>
-#include "v_chat_widget.h"
+#include "httpclient.h"
 
 class OtherProfile : public QWidget
 {
@@ -13,6 +13,8 @@ class OtherProfile : public QWidget
 public:
     explicit OtherProfile(QWidget *parent = nullptr);
     void setLanguage();
+public slots:
+    void handleDataFromChat(QString nick);
 
 signals:
     void goBackSignal();
@@ -25,6 +27,7 @@ private:
     QLabel *surnameLabel;
     QLabel *nicknameLabel;
     QPushButton *goBackButton;
+    HttpClient *client_other_profile;
 
 private:
     void init();

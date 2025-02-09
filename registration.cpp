@@ -27,7 +27,7 @@ Registration::Registration(QWidget *parent)
     topLabel->setStyleSheet("QLabel { font-size: 20px; }");
     topLabel->move(150, 200);
     topLabel->setAlignment(Qt::AlignCenter);
-    smallText =new QLabel;
+    smallText = new QLabel;
     smallText->setStyleSheet("QLabel { font-size: 10px; }");
     topLayout = new QVBoxLayout;
     middleLayout = new QHBoxLayout;
@@ -87,7 +87,6 @@ Registration::Registration(QWidget *parent)
     dateEdit->setDisplayFormat("yyyy-MM-dd");
     dateEdit->setStyleSheet("");
 
-
     formLayout->addRow(nameLabel, nameField);
 
     formLayout->addRow(surnameLabel, surnameField);
@@ -116,7 +115,6 @@ Registration::Registration(QWidget *parent)
     prevButton = new QPushButton();
 
     registerButton = new QPushButton();
-
 
     bottomLayout->addWidget(prevButton);
     bottomLayout->addWidget(registerButton);
@@ -213,7 +211,6 @@ Registration::Registration(QWidget *parent)
         }
     });
 
-
     connect(haveAccountButton,
             &QPushButton::clicked,
             this,
@@ -222,38 +219,39 @@ Registration::Registration(QWidget *parent)
     connect(prevButton, &QPushButton::clicked, this, &Registration::handle_prev_btn);
     connect(registerButton, &QPushButton::clicked, this, &Registration::handle_reg_btn);
     connect(checkBox, &QCheckBox::checkStateChanged, this, [=](Qt::CheckState state) {
-        if (state == Qt::Checked)
-        {
+        if (state == Qt::Checked) {
             valids[7] = true;
-            termsOfUseButton->setStyleSheet("QPushButton { background-color: transparent; color: blue; "
-                                            "border: none; text-decoration: underline; } ");
+            termsOfUseButton->setStyleSheet(
+                "QPushButton { background-color: transparent; color: blue; "
+                "border: none; text-decoration: underline; } ");
             termsOfUseButton->setFixedHeight(checkBox->sizeHint().height());
             QFont tfont = termsOfUseButton->font();
             tfont.setPointSize(10);
             termsOfUseButton->setFont(tfont);
-        }
-        else
-        {
+        } else {
             valids[7] = false;
-            termsOfUseButton->setStyleSheet("QPushButton { background-color: transparent; color: red; "
-                                            "border: none; text-decoration: underline; } ");
+            termsOfUseButton->setStyleSheet(
+                "QPushButton { background-color: transparent; color: red; "
+                "border: none; text-decoration: underline; } ");
             termsOfUseButton->setFixedHeight(checkBox->sizeHint().height());
             QFont tfont = termsOfUseButton->font();
             tfont.setPointSize(10);
             termsOfUseButton->setFont(tfont);
         }
     });
-    connect(termsOfUseButton, &QPushButton::clicked, this, [this]() { QMessageBox::information(this, "Terms of use",
-                                                                                               "These terms of use is an agreement between Synergy (\"the Company\", \"us\", \"we\" or \"our\") and "
-                                                                                               "you (\"User\", \"you\" or \"your\"). This Agreement sets forth the general terms and conditions of your use "
-                                                                                               "of any Synergys products or services.");});
+    connect(termsOfUseButton, &QPushButton::clicked, this, [this]() {
+        QMessageBox::information(this,
+                                 "Terms of use",
+                                 "These terms of use is an agreement between Synergy (\"the "
+                                 "Company\", \"us\", \"we\" or \"our\") and "
+                                 "you (\"User\", \"you\" or \"your\"). This Agreement sets forth "
+                                 "the general terms and conditions of your use "
+                                 "of any Synergys products or services.");
+    });
 
     setLanguage();
     save_texts();
 }
-
-
-
 
 void Registration::handle_reg_btn()
 {
@@ -303,14 +301,14 @@ void Registration::handle_terms_of_use_btn()
 
 void Registration::setLanguage()
 {
-    smallText->setText(tr("<p style='font-size: 10px;'>Welcome to DeltaSynergy! A place for meaningful"
-                          " conversations. Connect with your friends and family, "
-                          "build your community, and deepen your interests.</p>"));
+    smallText->setText(
+        tr("<p style='font-size: 10px;'>Welcome to DeltaSynergy! A place for meaningful"
+           " conversations. Connect with your friends and family, "
+           "build your community, and deepen your interests.</p>"));
     topLabel->setText(tr("Registration"));
     nameField->setPlaceholderText(tr("John"));
     surnameField->setPlaceholderText(tr("Doe"));
     emailField->setPlaceholderText(tr("johndoe@example.com"));
-
 
     nicknameField->setPlaceholderText(tr("Enter your nickname"));
     passwordField->setPlaceholderText(tr("Enter your password"));

@@ -24,6 +24,7 @@ public:
 
     bool checkFormValidity();
     void clear_fields();
+
 private:
     QWidget *centralWidget;
     QVBoxLayout *mainLayout;
