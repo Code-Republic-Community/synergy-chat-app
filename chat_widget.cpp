@@ -1,6 +1,10 @@
 // messagesFrame->setFixedSize(380, 570);
 
 #include "chat_widget.h"
+#include "globals.h"
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QTimer>
 
 ChatWidget::ChatWidget(QString nick, QWidget *parent)
     : QWidget(parent)
@@ -10,7 +14,10 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     y = 20;
     x = 200;
 
-    v_user = new VChatWidget("name", nick, "surname",  this);
+    chatReloadTimer = new QTimer(this);
+    chatReloadTimer->setInterval(10000);
+
+    v_user = new VChatWidget("name", nick, "surname", this);
     v_user->setGeometry(120, 630, 272, 60);
 
     send_btn = new QPushButton(this);
@@ -39,7 +46,11 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     connect(backButton, &QPushButton::clicked, this, &ChatWidget::handle_go_back);
     connect(send_btn, &QPushButton::clicked, this, &ChatWidget::sendMessage);
     connect(line, &QLineEdit::returnPressed, this, &ChatWidget::handle_line);
-
+    connect(chatReloadTimer, &QTimer::timeout, this, [=]() {
+        loadChat(v_user->get_nick());
+    });
+    chatReloadTimer->start();
+    loadChat(nick);
     setLanguage();
 }
 
@@ -47,6 +58,7 @@ void ChatWidget::setNick(QString nick)
 {
     clearMessages();
     v_user->set_nick(nick);
+    loadChat(nick);
 }
 
 QString ChatWidget::getNick() const
@@ -73,38 +85,51 @@ void ChatWidget::setLanguage()
 
 void ChatWidget::sendMessage(bool isOutgoing)
 {
-    QString url_path = "http://127.0.0.1:8000/sendMessage/";
-    // url_path += globalId;
+    QString contact_nickname = v_user->get_nick();
+    QString url_path = QString("https://synergy-iauu.onrender.com/sendMessage/%1/%2")
+                           .arg(Globals::getInstance().getUserId())
+                           .arg(contact_nickname);
     QUrl url(url_path);
     QJsonObject jsonData;
-    jsonData["sender"] = "115310f3-4d6e-4897-a15a-dd62bea31204";
+    jsonData["sender"] = Globals::getInstance().getUserId();
     jsonData["text"] = line->text();
+    jsonData["send_date"] = QDate::currentDate().toString(Qt::ISODate);
 
-    qDebug() << "Hesa";
-    chat_client->postRequest(url, jsonData);
+    qDebug() << "Sending message to:" << url.toString();
+    qDebug() << "Message content:" << jsonData;
 
-    if (line->text() != "") {
+    if (!line->text().isEmpty()) {
         addMessage(line->text(), isOutgoing);
         line->clear();
     }
+    connect(chat_client, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
+        qDebug() << "Message sent. Reloading chat.";
+        loadChat(contact_nickname);
+    });
+
+    chat_client->postRequest(url, jsonData);
+
 }
 
 void ChatWidget::addMessage(const QString &message_text, bool isOutgoing)
 {
     ChatMessageWidget *message = new ChatMessageWidget(message_text, contentWidget);
+
+    int messageWidth = message->width() + 20;
+    int messageHeight = message->height() + 20;
+
     if (isOutgoing) {
-        message->setGeometry(20, y, message->width() + 20, message->height() + 20);
+        message->setGeometry(380 - messageWidth - 40, y, messageWidth, messageHeight);
     } else {
-        message->setGeometry(380 - message->width() - 40,
-                             y,
-                             message->width() + 20,
-                             message->height() + 20);
+        message->setGeometry(20, y, messageWidth, messageHeight);
     }
-    y += message->height();
-    int newContentHeight = y + message->height() + 20;
+
+    y += messageHeight + 10;
+    int newContentHeight = y + messageHeight + 20;
     message->show();
     contentWidget->setMinimumHeight(newContentHeight);
 }
+
 
 void ChatWidget::clearMessages()
 {
@@ -116,6 +141,48 @@ void ChatWidget::clearMessages()
     contentWidget->setMinimumHeight(0);
 }
 
+void ChatWidget::loadChat(QString nickname)
+{
+    clearMessages();
+    QString url_path = QString("https://synergy-iauu.onrender.com/getMessageHistory/%1/%2")
+                           .arg(Globals::getInstance().getUserId())
+                           .arg(nickname);
+    QUrl url(url_path);
+
+    disconnect(chat_client, &HttpClient::responseReceived, nullptr, nullptr);
+
+    connect(chat_client, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+
+        if (!jsonDoc.isObject()) {
+            qDebug() << "Invalid JSON response in loadChat";
+            return;
+        }
+
+        QJsonObject jsonObject = jsonDoc.object();
+        if (!jsonObject.contains("conversation") || !jsonObject["conversation"].isArray()) {
+            qDebug() << "No conversation data found";
+            return;
+        }
+
+        QJsonArray messagesArray = jsonObject["conversation"].toArray();
+        QString currentUserId = Globals::getInstance().getUserId();
+
+        for (const QJsonValue &messageVal : messagesArray) {
+            if (!messageVal.isObject()) continue;
+
+            QJsonObject messageObj = messageVal.toObject();
+            QString sender = messageObj["sender"].toString();
+            QString text = messageObj["text"].toString();
+            bool isOutgoing = (sender == currentUserId);
+
+            addMessage(text, isOutgoing);
+        }
+    });
+
+    chat_client->getRequest(url.toString());
+}
+
 void ChatWidget::handle_line()
 {
     QString searchText = line->text();
@@ -123,7 +190,7 @@ void ChatWidget::handle_line()
         qDebug() << "Search query:" << searchText;
         //chat filtration, request
         // if (scroll_widget->s)
-    } else {
+        } else {
         qDebug() << "Search query is empty";
     }
 }

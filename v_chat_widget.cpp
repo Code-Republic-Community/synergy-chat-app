@@ -137,7 +137,7 @@ QPixmap VChatWidget::cut_photo(const QString &pic_path, int size)
 
 void VChatWidget::handle_click()
 {
-    emit clicked_vchat(this->get_nick());
+    emit clicked_vchat(contact_nickname);
 }
 
 void VChatWidget::set_nick(QString text)

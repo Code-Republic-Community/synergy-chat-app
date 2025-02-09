@@ -21,6 +21,9 @@ public:
     MainPageWindow(QWidget *parent = nullptr);
     ~MainPageWindow() = default;
     void setLanguage();
+private:
+    void connections();
+
 
 private:
     ScrollWidget *scroll_widget;
@@ -31,11 +34,8 @@ private:
     HttpClient *client_main_page;
 
 //for search box
-    QStringList matched_contacts_list;
-    QStringList matched_other_users_list;
     QVector<VChatWidget*> matched_contacts;
     QVector<VChatWidget*> matched_other_users;
-
 
 // esqany login ylneluc contactnery stanalu u cuyc talu hamar
 private:
@@ -49,6 +49,11 @@ public slots:
 // /////////////////////////////////////////////////////////
 public slots:
     void clearDataOnLogout();
+    void handleContactReDonwnload();
+
+private:
+    void clear_matched_arrays();
+    void clear_contact_array();
 
 private slots:
     void handleSearch();

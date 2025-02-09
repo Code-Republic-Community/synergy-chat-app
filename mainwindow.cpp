@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(chat_pg, &ChatWidget::go_back_signal, this, &MainWindow::goToMainPg);
+    connect(profile_settings_pg,&MyProfile::logOutSiganl, main_pg, &MainPageWindow::handleContactReDonwnload);
 
 
     connect(settings_pg, &Settings::languageChanged, this, &MainWindow::change_language);

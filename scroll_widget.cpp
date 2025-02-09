@@ -3,6 +3,7 @@
 ScrollWidget::ScrollWidget(QWidget *parent)
     : QWidget(parent)
 {
+    createLineContainer();
     scroll = new QScrollArea(this);
     scroll->setWidgetResizable(true);
     change_sizes(50, 100, 300, 570);
@@ -19,48 +20,16 @@ ScrollWidget::ScrollWidget(QWidget *parent)
     scroll->setWidget(scroll_content);
 }
 
-void ScrollWidget::add_chat(VChatWidget *new_chat)
+void ScrollWidget::createLineContainer()
 {
-    all_chats.append(new_chat);
-}
-
-void ScrollWidget::show_chats()
-{
-    hide_search_chats();
-    clear_search_chats();
-    qDebug()<<"Show chats Scroll Widget";
-    contentLayout->setAlignment(Qt::AlignTop);
-    for (int i = 0; i < all_chats.size(); ++i) {
-        contentLayout->addWidget(all_chats[i]);
-        all_chats[i]->scroll_long_text(all_chats[i]->get_name());
-    }
-}
-
-void ScrollWidget::hide_chats()
-{
-    for (int i = 0; i < all_chats.size(); ++i) {
-        contentLayout->removeWidget(all_chats[i]);
-        all_chats[i]->setParent(nullptr);
-    }
-}
-
-void ScrollWidget::change_sizes(int x, int y, int w, int h)
-{
-    scroll->setGeometry(x, y, w, h);
-    scroll->resize(w, h);
-    scroll->setFixedSize(w, h);
-}
-
-void ScrollWidget::draw_line(QString text)
-{
-    lineContainer = new QWidget();
+    lineContainer = new QWidget;
     lineContainer->setFixedHeight(20);
 
     QHBoxLayout *lineLayout = new QHBoxLayout(lineContainer);
     lineLayout->setSpacing(5);
     lineLayout->setContentsMargins(10, 2, 10, 2);
 
-    QLabel *lineText = new QLabel(text);
+    QLabel *lineText = new QLabel("Unknown Contacts");
     lineText->setStyleSheet("font-weight: bold; font-size: 14px; padding: 0px; color: white;");
     lineText->setAlignment(Qt::AlignCenter);
 
@@ -79,16 +48,39 @@ void ScrollWidget::draw_line(QString text)
     lineLayout->addWidget(lineLeft);
     lineLayout->addWidget(lineText);
     lineLayout->addWidget(lineRight);
+}
 
+
+void ScrollWidget::change_sizes(int x, int y, int w, int h)
+{
+    scroll->setGeometry(x, y, w, h);
+    scroll->resize(w, h);
+    scroll->setFixedSize(w, h);
+}
+
+void ScrollWidget::draw_line()
+{
     contentLayout->addWidget(lineContainer);
+    lineContainer->show();
     scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+void ScrollWidget::remove_Line()
+{
+    contentLayout->removeWidget(lineContainer);
+    lineContainer->hide();
 }
 
 
 QWidget *ScrollWidget::getContentWidget() const
 {
     return scroll_content;
+}
+
+void ScrollWidget::add_chat(VChatWidget *new_chat)
+{
+    all_chats.append(new_chat);
 }
 
 void ScrollWidget::add_matched_contact(VChatWidget *chat)
@@ -101,60 +93,94 @@ void ScrollWidget::add_matched_other_users(VChatWidget *chat)
     matched_other_users.push_back(chat);
 }
 
-void ScrollWidget::clear_search_chats()
+void ScrollWidget::show_chats()
 {
-    hide_search_chats();
-    for (auto chat : matched_contacts) {
-        delete chat;
-        chat = nullptr;
-    }
-    matched_contacts.resize(0);
-    for (auto chat : matched_other_users) {
-        delete chat;
-        chat = nullptr;
-    }
-    matched_other_users.resize(0);
-    contentLayout->removeWidget(lineContainer);
-}
-
-void ScrollWidget::show_search_chats()
-{
-    qDebug()<<"Show Matched contact Scroll Widget";
+    clear_chats();
+    qDebug()<<"Show chats Scroll Widget";
     contentLayout->setAlignment(Qt::AlignTop);
-    for (int i = 0; i < matched_contacts.size(); ++i)
-    {
-        contentLayout->addWidget(matched_contacts[i]);
-        matched_contacts[i]->scroll_long_text(matched_contacts[i]->get_name());
-    }
-    if(!matched_other_users.isEmpty())
-    {
-        draw_line("Unknown Contacts");
-    }
-    for (int i = 0; i < matched_other_users.size(); ++i)
-    {
-        contentLayout->addWidget(matched_other_users[i]);
-        matched_other_users[i]->scroll_long_text(matched_other_users[i]->get_name());
+    for (int i = 0; i < all_chats.size(); ++i) {
+        contentLayout->addWidget(all_chats[i]);
+        all_chats[i]->show();
+        all_chats[i]->scroll_long_text(all_chats[i]->get_name());
     }
 }
-
-void ScrollWidget::hide_search_chats()
-{
-    for (int i = 0; i < matched_contacts.size(); ++i) {
-        contentLayout->removeWidget(matched_contacts[i]);
-        matched_contacts[i]->setParent(nullptr);
-    }
-    for (int i = 0; i < matched_other_users.size(); ++i) {
-        contentLayout->removeWidget(matched_other_users[i]);
-        matched_other_users[i]->setParent(nullptr);
-    }
-}
-
 
 void ScrollWidget::clear_chats()
 {
-    for (auto chat : all_chats) {
-        delete chat;
-        chat = nullptr;
+    qDebug() << "Removing all chats from Scroll Widget";
+    for (auto* chat : all_chats) {
+        contentLayout->removeWidget(chat);
+        chat->hide();
     }
-    all_chats.resize(0);
 }
+
+void ScrollWidget::clear_search_chats()
+{
+    for (auto* chat : matched_contacts)
+    {
+        contentLayout->removeWidget(chat);
+        chat->hide();
+    }
+    remove_Line();
+    for (auto* chat : matched_other_users)
+    {
+        contentLayout->removeWidget(chat);
+        chat->hide();
+    }
+}
+
+
+void ScrollWidget::show_search_chats()
+{
+    contentLayout->setAlignment(Qt::AlignTop);
+    if (!matched_contacts.isEmpty()) {
+        qDebug() << "Show Matched contact Scroll Widget";
+        for (int i = 0; i < matched_contacts.size(); ++i) {
+            contentLayout->addWidget(matched_contacts[i]);
+            matched_contacts[i]->show();
+            matched_contacts[i]->scroll_long_text(matched_contacts[i]->get_name());
+        }
+    }
+    if (!matched_other_users.isEmpty()) {
+        qDebug() << "Show Matched Other Users Scroll Widget";
+
+        draw_line();
+
+        for (int i = 0; i < matched_other_users.size(); ++i) {
+            contentLayout->addWidget(matched_other_users[i]);
+            matched_other_users[i]->show();
+            matched_other_users[i]->scroll_long_text(matched_other_users[i]->get_name());
+        }
+    }
+}
+
+void ScrollWidget::delete_all_chats()
+{
+    qDebug() << "Deleting all chat widgets";
+
+    for (auto* chat : all_chats) {
+        contentLayout->removeWidget(chat);
+        delete chat;
+    }
+
+    all_chats.clear();
+}
+
+void ScrollWidget::delete_search_chats()
+{
+    qDebug() << "Deleting search chat widgets";
+
+    for (auto* chat : matched_contacts) {
+        contentLayout->removeWidget(chat);
+        delete chat;
+    }
+    matched_contacts.clear();
+
+    for (auto* chat : matched_other_users) {
+        contentLayout->removeWidget(chat);
+        delete chat;
+    }
+    matched_other_users.clear();
+}
+
+

@@ -64,34 +64,7 @@ MainPageWindow::MainPageWindow(QWidget *parent)
                                  "QPushButton:pressed {"
                                  "    background-color: rgba(142, 21, 222, 0.2);"
                                  "}");
-    connect(ProfileButton, &QPushButton::clicked, this, &MainPageWindow::handleProfileButton);
-    connect(SearchButton, &QPushButton::clicked, this, &MainPageWindow::handleSearch);
-    connect(searchBar, &QLineEdit::returnPressed, this, &MainPageWindow::handleSearch);
-    connect(this, &MainPageWindow::contact_successfully_added_to_scrollWidget, this, [this](){
-        auto ptr =  contacts.back();
-        scroll_widget->add_chat(ptr);
-        connect(ptr, &VChatWidget::clicked_vchat, this, &MainPageWindow::handle_vchat_click);
-        scroll_widget->show_chats();
-    });
-    connect(this, &MainPageWindow::matched_contact_or_other_user_added_successfully, this, [this](bool contact_or_otherUser){
-        if(contact_or_otherUser)
-        {
-            auto ptr = matched_contacts.back();
-            scroll_widget->add_matched_contact(ptr);
-            connect(ptr, &VChatWidget::clicked_vchat, this, [this](QString nickname) {
-                this->vchat_clicked_from_search_pg(nickname);
-            });
-        }
-        else
-        {
-            auto ptr = matched_other_users.back();
-            scroll_widget->add_matched_other_users(ptr);
-            connect(ptr, &VChatWidget::clicked_vchat, this, [this](QString nickname) {
-                this->vchat_clicked_from_search_pg(nickname);
-            });
-        }
-        scroll_widget->show_search_chats();
-    });
+    connections();
     setLanguage();
 }
 
@@ -101,54 +74,88 @@ void MainPageWindow::setLanguage()
     searchBar->setPlaceholderText(tr("search..."));
 }
 
+void MainPageWindow::connections()
+{
+    connect(ProfileButton, &QPushButton::clicked, this, &MainPageWindow::handleProfileButton);
+
+    connect(SearchButton, &QPushButton::clicked, this, &MainPageWindow::handleSearch);
+
+    connect(searchBar, &QLineEdit::returnPressed, this, &MainPageWindow::handleSearch);
+
+    connect(this, &MainPageWindow::contact_successfully_added_to_scrollWidget, this, [this](){
+        scroll_widget->clear_chats();
+        auto ptr =  contacts.back();
+        scroll_widget->add_chat(ptr);
+        connect(ptr, &VChatWidget::clicked_vchat, this, &MainPageWindow::handle_vchat_click);
+        scroll_widget->show_chats();
+    });
+
+    connect(this, &MainPageWindow::matched_contact_or_other_user_added_successfully, this, [this](bool contact_or_otherUser){
+        scroll_widget->clear_search_chats();
+        if(contact_or_otherUser)
+        {
+            auto ptr = matched_contacts.back();
+            scroll_widget->add_matched_contact(ptr);
+            qDebug()<<"Added matched contact to scroll widget"<<ptr ->get_nick();
+            connect(ptr, &VChatWidget::clicked_vchat, this, &MainPageWindow::vchat_clicked_from_search_pg);
+        }
+        else
+        {
+            auto ptr = matched_other_users.back();
+            scroll_widget->add_matched_other_users(ptr);
+            qDebug()<<"Added matched other user to scroll widget"<<ptr ->get_nick();
+            connect(ptr, &VChatWidget::clicked_vchat, this, &MainPageWindow::vchat_clicked_from_search_pg);
+        }
+        scroll_widget->show_search_chats();
+    });
+}
+
+
 void MainPageWindow::handle_vchat_click(QString nickname)
 {
+    qDebug() << "Opening chat with: " << nickname;
+    scroll_widget->clear_search_chats();
+    scroll_widget->delete_search_chats();
     emit vchat_clicked_from_main_pg(nickname);
 }
 
 void MainPageWindow::vchat_clicked_from_search_pg(QString nickname)
 {
-    // Hide and clear previous search results
-    scroll_widget->hide_chats();
-    scroll_widget->clear_chats();
-    scroll_widget->hide_search_chats();
-    scroll_widget->clear_search_chats();
-
-    // Check if user is already a contact
     if (contacts_nicknames_to_get_account_info.contains(nickname)) {
+        clear_matched_arrays();
         handle_vchat_click(nickname);
         get_contacts_info_and_show();
         return;
     }
 
-    // Send request to add the contact
     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
     connect(client_main_page, &HttpClient::responseReceived, this, [=](QByteArray responseData){
         QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
         QJsonObject jsonObject = jsonResponse.object();
-
         if (jsonObject.contains("message") && jsonObject["message"].toString() == "Contact added successfully to both users")
         {
             qDebug() << "Contact added successfully: " << nickname;
-
             contacts_nicknames_to_get_account_info.append(nickname);
-            get_contacts_info_and_show();  // Refresh contacts list
+            clear_matched_arrays();
+            scroll_widget->clear_chats();
+            scroll_widget->delete_all_chats();
             handle_vchat_click(nickname);
+            get_contacts_info_and_show();
         }
-        else {
+        else
+        {
             qDebug() << "Failed to add contact: " << jsonObject.value("detail").toString();
         }
     });
 
-    QString addContactRequestLink = "https://synergy-iauu.onrender.com/add_contact";
-    QJsonObject jsonData;
-    jsonData["user_id"] = Globals::getInstance().getUserId();
-    jsonData["contact_nickname"] = nickname;  // FIXED: Remove extra space
-
-    client_main_page->postRequest(addContactRequestLink, jsonData);
-
+    QString addContactRequestLink = "https://synergy-iauu.onrender.com/addcontact/" + Globals::getInstance().getUserId() + "/" + nickname;
+    // QJsonObject jsonData;
+    // jsonData["user_id"] = Globals::getInstance().getUserId();
+    // jsonData["contact_nickname"] = nickname;
+    qDebug() << "Sending request to:" << addContactRequestLink;
+    qDebug() << "Request body:" << nickname;
+    client_main_page->postRequest(addContactRequestLink, {});
 }
-
 
 void MainPageWindow::handleProfileButton()
 {
@@ -170,18 +177,48 @@ void MainPageWindow::handleIdReceiving()
 
 void MainPageWindow::clearDataOnLogout()
 {
-    contacts.clear();
+    clear_contact_array();
+    clear_matched_arrays();
+
     contacts_nicknames_to_get_account_info.clear();
     scroll_widget->clear_chats();
-    scroll_widget->hide_chats();
+    scroll_widget->clear_search_chats();
+    scroll_widget->delete_all_chats();
+    scroll_widget->delete_search_chats();
     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
 }
 
 
+//anuny miqich sxala pti liner remove all data on log out
+void MainPageWindow::handleContactReDonwnload()
+{
+    scroll_widget->clear_search_chats();
+    scroll_widget->delete_search_chats();
+    scroll_widget->clear_chats();
+    scroll_widget->delete_all_chats();
+    contacts_nicknames_to_get_account_info.clear();
+    clear_contact_array();
+    clear_matched_arrays();
+}
+
+void MainPageWindow::clear_matched_arrays()
+{
+    matched_contacts.clear();
+    matched_other_users.clear();
+    matched_contacts.resize(0);
+    matched_other_users.resize(0);
+}
+
+void MainPageWindow::clear_contact_array()
+{
+    contacts.clear();
+    contacts.resize(0);
+}
+
 // response stanaluc vercnum enq mer contactneri nickname ery ev gcum QStringList i mej vor heto avelacnenq mainpage um
 void MainPageWindow::handle_contact(QByteArray responseData)
 {
-    disconnect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_contact);
+    // disconnect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_contact);
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     if (jsonResponse.isNull() || !jsonResponse.isObject()) {
@@ -202,7 +239,6 @@ void MainPageWindow::handle_contact(QByteArray responseData)
 
     contacts_nicknames_to_get_account_info.clear();
     scroll_widget->clear_chats();
-    scroll_widget->hide_chats();
 
     QJsonArray contactsArray = contactsDoc.array();
     for (const QJsonValue &value : contactsArray) {
@@ -218,14 +254,10 @@ void MainPageWindow::handle_contact(QByteArray responseData)
     emit received_contacts();
 }
 
-
 void MainPageWindow::get_contacts_info_and_show()
 {
     int count_of_contacts = contacts_nicknames_to_get_account_info.size();
-    scroll_widget->hide_chats();
-    scroll_widget->clear_chats();
-    contacts.clear();
-
+    qDebug() << "count_of_contacts = contacts_nicknames_to_get_account_info.size();" << count_of_contacts;
     for (int i = 0; i < count_of_contacts; ++i)
     {
         disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
@@ -254,65 +286,165 @@ void MainPageWindow::get_contacts_info_and_show()
         client_main_page->getRequest(contactInfoGetRequestLink);
     }
 }
+// void MainPageWindow::get_contacts_info_and_show()
+// {
+//     int count_of_contacts = contacts_nicknames_to_get_account_info.size();
+//     qDebug() << "Fetching contact details for:" << count_of_contacts << " contacts";
+//     scroll_widget->clear_chats();
+//     scroll_widget->delete_all_chats();
+//     scroll_widget->clear_search_chats();
+//     scroll_widget->delete_search_chats();
+//     clear_contact_array();
+//     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
+//     connect(client_main_page, &HttpClient::responseReceived, this, [this](QByteArray responseData) {
+//         QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+//         if (!jsonDoc.isObject()) {
+//             qDebug() << "Invalid JSON response in get_contacts_info_and_show";
+//             return;
+//         }
+
+//         QJsonObject jsonObject = jsonDoc.object();
+//         QString name = jsonObject.value("name").toString();
+//         QString surname = jsonObject.value("surname").toString();
+//         QString nickname = jsonObject.value("nickname").toString();
+
+//         qDebug() << "Received Contact Info - Name:" << name << ", Surname:" << surname << "Nickname:" << nickname;
+
+//         contacts.emplaceBack(new VChatWidget(name, nickname, surname));
+
+//         emit contact_successfully_added_to_scrollWidget();
+//     });
+
+//     for (int i = 0; i < count_of_contacts; ++i)
+//     {
+//         QString contactInfoGetRequestLink = "https://synergy-iauu.onrender.com/getContactInfo/"
+//                                             + Globals::getInstance().getUserId() + "/" + contacts_nicknames_to_get_account_info[i];
+//         client_main_page->getRequest(contactInfoGetRequestLink);
+//     }
+// }
 
 
-
-//der patrast chi
 void MainPageWindow::handle_search_data(QByteArray responseData)
 {
     disconnect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_search_data);
-
     QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
     if (!jsonDoc.isObject()) {
         qWarning() << "Invalid JSON response.";
-        emit found_users_by_search(false);
         return;
     }
-
     QJsonObject jsonObject = jsonDoc.object();
+    clear_matched_arrays();
 
-    matched_contacts_list.clear();
-    matched_contacts.clear();
     if (jsonObject.contains("matched_contacts") && jsonObject["matched_contacts"].isArray())
     {
         QJsonArray matchedContactsArray = jsonObject["matched_contacts"].toArray();
         for (const QJsonValue &val : matchedContactsArray)
         {
-            if (val.isString())
+            if (val.isObject())
             {
-                matched_contacts_list.append(val.toString());
+                QJsonObject userObj = val.toObject();
+                QString nickname = userObj.value("nickname").toString();
+                QString name = userObj.value("name").toString();
+                QString surname = userObj.value("surname").toString();
+
+                VChatWidget* contactWidget = new VChatWidget(name,nickname, surname);
+                matched_contacts.append(contactWidget);
+                emit matched_contact_or_other_user_added_successfully(true);
             }
         }
     }
 
-    matched_other_users_list.clear();
-    matched_other_users.clear();
     if (jsonObject.contains("matched_other_users") && jsonObject["matched_other_users"].isArray())
     {
         QJsonArray matchedOtherUsersArray = jsonObject["matched_other_users"].toArray();
         for (const QJsonValue &val : matchedOtherUsersArray)
         {
-            if (val.isString())
+            if (val.isObject())
             {
-                matched_other_users_list.append(val.toString());
+                QJsonObject userObj = val.toObject();
+                QString nickname = userObj.value("nickname").toString();
+                QString name = userObj.value("name").toString();
+                QString surname = userObj.value("surname").toString();
+
+                VChatWidget* userWidget = new VChatWidget(name,nickname, surname);
+                matched_other_users.append(userWidget);
+                emit matched_contact_or_other_user_added_successfully(false);
             }
         }
     }
 
-    qDebug() << "Matched Contacts:" << matched_contacts_list;
-    qDebug() << "Matched Other Users:" << matched_other_users_list;
+    qDebug() << "Matched Contacts:" << matched_contacts.size();
+    qDebug() << "Matched Other Users:" << matched_other_users.size();
 
-    if (matched_contacts_list.isEmpty() && matched_other_users_list.isEmpty())
+    if (!(matched_contacts.isEmpty() && matched_other_users.isEmpty()))
     {
-        emit found_users_by_search(false);
-    }
-    else
-    {
-        emit found_users_by_search(true);
+
+        searchBar->setText("");
+        clear_contact_array();
+        scroll_widget->clear_chats();
+        scroll_widget->show_search_chats();
     }
 }
 
+// void MainPageWindow::handle_search_data(QByteArray responseData)
+// {
+//     disconnect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_search_data);
+//     QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+//     if (!jsonDoc.isObject()) {
+//         qWarning() << "Invalid JSON response.";
+//         return;
+//     }
+//     QJsonObject jsonObject = jsonDoc.object();
 
+//     // Clear matched arrays before adding new results
+//     clear_matched_arrays();
+
+//     if (jsonObject.contains("matched_contacts") && jsonObject["matched_contacts"].isArray())
+//     {
+//         QJsonArray matchedContactsArray = jsonObject["matched_contacts"].toArray();
+//         for (const QJsonValue &val : matchedContactsArray)
+//         {
+//             if (val.isObject())
+//             {
+//                 QJsonObject userObj = val.toObject();
+//                 QString nickname = userObj.value("nickname").toString();
+//                 QString name = userObj.value("name").toString();
+//                 QString surname = userObj.value("surname").toString();
+
+//                 VChatWidget* contactWidget = new VChatWidget(name,nickname, surname);
+//                 matched_contacts.append(contactWidget);
+//                 emit matched_contact_or_other_user_added_successfully(true);
+//             }
+//         }
+//     }
+
+//     if (jsonObject.contains("matched_other_users") && jsonObject["matched_other_users"].isArray())
+//     {
+//         QJsonArray matchedOtherUsersArray = jsonObject["matched_other_users"].toArray();
+//         for (const QJsonValue &val : matchedOtherUsersArray)
+//         {
+//             if (val.isObject())
+//             {
+//                 QJsonObject userObj = val.toObject();
+//                 QString nickname = userObj.value("nickname").toString();
+//                 QString name = userObj.value("name").toString();
+//                 QString surname = userObj.value("surname").toString();
+
+//                 VChatWidget* userWidget = new VChatWidget(name,nickname, surname);
+//                 matched_other_users.append(userWidget);
+//                 emit matched_contact_or_other_user_added_successfully(false);
+//             }
+//         }
+//     }
+
+//     qDebug() << "Matched Contacts:" << matched_contacts.size();
+//     qDebug() << "Matched Other Users:" << matched_other_users.size();
+
+//     if (!(matched_contacts.isEmpty() && matched_other_users.isEmpty()))
+//     {
+//         searchBar->setText("");
+//     }
+// }
 
 
 void MainPageWindow::handleSearch()
@@ -320,66 +452,6 @@ void MainPageWindow::handleSearch()
     QString searchText = searchBar->text();
     if (!searchText.isEmpty())
     {
-        connect(this, &MainPageWindow::found_users_by_search,this, [this](bool yes_or_not){
-            if(yes_or_not)
-            {
-                scroll_widget->hide_chats();
-                scroll_widget->clear_search_chats();
-
-                if(!matched_contacts_list.isEmpty())
-                {
-                    matched_contacts.clear();
-                    matched_contacts.resize(0);
-                    for(int i = 0; i < matched_contacts_list.size(); ++i)
-                    {
-                        disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
-
-                        connect(client_main_page, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
-                            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
-                            if (!jsonDoc.isObject()) {
-                                qDebug() << "Invalid JSON response in get_contacts_info_and_show";
-                                return;
-                            }
-                            QJsonObject jsonObject = jsonDoc.object();
-                            QString name = jsonObject.value("name").toString();
-                            QString surname = jsonObject.value("surname").toString();
-                            QString nickname = jsonObject.value("nickname").toString();
-                            matched_contacts.emplaceBack(new VChatWidget(name, nickname, surname));
-                            emit matched_contact_or_other_user_added_successfully(true);
-                        });
-                        QString contactInfoGetRequestLink = "https://synergy-iauu.onrender.com/getContactInfo/"
-                                                            + Globals::getInstance().getUserId() + "/" + matched_contacts_list[i];
-                        client_main_page->getRequest(contactInfoGetRequestLink);
-                    }
-                }
-                if(!matched_other_users_list.isEmpty())
-                {
-                    matched_other_users.clear();
-                    matched_other_users.resize(0);
-                    for(int i = 0; i < matched_other_users_list.size(); ++i)
-                    {
-                        disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
-
-                        connect(client_main_page, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
-                            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
-                            if (!jsonDoc.isObject()) {
-                                qDebug() << "Invalid JSON response in get_contacts_info_and_show";
-                                return;
-                            }
-                            QJsonObject jsonObject = jsonDoc.object();
-                            QString name = jsonObject.value("name").toString();
-                            QString surname = jsonObject.value("surname").toString();
-                            QString nickname = jsonObject.value("nickname").toString();
-                            matched_other_users.emplaceBack(new VChatWidget(name, nickname, surname));
-                            emit matched_contact_or_other_user_added_successfully(false);
-                        });
-                        QString contactInfoGetRequestLink = "https://synergy-iauu.onrender.com/getContactInfo/"
-                                                            + Globals::getInstance().getUserId() + "/" + matched_other_users_list[i];
-                        client_main_page->getRequest(contactInfoGetRequestLink);
-                    }
-                }
-            }
-        });
         qDebug() << "Search query:" << searchText;
         QString searchLink = "https://synergy-iauu.onrender.com/search/"
                              + Globals::getInstance().getUserId() + "/" + searchText;
@@ -391,6 +463,29 @@ void MainPageWindow::handleSearch()
         qDebug() << "Search query is empty";
     }
 }
+// void MainPageWindow::handleSearch()
+// {
+//     QString searchText = searchBar->text();
+//     if (!searchText.isEmpty())
+//     {
+//         qDebug() << "Search query:" << searchText;
+
+//         // Clear previous search results before making a new request
+//         scroll_widget->clear_search_chats();
+//         scroll_widget->delete_search_chats();
+
+//         QString searchLink = "https://synergy-iauu.onrender.com/search/"
+//                              + Globals::getInstance().getUserId() + "/" + searchText;
+//         connect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_search_data, Qt::UniqueConnection);
+//         client_main_page->getRequest(searchLink);
+//     }
+//     else
+//     {
+//         qDebug() << "Search query is empty";
+//     }
+// }
+
+
 
 void MainPageWindow::keyPressEvent(QKeyEvent *event)
 {

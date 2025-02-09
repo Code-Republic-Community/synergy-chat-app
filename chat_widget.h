@@ -13,6 +13,7 @@
 #include "httpclient.h"
 #include "scroll_widget.h"
 #include "v_chat_widget.h"
+#include <QTimer>
 
 class ChatWidget : public QWidget
 {
@@ -36,10 +37,12 @@ private:
     HttpClient *chat_client;
     int x;
     int y;
+    QTimer *chatReloadTimer;
 
 private:
     void addMessage(const QString &message, bool isOutgoing);
     void clearMessages();
+    void loadChat(QString nickname);
 signals:
     void other_profile_signal(QString nick);
     void go_back_signal();
