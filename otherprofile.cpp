@@ -1,9 +1,9 @@
 #include "otherprofile.h"
 #include <QDebug>
-#include <QPixmap>
 #include <QJsonDocument>
-#include "v_chat_widget.h"
+#include <QPixmap>
 #include "globals.h"
+#include "v_chat_widget.h"
 
 OtherProfile::OtherProfile(QWidget *parent)
     : QWidget(parent)
@@ -21,12 +21,18 @@ void OtherProfile::setLanguage()
 {
     qDebug() << "Setting text in Other Proffile";
     goBackButton->setText(tr("Back"));
+    if (nameSmallLabel) nameSmallLabel->setText(tr("Name"));
+    if (surnameSmallLabel) surnameSmallLabel->setText(tr("Surname"));
+    if (nicknameSmallLabel) nicknameSmallLabel->setText(tr("Nickname"));
 }
 
-void OtherProfile::handleDataFromChat(QString nick)
+void OtherProfile::handleDataFromChat(QString nickname, QString name, QString surname , QPixmap photo)
 {
     disconnect(client_other_profile, &HttpClient::responseReceived, nullptr, nullptr);
-
+    nameLabel->setText(name);
+    surnameLabel->setText(surname);
+    nicknameLabel->setText("@" + nickname);
+    profilePhoto ->setPixmap(VChatWidget::cut_photo(photo, 100));
     connect(client_other_profile, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
         QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
         if (!jsonDoc.isObject()) {
@@ -35,52 +41,63 @@ void OtherProfile::handleDataFromChat(QString nick)
         }
 
         QJsonObject jsonObject = jsonDoc.object();
-        QString name = jsonObject.value("name").toString();
-        QString surname = jsonObject.value("surname").toString();
-        QString nickname = jsonObject.value("nickname").toString();
-        nameLabel->setText(name);
-        surnameLabel->setText(surname);
-        nicknameLabel->setText("@" + nickname);
+        QString _name = jsonObject.value("name").toString();
+        QString _surname = jsonObject.value("surname").toString();
+        QString _nickname = jsonObject.value("nickname").toString();
+        QString _encodedphoto = jsonObject.value("profile_photo").toString();
+        QPixmap _decodedphoto(Globals::getInstance().decodeBase64ToPixmap(_encodedphoto));
+        nameLabel->setText(_name);
+        surnameLabel->setText(_surname);
+        nicknameLabel->setText("@" + _nickname);
+        profilePhoto->setPixmap(VChatWidget::cut_photo(_decodedphoto, 100));
     });
     QString contactInfoGetRequestLink = "https://synergy-iauu.onrender.com/getContactInfo/"
-                                        + Globals::getInstance().getUserId() + "/" + nick;
+                                        + Globals::getInstance().getUserId() + "/" + nickname;
     client_other_profile->getRequest(contactInfoGetRequestLink);
+
 }
 
 void OtherProfile::init()
 {
     client_other_profile = new HttpClient;
     profilePhoto = new QLabel(this);
-    nameLabel = new QLabel(this);
-    surnameLabel = new QLabel(this);
-    nicknameLabel = new QLabel(this);
+    createLabelPair(tr("Name"), nameSmallLabel, nameLabel);
+    createLabelPair(tr("Surname"), surnameSmallLabel, surnameLabel);
+    createLabelPair(tr("Nickname"), nicknameSmallLabel, nicknameLabel);
     goBackButton = new QPushButton(this);
 }
 
 void OtherProfile::setup()
 {
     nameLabel->setText("John");
-    surnameLabel->setText("doe");
+    surnameLabel->setText("Doe");
     nicknameLabel->setText("@johndoe");
+
+    setupLabelPosition(nameSmallLabel, nameLabel, 150);
+    setupLabelPosition(surnameSmallLabel, surnameLabel, 210);
+    setupLabelPosition(nicknameSmallLabel, nicknameLabel, 270);
+
 
     goBackButton->setGeometry(10, 10, 80, 40);
     profilePhoto->setGeometry(150, 10, 100, 100);
 
-    nameLabel->setGeometry(20, 130, 360, 30);
-    surnameLabel->setGeometry(20, 170, 360, 30);
-    nicknameLabel->setGeometry(20, 210, 360, 30);
+    profilePhoto->setPixmap(VChatWidget::cut_photo(QPixmap(":/pngs/panda.jpg"), 100));
+}
 
-    QPixmap profilePic("");
-    if (!profilePic.isNull())
-    {
-        profilePhoto->setPixmap(
-            VChatWidget::cut_photo(":/pngs/panda.jpg", 100)); // stex petqa lini back ic ekac nkary
-    }
-    else
-    {
-        qDebug() << "Failed to load profile photo. Using default.";
-        profilePhoto->setPixmap(VChatWidget::cut_photo(":/pngs/panda.jpg", 100));
-    }
+void OtherProfile::createLabelPair(const QString &smallText, QLabel *&smallLabel, QLabel *&mainLabel)
+{
+    smallLabel = new QLabel(smallText, this);
+    smallLabel->setStyleSheet("font-size: 10px; color: white;");
+
+    mainLabel = new QLabel(this);
+    mainLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
+}
+
+void OtherProfile::setupLabelPosition(QLabel *smallLabel, QLabel *mainLabel, int y)
+{
+
+    smallLabel->setGeometry(10, y - 17, 380, 15);
+    mainLabel->setGeometry(10, y, 380, 30);
 }
 
 void OtherProfile::styling()
@@ -121,5 +138,7 @@ void OtherProfile::styling()
 
 void OtherProfile::connections()
 {
-    connect(goBackButton, &QPushButton::clicked, this, [this]() { emit goBackSignal(); });
+    connect(goBackButton, &QPushButton::clicked, this, [this]() {
+        emit goBackSignal();
+    });
 }

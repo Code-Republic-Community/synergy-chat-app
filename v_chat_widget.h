@@ -17,14 +17,15 @@ class VChatWidget : public QPushButton
 {
     Q_OBJECT
 public:
-    VChatWidget(QString name_text, QString nick_text, QString surname_text, QWidget *parent = nullptr);
+    VChatWidget(QString name_text,
+                QString nick_text,
+                QString surname_text,
+                QPixmap profile_pohoto,
+                QWidget *parent = nullptr);
     ~VChatWidget() = default;
 
 signals:
-    void clicked_vchat(QString nick);
-
-protected:
-    // void mousePressEvent(QMouseEvent *event) override;
+    void clicked_vchat(QString nickname, QString name, QString surname, QPixmap photo);
 
 public:
     void scroll_long_text(QString text);
@@ -37,10 +38,12 @@ private:
     QLabel *pic;
     QLabel *name;
     QLabel *nick;
+
 private:
     QString contact_nickname;
     QString contact_name;
     QString contact_surname;
+    QPixmap contact_photo;
 
 public:
     QString get_nick() const;
@@ -49,16 +52,15 @@ public:
 
     void set_nick(QString text);
     void set_name(QString text);
-    void set_user_pic(const QString &pic_path);
-    static QPixmap cut_photo(const QString &pic_path, int size);
+    void set_surname(QString text);
+    void set_photo(QPixmap profile_photo);
+    static QPixmap cut_photo(QPixmap profile_photo, int size);
 
 private:
     QTimer *timer;
     int position;
     QString scroll_text;
 
-private slots:
-    void handle_click();
 };
 
 #endif // V_CHAT_WIDGET_H

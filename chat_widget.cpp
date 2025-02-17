@@ -1,12 +1,12 @@
 // messagesFrame->setFixedSize(380, 570);
 
 #include "chat_widget.h"
-#include "globals.h"
-#include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QTimer>
+#include "globals.h"
 
-ChatWidget::ChatWidget(QString nick, QWidget *parent)
+ChatWidget::ChatWidget(QWidget *parent)
     : QWidget(parent)
 {
     this->setFixedSize(400, 700);
@@ -16,9 +16,6 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
 
     chatReloadTimer = new QTimer(this);
     chatReloadTimer->setInterval(10000);
-
-    v_user = new VChatWidget("name", nick, "surname", this);
-    v_user->setGeometry(120, 630, 272, 60);
 
     send_btn = new QPushButton(this);
     send_btn->setGeometry(340, 10, 50, 55);
@@ -42,37 +39,24 @@ ChatWidget::ChatWidget(QString nick, QWidget *parent)
     line->setObjectName("messageInput");
     line->setGeometry(10, 10, 325, 55);
 
-    connect(v_user, &VChatWidget::clicked_vchat, this, &ChatWidget::handle_profile_signal);
     connect(backButton, &QPushButton::clicked, this, &ChatWidget::handle_go_back);
     connect(send_btn, &QPushButton::clicked, this, &ChatWidget::sendMessage);
     connect(line, &QLineEdit::returnPressed, this, &ChatWidget::handle_line);
-    connect(chatReloadTimer, &QTimer::timeout, this, [=]() {
-        loadChat(v_user->get_nick());
-    });
-    chatReloadTimer->start();
-    loadChat(nick);
     setLanguage();
 }
 
-void ChatWidget::setNick(QString nick)
-{
-    clearMessages();
-    v_user->set_nick(nick);
-    loadChat(nick);
-}
 
-QString ChatWidget::getNick() const
+void ChatWidget::handle_profile_signal(QString nickname, QString name, QString surname, QPixmap photo)
 {
-    return v_user->get_nick();
-}
-
-void ChatWidget::handle_profile_signal(QString nick)
-{
-    emit other_profile_signal(nick);
+    emit other_profile_signal(nickname, name, surname, photo);
 }
 
 void ChatWidget::handle_go_back()
 {
+    disconnect(v_user, &VChatWidget::clicked_vchat, this, &ChatWidget::handle_profile_signal);
+    disconnect(chatReloadTimer, &QTimer::timeout, nullptr, nullptr);
+    delete v_user;
+    clearMessages();
     emit go_back_signal();
 }
 
@@ -81,6 +65,20 @@ void ChatWidget::setLanguage()
     send_btn->setText(tr("✉️"));
     backButton->setText(tr("Back"));
     line->setPlaceholderText(tr("Type message..."));
+}
+
+void ChatWidget::handleDataFromMainPage(QString nickname, QString name, QString surname, QPixmap photo)
+{
+    qDebug() <<"handleDataFromMainPage(QString nickname, QString name, QString surname, QPixmap photo)";
+    v_user = new VChatWidget(name, nickname, surname, photo, this);
+    v_user->setGeometry(120, 630, 272, 60);
+    v_user->show();
+    connect(v_user, &VChatWidget::clicked_vchat, this, &ChatWidget::handle_profile_signal);
+    connect(chatReloadTimer, &QTimer::timeout, this, [=]() {
+        loadChat(v_user->get_nick());
+    });
+    chatReloadTimer->start();
+    loadChat(v_user->get_nick());
 }
 
 void ChatWidget::sendMessage(bool isOutgoing)
@@ -108,7 +106,6 @@ void ChatWidget::sendMessage(bool isOutgoing)
     });
 
     chat_client->postRequest(url, jsonData);
-
 }
 
 void ChatWidget::addMessage(const QString &message_text, bool isOutgoing)
@@ -130,7 +127,6 @@ void ChatWidget::addMessage(const QString &message_text, bool isOutgoing)
     contentWidget->setMinimumHeight(newContentHeight);
 }
 
-
 void ChatWidget::clearMessages()
 {
     QList<QWidget *> children = contentWidget->findChildren<QWidget *>();
@@ -143,7 +139,6 @@ void ChatWidget::clearMessages()
 
 void ChatWidget::loadChat(QString nickname)
 {
-    clearMessages();
     QString url_path = QString("https://synergy-iauu.onrender.com/getMessageHistory/%1/%2")
                            .arg(Globals::getInstance().getUserId())
                            .arg(nickname);
@@ -167,9 +162,10 @@ void ChatWidget::loadChat(QString nickname)
 
         QJsonArray messagesArray = jsonObject["conversation"].toArray();
         QString currentUserId = Globals::getInstance().getUserId();
-
+        clearMessages();
         for (const QJsonValue &messageVal : messagesArray) {
-            if (!messageVal.isObject()) continue;
+            if (!messageVal.isObject())
+                continue;
 
             QJsonObject messageObj = messageVal.toObject();
             QString sender = messageObj["sender"].toString();
@@ -188,9 +184,8 @@ void ChatWidget::handle_line()
     QString searchText = line->text();
     if (!searchText.isEmpty()) {
         qDebug() << "Search query:" << searchText;
-        //chat filtration, request
-        // if (scroll_widget->s)
-        } else {
+    }
+    else {
         qDebug() << "Search query is empty";
     }
 }

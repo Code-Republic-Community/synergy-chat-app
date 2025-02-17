@@ -81,11 +81,43 @@
                 <source>Back</source>
                 <translation>Back</translation>
             </message>
+            <message>
+                <source>Namե</source>
+                <translation>Name</translation>
+            </message>
+            <message>
+                <source>Surname</source>
+                <translation>Surname</translation>
+            </message>
+            <message>
+                <source>Nickname</source>
+                <translation>Nickname</translation>
+            </message>
+            <message>
+                <source>Email</source>
+                <translation>Email</translation>
+            </message>
+            <message>
+                <source>Date of Birth</source>
+                <translation>Date of Birth</translation>
+            </message>
 
         <name>OtherProfile</name>
             <message>
                 <source>Back</source>
                 <translation>Back</translation>
+            </message>
+            <message>
+                <source>Name</source>
+                <translation>Name</translation>
+            </message>
+            <message>
+                <source>Surname</source>
+                <translation>Surname</translation>
+            </message>
+            <message>
+                <source>Nickname</source>
+                <translation>Nickname</translation>
             </message>
 
         <name>WelcomePg</name>
@@ -133,16 +165,6 @@
         <translation>Login</translation>
     </message>
     <message>
-        <source>Welcome to the Login Page.
-    Enter your username and password.
-    If you don't have an account, you can register by clicking 'Register'.
-    Your information is safe with us.</source>
-        <translation>Welcome to the Login Page.
-        Enter your username and password.
-        If you don't have an account, you can register by clicking 'Register'.
-        Your information is safe with us.</translation>
-    </message>
-    <message>
         <source>Username</source>
         <translation>Username</translation>
     </message>
@@ -163,8 +185,8 @@
         <translation>register</translation>
     </message>
     <message>
-        <source>Prev</source>
-        <translation>Prev</translation>
+        <source>Back</source>
+        <translation>Back</translation>
     </message>
     <message>
         <source>Next</source>
@@ -174,7 +196,14 @@
         <source>Both must be complementary</source>
         <translation>Both must be complementary</translation>
     </message>
-
+    <message>
+        <source>Register</source>
+        <translation>Register</translation>
+    </message>
+    <message>
+        <source>Enter your username and password. If you don't have an account, register below.</source>
+        <translation>Enter your username and password. If you don't have an account, register below.</translation>
+    </message>
 <name>Verification</name>
     <message>
         <source>Verification code sent to your email: *****@gmail.com</source>
@@ -197,11 +226,6 @@
         <translation>Back</translation>
     </message>
 
-<name>Verification</name>
-    <message>
-        <source>Back</source>
-        <translation>Back</translation>
-    </message>
 
 <name>ChatWidget</name>
     <message>
@@ -223,7 +247,7 @@
         <translation>search...</translation>
     </message>
 
-        <name>Registration</name>
+<name>Registration</name>
             <message>
                 <source>John</source>
                 <translation>John</translation>
@@ -296,6 +320,18 @@
             <message>
                 <source>Register</source>
                 <translation>Register</translation>
+            </message>
+            <message>
+                <source>Welcome to DeltaSynergy! A place for meaningful</source>
+                <translation>Welcome to DeltaSynergy! A place for meaningful</translation>
+            </message>
+            <message>
+                <source>conversations. Connect with your friends and family,</source>
+                <translation>conversations. Connect with your friends and family,</translation>
+            </message>
+            <message>
+                <source>build your community, and deepen your interests.</source>
+                <translation>build your community, and deepen your interests.</translation>
             </message>
 
 

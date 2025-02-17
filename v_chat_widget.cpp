@@ -1,12 +1,12 @@
 #include "v_chat_widget.h"
 
-VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_text, QWidget *parent)
+VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_text,QPixmap profile_pohoto, QWidget *parent)
     : QPushButton(parent)
 {
     contact_name = name_text;
     contact_nickname = nick_text;
     contact_surname = surname_text;
-    // this->setFixedSize(300, 60);
+    contact_photo = profile_pohoto;
     this->setMinimumSize(200, 60);
     this->setMaximumSize(300, 60);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -14,7 +14,6 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
 
     QFrame *container = new QFrame();
     container->setStyleSheet(
-        // "background-color: black;"
         "border: 0px solid white;"
         "border-radius: 10px;");
     container->setFixedSize(200, 60);
@@ -28,7 +27,6 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
     name = new QLabel();
     name->setStyleSheet("color: white; font-size: 12px; border: none;");
     name->setAlignment(Qt::AlignLeft);
-    // name->setFixedWidth(50);
     name->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     nick = new QLabel();
@@ -37,11 +35,10 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
     nick->setAlignment(Qt::AlignRight);
 
     pic = new QLabel();
-    QPixmap avatarImage("C:\\Users\\aregm_\\Qt_projects\\MainPage\\images\\avatar.png");
-    pic->setPixmap(avatarImage.scaled(40, 40, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    pic->setFixedSize(40, 40);
     pic->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    pic->setStyleSheet("border: 0px");
+    pic->setPixmap(cut_photo(contact_photo, 40));
+    pic->setFixedSize(40, 40);
+    pic->setStyleSheet("border: 0px;");
 
     layout->setSpacing(10);
     layout->addWidget(name);
@@ -58,12 +55,10 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
     timer = nullptr;
     position = 0;
 
-    pic->setPixmap(cut_photo(":/pngs/panda", 40));
-    pic->setFixedSize(40, 40);
-    pic->setStyleSheet("border: 0px;");
-
     setLanguage(name_text, nick_text);
-    connect(this, &QPushButton::clicked, this, &VChatWidget::handle_click);
+    connect(this, &QPushButton::clicked, this, [this](){
+        emit clicked_vchat(contact_nickname, contact_name, contact_surname, contact_photo);
+    });
 }
 
 void VChatWidget::scroll_long_text(QString text)
@@ -98,13 +93,13 @@ void VChatWidget::set_name(QString text)
     contact_name = text;
 }
 
-QPixmap VChatWidget::cut_photo(const QString &pic_path, int size)
+QPixmap VChatWidget::cut_photo(QPixmap profile_photo, int size)
 {
-    QPixmap avatar(pic_path);
+    QPixmap avatar(profile_photo);
 
     if (avatar.isNull()) {
-        qDebug() << "Failed to load image: " << pic_path;
-        std::exit(0);
+        qDebug() << "Failed to load image: ";
+        avatar = QPixmap(":/pngs/panda");
     }
 
     double borderThickness = 2.2;
@@ -133,11 +128,6 @@ QPixmap VChatWidget::cut_photo(const QString &pic_path, int size)
     painter.drawPath(path);
 
     return triangle;
-}
-
-void VChatWidget::handle_click()
-{
-    emit clicked_vchat(contact_nickname);
 }
 
 void VChatWidget::set_nick(QString text)

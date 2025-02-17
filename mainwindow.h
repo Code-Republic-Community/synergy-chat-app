@@ -34,12 +34,14 @@ private:
     Verification *verification_pg;
     OtherProfile *other_profile_pg;
 
+
+
 private slots:
     void goToSignIn();
     void goToRegPg();
     void goToWelcomePg();
     void goToMainPg();
-    void goToChatPg(QString nick);
+    void goToChatPg();
     void goToProfileSettingsPg();
     void goToSettings();
     void goToVerificationPg();

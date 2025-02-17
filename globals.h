@@ -2,7 +2,7 @@
 #define GLOBALS_H
 #include <QPair>
 #include <QString>
-
+#include <QPixmap>
 class Globals
 {
 private:
@@ -12,7 +12,8 @@ public:
     static Globals &getInstance();
     const QString &getUserId();
     void setUserID(const QString &id);
-
+    QPixmap decodeBase64ToPixmap(const QString &base64String);
+    QString encodeImageToBase64(const QPixmap &pixmap);
 private:
     QPair<QString, QString> comboBoxStyle;
     QPair<QString, QString> buttonStyle;

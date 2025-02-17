@@ -19,22 +19,26 @@ Registration::Registration(QWidget *parent)
     valids[4] = true;
     client_registration = new HttpClient();
     centralWidget = new QWidget(this);
-    centralWidget->resize(this->size());
+
 
     mainLayout = new QVBoxLayout;
 
-    topLabel = new QLabel;
+    topLabel = new QLabel(this);
     topLabel->setStyleSheet("QLabel { font-size: 20px; }");
-    topLabel->move(150, 200);
+    topLabel->move(150, 50);
     topLabel->setAlignment(Qt::AlignCenter);
-    smallText = new QLabel;
+
+    smallText = new QLabel(this);
+    smallText->setGeometry(50, 30 + topLabel->height(), 300, 100);
     smallText->setStyleSheet("QLabel { font-size: 10px; }");
+    smallText->setWordWrap(true);
+    smallText->setAlignment(Qt::AlignCenter);
+
+    centralWidget->setGeometry(0, smallText->y() + smallText->height(), 400, 700 - smallText->y()-smallText->height());
+
     topLayout = new QVBoxLayout;
     middleLayout = new QHBoxLayout;
     bottomLayout = new QHBoxLayout;
-
-    topLayout->addWidget(topLabel, 0, Qt::AlignTop | Qt::AlignHCenter);
-    topLayout->addWidget(smallText, 0, Qt::AlignTop | Qt::AlignHCenter);
 
     formLayout = new QFormLayout;
 
@@ -127,6 +131,8 @@ Registration::Registration(QWidget *parent)
     mainLayout->addLayout(bottomLayout);
     mainLayout->addStretch();
     centralWidget->setLayout(mainLayout);
+
+    setLanguage();
 
     connect(client_registration, &HttpClient::responseReceived, this, &Registration::handleUserId);
 
@@ -242,14 +248,10 @@ Registration::Registration(QWidget *parent)
     connect(termsOfUseButton, &QPushButton::clicked, this, [this]() {
         QMessageBox::information(this,
                                  "Terms of use",
-                                 "These terms of use is an agreement between Synergy (\"the "
-                                 "Company\", \"us\", \"we\" or \"our\") and "
-                                 "you (\"User\", \"you\" or \"your\"). This Agreement sets forth "
-                                 "the general terms and conditions of your use "
-                                 "of any Synergys products or services.");
+                                 "These terms of use is an agreement between Synergy Chat and"
+                                 "you that sets forth the general terms and conditions"
+                                 "of your use of any Synergys products or services.");
     });
-
-    setLanguage();
     save_texts();
 }
 
@@ -301,10 +303,9 @@ void Registration::handle_terms_of_use_btn()
 
 void Registration::setLanguage()
 {
-    smallText->setText(
-        tr("<p style='font-size: 10px;'>Welcome to DeltaSynergy! A place for meaningful"
-           " conversations. Connect with your friends and family, "
-           "build your community, and deepen your interests.</p>"));
+    smallText->setText(tr("Welcome to DeltaSynergy! A place for meaningful") + "\n" +
+                       tr("conversations. Connect with your friends and family,") + "\n" +
+                       tr("build your community, and deepen your interests."));
     topLabel->setText(tr("Registration"));
     nameField->setPlaceholderText(tr("John"));
     surnameField->setPlaceholderText(tr("Doe"));

@@ -163,7 +163,7 @@ void Login::init()
     m_dontHaveAnAccount->setGeometry(110, 460, 200, 150);
 
     m_register = new QLabel(this);
-    m_register->setGeometry(110, 543, 60, 20);
+    m_register->setGeometry(110, 543, 120, 20);
     m_register->setStyleSheet("color: blue; text-decoration: underline;");
     m_register->setCursor(Qt::PointingHandCursor);
 
@@ -193,8 +193,7 @@ void Login::setLanguage()
 {
     m_loginLabel->setText(tr("Login"));
 
-    m_underLoginText->setText(tr("Enter your username and password.\n"
-                                 "If you don't have an account, register below."));
+    m_underLoginText->setText(tr("Enter your username and password. If you don't have an account, register below."));
 
     m_usernameLabel->setText(tr("Username"));
     usernameLineEdit->setPlaceholderText(tr("Username"));
@@ -205,9 +204,9 @@ void Login::setLanguage()
     m_rememberMe->setText(tr("Remember Me"));
 
     m_dontHaveAnAccount->setText(tr("Don't have an account"));
-    m_register->setText("register");
+    m_register->setText(tr("Register"));
 
-    m_nextAndPrev->setLeftButton(tr("Prev"));
+    m_nextAndPrev->setLeftButton(tr("Back"));
     m_nextAndPrev->setRightButton(tr("Next"));
 
     m_forget->setText(tr("Both must be complementary"));

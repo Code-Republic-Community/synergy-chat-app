@@ -8,6 +8,7 @@
 #include <QUrl>
 #include "globals.h"
 #include "httpclient.h"
+#include "v_chat_widget.h"
 
 MyProfile::MyProfile(QWidget *parent)
     : QWidget(parent)
@@ -24,7 +25,6 @@ MyProfile::MyProfile(QWidget *parent)
 void MyProfile::handleProfileUpdate(QByteArray responseData)
 {
     qDebug() << "________________MYProfile request_________________";
-
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     if (jsonResponse.isNull() || !jsonResponse.isObject()) {
         qDebug() << "Invalid JSON response.";
@@ -39,22 +39,48 @@ void MyProfile::handleProfileUpdate(QByteArray responseData)
     QString name = jsonObject.value("name").toString();
     QString date_of_birth = jsonObject.value("date_of_birth").toString();
 
+    profilePhoto->setPixmap(VChatWidget::cut_photo(QPixmap(), 100));
+
     if (nameLabel) {
-        nameLabel->setText("Name: " + name);
+        nameLabel->setText(name);
     }
     if (surnameLabel) {
-        surnameLabel->setText(tr("Surname: ") + surname);
+        surnameLabel->setText(surname);
     }
     if (nicknameLabel) {
-        nicknameLabel->setText(tr("Nickname: ") + nickname);
+        nicknameLabel->setText(nickname);
     }
     if (emailLabel) {
-        emailLabel->setText(tr("Email: ") + email);
+        emailLabel->setText(email);
     }
     if (ageLabel) {
-        ageLabel->setText("Date of Birth: " + date_of_birth);
+        ageLabel->setText(date_of_birth);
     }
     oldDataMap = newDataMap;
+}
+
+void MyProfile::handleProfileEditing() //petqa grvi
+{
+//     QJsonObject jsonData;
+//     jsonData["name"] = newDataMap->value(0);
+//     jsonData["surname"] = newDataMap->value(1);
+//     jsonData["nickname"] = newDataMap->value(2);
+//     QUrl putRequestLink("https://synergy-iauu.onrender.com/edit_profile/" + Globals::getInstance().getUserId() + "/");
+//     connect(client_donwnload_profile_data, &HttpClient::responseReceived, this, [=](QByteArray responseData){
+//         QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+//         QJsonObject jsonObject = jsonResponse.object();
+//         if(jsonObject.contains("message") && jsonObject["message"].toString() == "Profile updated successfully")
+//         {
+//             oldDataMap->insert(2, newDataMap->take(2));
+//         }
+//         else
+//         {
+//             newDataMap->insert(2, oldDataMap->take(2));
+//             nicknameLabel->setText(newDataMap->take(2));
+//             nicknameEdit->setText(nicknameLabel->text());
+//         }
+//     });
+//     client_donwnload_profile_data->putRequest(putRequestLink, jsonData); //hat hat put anem vor nickname y zbaxvac lini mnacacy ashxati ...
 }
 
 void MyProfile::handleIdReceiving()
@@ -67,12 +93,9 @@ void MyProfile::handleIdReceiving()
     QUrl accountinfo(link + Globals::getInstance().getUserId());
     client_donwnload_profile_data->getRequest(accountinfo);
 }
+
 void MyProfile::setLanguage()
 {
-    if (changePhotoButton) {
-        changePhotoButton->setText(tr("Change"));
-    }
-
     if (goBackButton) {
         goBackButton->setText(tr("Back"));
     }
@@ -88,18 +111,31 @@ void MyProfile::setLanguage()
     if (editProfile) {
         editProfile->setText(tr("Edit"));
     }
+
+    if (nameSmallLabel) nameSmallLabel->setText(tr("Name"));
+    if (surnameSmallLabel) surnameSmallLabel->setText(tr("Surname"));
+    if (nicknameSmallLabel) nicknameSmallLabel->setText(tr("Nickname"));
+    if (emailSmallLabel) emailSmallLabel->setText(tr("Email"));
+    if (ageSmallLabel) ageSmallLabel->setText(tr("Date of Birth"));
 }
 
 void MyProfile::init()
 {
     client_donwnload_profile_data = new HttpClient();
+    is_photo_edited = false;
+    topLayoutContainer = new QWidget(this);
+    topLayout = new QHBoxLayout;
+
+    bottomLayoutContainer = new QWidget(this);
+    bottomLayout = new QHBoxLayout;
 
     profilePhoto = new QLabel(this);
-    nameLabel = new QLabel(this);
-    surnameLabel = new QLabel(this);
-    nicknameLabel = new QLabel(this);
-    emailLabel = new QLabel(this);
-    ageLabel = new QLabel(this);
+
+    createLabelPair(tr("Name"), nameSmallLabel, nameLabel);
+    createLabelPair(tr("Surname"), surnameSmallLabel, surnameLabel);
+    createLabelPair(tr("Nickname"), nicknameSmallLabel, nicknameLabel);
+    createLabelPair(tr("Email"), emailSmallLabel, emailLabel);
+    createLabelPair(tr("Date of Birth"), ageSmallLabel, ageLabel);
 
     nameEdit = new QLineEdit(this);
     surnameEdit = new QLineEdit(this);
@@ -116,50 +152,77 @@ void MyProfile::init()
 
     changePhotoButton = new QPushButton(this);
     changePhotoButton->hide();
-
+    editIcon = new QIcon(":/pngs/edit.ico");
     oldDataMap = new QMap<int, QString>();
     newDataMap = new QMap<int, QString>();
 }
 
 void MyProfile::setup()
 {
-    QString defaultPhotoPath = ":/pngs/panda.jpg";
+    QPixmap picture(":/pngs/panda.jpg");
+    topLayoutContainer ->setLayout(topLayout);
+    topLayoutContainer->setGeometry(0, 0, 400, 60);
+
+    bottomLayoutContainer->setLayout(bottomLayout);
+    bottomLayoutContainer->setGeometry(0, 640, 400, 60);
 
     nameLabel->setText("John");
     surnameLabel->setText("Doe");
     nicknameLabel->setText("@johndoe");
-    emailLabel->setText("johndoe2004@gmail.com");
+    emailLabel->setText("johndoe2@gmail.com");
     ageLabel->setText("02.02.2004");
 
     oldDataMap->insert(0, nameLabel->text());
     oldDataMap->insert(1, surnameLabel->text());
     oldDataMap->insert(2, nicknameLabel->text());
 
-    goBackButton->setGeometry(10, 10, 80, 40);
-    profilePhoto->setGeometry(150, 10, 100, 100);
-    editProfile->setGeometry(310, 10, 80, 40);
+    topLayout ->addWidget(goBackButton);
 
-    nameLabel->setGeometry(20, 130, 360, 30);
-    surnameLabel->setGeometry(20, 170, 360, 30);
-    nicknameLabel->setGeometry(20, 210, 360, 30);
-    emailLabel->setGeometry(20, 250, 360, 30);
-    ageLabel->setGeometry(20, 290, 360, 30);
+    topLayout ->addWidget(editProfile);
+
+    profilePhoto->setGeometry(150, 60, 100, 100);
+
+    topLayout->setAlignment(editProfile, Qt::AlignRight);
+    topLayout->setAlignment(goBackButton, Qt::AlignLeft);
+
+
+
+    setupLabelPosition(nameSmallLabel, nameLabel, 180);
+    setupLabelPosition(surnameSmallLabel, surnameLabel, 240);
+    setupLabelPosition(nicknameSmallLabel, nicknameLabel, 300);
+    setupLabelPosition(emailSmallLabel, emailLabel, 360);
+    setupLabelPosition(ageSmallLabel, ageLabel, 420);
 
     nameEdit->setGeometry(nameLabel->geometry());
     surnameEdit->setGeometry(surnameLabel->geometry());
     nicknameEdit->setGeometry(nicknameLabel->geometry());
 
-    gotoSettings->setGeometry(20, 640, 170, 40);
-    logOut->setGeometry(210, 640, 170, 40);
-    changePhotoButton->setGeometry(260, 70, 120, 40);
+    bottomLayout->addWidget(gotoSettings);
+    bottomLayout->addWidget(logOut);
 
-    QPixmap profilePic(VChatWidget::cut_photo(defaultPhotoPath, 100));
-    if (!profilePic.isNull()) {
-        profilePhoto->setPixmap(
-            profilePic.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    } else {
-        qDebug() << "Failed to load default profile photo.";
-    }
+    changePhotoButton->setIcon(*editIcon);
+    changePhotoButton->setGeometry(230, 120, 20, 20);
+    changePhotoButton->setIconSize(changePhotoButton->size());
+
+    oldDataMap->insert(0, nameLabel->text());
+    oldDataMap->insert(1, surnameLabel->text());
+    oldDataMap->insert(2, nicknameLabel->text());
+}
+
+void MyProfile::createLabelPair(const QString &smallText, QLabel *&smallLabel, QLabel *&mainLabel)
+{
+    smallLabel = new QLabel(smallText, this);
+    smallLabel->setStyleSheet("font-size: 10px; color: white;");
+
+    mainLabel = new QLabel(this);
+    mainLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
+}
+
+void MyProfile::setupLabelPosition(QLabel *smallLabel, QLabel *mainLabel, int y)
+{
+
+    smallLabel->setGeometry(10, y - 17, 380, 15);
+    mainLabel->setGeometry(10, y, 380, 30);
 }
 
 void MyProfile::styling()
@@ -216,13 +279,14 @@ void MyProfile::styling()
     gotoSettings->setStyleSheet(buttonStyle);
     logOut->setStyleSheet(buttonStyle);
     editProfile->setStyleSheet(buttonStyle);
-    changePhotoButton->setStyleSheet(buttonStyle);
-
     profilePhoto->setAlignment(Qt::AlignCenter);
 }
 
 void MyProfile::connections()
 {
+
+    connect(this, &MyProfile::settings_changed_successfully, this, &MyProfile::handleProfileEditing);
+
     connect(editProfile, &QPushButton::clicked, this, [this]() {
         if (isEditing) {
             saveChanges();
@@ -244,18 +308,11 @@ void MyProfile::connections()
         QString filePath = QFileDialog::getOpenFileName(this,
                                                         "Select Profile Photo",
                                                         QDir::homePath(),
-                                                        "Images (*.png *.xpm *.jpg *.jpeg *.bmp)");
+                                                        "Images (*.png *.jpg *.jpeg)");
 
         if (!filePath.isEmpty()) {
             QPixmap newProfilePic(filePath);
-            if (!newProfilePic.isNull()) {
-                profilePhoto->setPixmap(VChatWidget::cut_photo(filePath, 100));
-                qDebug() << "Profile photo changed to:" << filePath;
-            } else {
-                qDebug() << "Failed to load selected image.";
-            }
-        } else {
-            qDebug() << "No file selected.";
+            profilePhoto->setPixmap(VChatWidget::cut_photo(newProfilePic, 100));
         }
     });
 
@@ -291,10 +348,11 @@ void MyProfile::toggleEditMode(bool enable)
         newDataMap->insert(0, nameLabel->text());
         newDataMap->insert(1, surnameLabel->text());
         newDataMap->insert(2, nicknameLabel->text());
-
         editProfile->setText(tr("Save"));
         goBackButton->setText(tr("Cancel"));
-    } else {
+    }
+    else
+    {
         nameLabel->setText(oldDataMap->value(0));
         surnameLabel->setText(oldDataMap->value(1));
         nicknameLabel->setText(oldDataMap->value(2));
@@ -306,9 +364,9 @@ void MyProfile::toggleEditMode(bool enable)
 
 void MyProfile::saveChanges()
 {
+
     oldDataMap->insert(0, nameEdit->text());
     oldDataMap->insert(1, surnameEdit->text());
-    oldDataMap->insert(2, nicknameEdit->text());
 
     nameLabel->setText(nameEdit->text());
     surnameLabel->setText(surnameEdit->text());
@@ -317,6 +375,6 @@ void MyProfile::saveChanges()
     newDataMap->insert(0, nameEdit->text());
     newDataMap->insert(1, surnameEdit->text());
     newDataMap->insert(2, nicknameEdit->text());
-
+    emit settings_changed_successfully();
     toggleEditMode(false);
 }

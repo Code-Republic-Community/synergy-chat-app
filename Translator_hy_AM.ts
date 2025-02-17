@@ -81,11 +81,44 @@
                 <source>Back</source>
                 <translation>Հետ</translation>
             </message>
+            <message>
+                <source>Name</source>
+                <translation>Անուն</translation>
+            </message>
+            <message>
+                <source>Surname</source>
+                <translation>Ազգանուն</translation>
+            </message>
+            <message>
+                <source>Nickname</source>
+                <translation>Մականուն</translation>
+            </message>
+            <message>
+                <source>Email</source>
+                <translation>Էլ. փոստ</translation>
+            </message>
+            <message>
+                <source>Date of Birth</source>
+                <translation>Ծննդյան ամսաթիվ</translation>
+            </message>
+
 
         <name>OtherProfile</name>
             <message>
                 <source>Back</source>
                 <translation>Հետ</translation>
+            </message>
+            <message>
+                <source>Name</source>
+                <translation>Անուն</translation>
+            </message>
+            <message>
+                <source>Surname</source>
+                <translation>Ազգանուն</translation>
+            </message>
+            <message>
+                <source>Nickname</source>
+                <translation>Օգտանուն</translation>
             </message>
 
         <name>WelcomePg</name>
@@ -133,16 +166,6 @@
                 <translation>Մուտք</translation>
             </message>
             <message>
-                <source>Welcome to the Login Page.
-            Enter your username and password.
-            If you don't have an account, you can register by clicking 'Register'.
-            Your information is safe with us.</source>
-                <translation>Բարի գալուստ մուտքի էջ:
-            Մուտքագրեք ձեր օգտագործողի անունը եւ գաղտնաբառը:
-            Եթե հաշիվ չունեք, կարող եք գրանցվել՝ սեղմելով "Գրանցվել":
-            Ձեր տվյալները մեզ մոտ ապահով են:</translation>
-            </message>
-            <message>
                 <source>Username</source>
                 <translation>Օգտագործողի անուն</translation>
             </message>
@@ -163,7 +186,7 @@
                 <translation>Գրանցվել</translation>
             </message>
             <message>
-                <source>Prev</source>
+                <source>Back</source>
                 <translation>Հետ</translation>
             </message>
             <message>
@@ -174,6 +197,15 @@
                 <source>Both must be complementary</source>
                 <translation>Երկուսն էլ պետք է լինեն նույնը</translation>
             </message>
+            <message>
+                <source>Register</source>
+                <translation>Գրանցվել</translation>
+            </message>
+            <message>
+                <source>Enter your username and password. If you don't have an account, register below.</source>
+                <translation>Մուտքագրեք ձեր օգտանունը և գաղտնաբառը։ Եթե չունեք հաշիվ, գրանցվեք ստորև։</translation>
+            </message>
+
 
 
         <name>Verification</name>
@@ -198,12 +230,6 @@
                 <translation>Հետ</translation>
             </message>
 
-        <name>Verification</name>
-            <message>
-                <source>Back</source>
-                <translation>Հետ</translation>
-            </message>
-
         <name>ChatWidget</name>
             <message>
                 <source>Back</source>
@@ -223,7 +249,7 @@
                 <source>search...</source>
                 <translation>որոնում...</translation>
             </message>
-            <name>Registration</name>
+        <name>Registration</name>
                         <message>
                             <source>John</source>
                             <translation>John</translation>
@@ -299,6 +325,19 @@
                         <message>
                             <source>Register</source>
                             <translation>Գրանցվել</translation>
+                        </message>
+
+                        <message>
+                            <source>Welcome to DeltaSynergy! A place for meaningful</source>
+                            <translation>Բարի գալուստ Synergy Չատ! Տեղ իմաստալից </translation>
+                        </message>
+                        <message>
+                            <source>conversations. Connect with your friends and family,</source>
+                            <translation>զրույցների համար։ Կապվեք ձեր ընկերների և ընտանիքի հետ,</translation>
+                        </message>
+                        <message>
+                            <source>build your community, and deepen your interests.</source>
+                            <translation>ստեղծեք ձեր համայնքը և խորացրեք ձեր հետաքրքրությունները։</translation>
                         </message>
 
     </context>

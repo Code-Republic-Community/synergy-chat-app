@@ -50,7 +50,6 @@ void ScrollWidget::createLineContainer()
     lineLayout->addWidget(lineRight);
 }
 
-
 void ScrollWidget::change_sizes(int x, int y, int w, int h)
 {
     scroll->setGeometry(x, y, w, h);
@@ -71,7 +70,6 @@ void ScrollWidget::remove_Line()
     contentLayout->removeWidget(lineContainer);
     lineContainer->hide();
 }
-
 
 QWidget *ScrollWidget::getContentWidget() const
 {
@@ -96,7 +94,7 @@ void ScrollWidget::add_matched_other_users(VChatWidget *chat)
 void ScrollWidget::show_chats()
 {
     clear_chats();
-    qDebug()<<"Show chats Scroll Widget";
+    qDebug() << "Show chats Scroll Widget";
     contentLayout->setAlignment(Qt::AlignTop);
     for (int i = 0; i < all_chats.size(); ++i) {
         contentLayout->addWidget(all_chats[i]);
@@ -108,7 +106,7 @@ void ScrollWidget::show_chats()
 void ScrollWidget::clear_chats()
 {
     qDebug() << "Removing all chats from Scroll Widget";
-    for (auto* chat : all_chats) {
+    for (auto *chat : all_chats) {
         contentLayout->removeWidget(chat);
         chat->hide();
     }
@@ -116,19 +114,16 @@ void ScrollWidget::clear_chats()
 
 void ScrollWidget::clear_search_chats()
 {
-    for (auto* chat : matched_contacts)
-    {
+    for (auto *chat : matched_contacts) {
         contentLayout->removeWidget(chat);
         chat->hide();
     }
     remove_Line();
-    for (auto* chat : matched_other_users)
-    {
+    for (auto *chat : matched_other_users) {
         contentLayout->removeWidget(chat);
         chat->hide();
     }
 }
-
 
 void ScrollWidget::show_search_chats()
 {
@@ -158,7 +153,7 @@ void ScrollWidget::delete_all_chats()
 {
     qDebug() << "Deleting all chat widgets";
 
-    for (auto* chat : all_chats) {
+    for (auto *chat : all_chats) {
         contentLayout->removeWidget(chat);
         delete chat;
     }
@@ -170,17 +165,15 @@ void ScrollWidget::delete_search_chats()
 {
     qDebug() << "Deleting search chat widgets";
 
-    for (auto* chat : matched_contacts) {
+    for (auto *chat : matched_contacts) {
         contentLayout->removeWidget(chat);
         delete chat;
     }
     matched_contacts.clear();
 
-    for (auto* chat : matched_other_users) {
+    for (auto *chat : matched_other_users) {
         contentLayout->removeWidget(chat);
         delete chat;
     }
     matched_other_users.clear();
 }
-
-

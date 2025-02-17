@@ -83,11 +83,44 @@
                 <source>Back</source>
                 <translation>Назад</translation>
             </message>
+            <message>
+                <source>Name</source>
+                <translation>Имя</translation>
+            </message>
+            <message>
+                <source>Surname</source>
+                <translation>Фамилия</translation>
+            </message>
+            <message>
+                <source>Nickname</source>
+                <translation>Никнейм</translation>
+            </message>
+            <message>
+                <source>Email</source>
+                <translation>Эл. почта</translation>
+            </message>
+            <message>
+                <source>Date of Birth</source>
+                <translation>Дата рождения</translation>
+            </message>
+
 
         <name>OtherProfile</name>
             <message>
                 <source>Back</source>
                 <translation>Назад</translation>
+            </message>
+            <message>
+                <source>Name</source>
+                <translation>Имя</translation>
+            </message>
+            <message>
+                <source>Surname</source>
+                <translation>Фамилия</translation>
+            </message>
+            <message>
+                <source>Nickname</source>
+                <translation>Никнейм</translation>
             </message>
 
         <name>WelcomePg</name>
@@ -134,14 +167,7 @@
                 <translation>Войти</translation>
             </message>
             <message>
-                <source>Welcome to the Login Page.
-    Enter your username and password.
-    If you don't have an account, you can register by clicking 'Register'.
-    Your information is safe with us.</source>
-                <translation>Добро пожаловать на страницу входа.
-    Введите ваше имя пользователя и пароль.
-    Если у вас нет учетной записи, вы можете зарегистрироваться, нажав "Зарегистрироваться".
-    Ваши данные в безопасности.</translation>
+
             </message>
             <message>
                 <source>Username</source>
@@ -164,7 +190,7 @@
                 <translation>Зарегистрироваться</translation>
             </message>
             <message>
-                <source>Prev</source>
+                <source>Back</source>
                 <translation>Назад</translation>
             </message>
             <message>
@@ -174,6 +200,14 @@
             <message>
                 <source>Both must be complementary</source>
                 <translation>Оба должны быть одинаковыми</translation>
+            </message>
+            <message>
+                <source>Register</source>
+                <translation>Зарегистрироваться</translation>
+            </message>
+            <message>
+                <source>Enter your username and password. If you don't have an account, register below.</source>
+                <translation>Введите ваше имя пользователя и пароль. Если у вас нет аккаунта, зарегистрируйтесь ниже.</translation>
             </message>
 
         <name>Verification</name>
@@ -193,12 +227,6 @@
                 <source>Verify</source>
                 <translation>Подтвердить</translation>
             </message>
-            <message>
-                <source>Back</source>
-                <translation>Назад</translation>
-            </message>
-
-        <name>Verification</name>
             <message>
                 <source>Back</source>
                 <translation>Назад</translation>
@@ -299,6 +327,19 @@
                         <message>
                             <source>Register</source>
                             <translation>Зарегистрироваться</translation>
+                        </message>
+
+                        <message>
+                            <source>Welcome to DeltaSynergy! A place for meaningful</source>
+                            <translation>Добро пожаловать в Synergy Чат! Место для содержательного</translation>
+                        </message>
+                        <message>
+                            <source>conversations. Connect with your friends and family,</source>
+                            <translation>общения. Общайтесь с друзьями и семьей,</translation>
+                        </message>
+                        <message>
+                            <source>build your community, and deepen your interests.</source>
+                            <translation>создайте свое сообщество и углубляйте свои интересы.</translation>
                         </message>
     </context>
 </TS>

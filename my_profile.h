@@ -7,8 +7,9 @@
 #include <QPushButton>
 #include <QString>
 #include <QWidget>
+#include <QHBoxLayout>
+#include <QIcon>
 #include "httpclient.h"
-#include "v_chat_widget.h"
 
 class MyProfile : public QWidget
 {
@@ -20,8 +21,10 @@ signals:
     void goBackSignal();
     void logOutSiganl();
     void gotoSettingsSignal();
+    void settings_changed_successfully();
 private slots:
     void handleProfileUpdate(QByteArray responseData);
+    void handleProfileEditing();
 public slots:
     void handleIdReceiving();
 
@@ -30,12 +33,25 @@ private:
     QString userId;
 
 private:
+    QHBoxLayout *topLayout;
+    QWidget *topLayoutContainer;
+    QHBoxLayout *bottomLayout;
+    QWidget *bottomLayoutContainer;
+
+
     QLabel *profilePhoto;
     QLabel *nameLabel;
     QLabel *surnameLabel;
     QLabel *nicknameLabel;
     QLabel *emailLabel;
     QLabel *ageLabel;
+
+
+    QLabel *nameSmallLabel;
+    QLabel *surnameSmallLabel;
+    QLabel *nicknameSmallLabel;
+    QLabel *emailSmallLabel;
+    QLabel *ageSmallLabel;
 
     QLineEdit *nameEdit;
     QLineEdit *surnameEdit;
@@ -46,7 +62,8 @@ private:
     QPushButton *logOut;
     QPushButton *editProfile;
     QPushButton *changePhotoButton;
-
+    QIcon *editIcon;
+    bool is_photo_edited;
     QMap<int, QString> *oldDataMap;
     QMap<int, QString> *newDataMap;
 
@@ -59,6 +76,8 @@ private:
     void connections();
     void toggleEditMode(bool enable);
     void saveChanges();
+    void createLabelPair(const QString &smallText, QLabel *&smallLabel, QLabel *&mainLabel);
+    void setupLabelPosition(QLabel *smallLabel, QLabel *mainLabel, int y);
 };
 
 #endif // MYPROFILE_H

@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     login_pg = new Login();
     reg_pg = new Registration();
     main_pg = new MainPageWindow();
-    chat_pg = new ChatWidget("TMP");
+    chat_pg = new ChatWidget();
     profile_settings_pg = new MyProfile();
     settings_pg = new Settings();
     verification_pg = new Verification();
@@ -40,9 +40,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(reg_pg, &Registration::prev_btn_signal, this, &MainWindow::goToWelcomePg);
 
     connect(main_pg, &MainPageWindow::vchat_clicked_from_main_pg, this, &MainWindow::goToChatPg);
+    connect(main_pg, &MainPageWindow::vchat_clicked_from_main_pg, chat_pg, &ChatWidget::handleDataFromMainPage);
 
-
-    connect(main_pg, &MainPageWindow::profile_button_signal, this, &MainWindow::goToProfileSettingsPg);
+    connect(main_pg,
+            &MainPageWindow::profile_button_signal,
+            this,
+            &MainWindow::goToProfileSettingsPg);
 
     connect(profile_settings_pg, &MyProfile::gotoSettingsSignal, this, &MainWindow::goToSettings);
 
@@ -64,17 +67,22 @@ MainWindow::MainWindow(QWidget *parent)
     connect(reg_pg, &Registration::have_an_account_signal, this, &MainWindow::goToSignIn);
 
     connect(other_profile_pg, &OtherProfile::goBackSignal, this, [this]() {
-        goToChatPg(chat_pg->getNick());
+        goToChatPg();
     });
 
     connect(chat_pg, &ChatWidget::go_back_signal, this, &MainWindow::goToMainPg);
-    connect(profile_settings_pg,&MyProfile::logOutSiganl, main_pg, &MainPageWindow::handleContactReDonwnload);
-
+    connect(profile_settings_pg,
+            &MyProfile::logOutSiganl,
+            main_pg,
+            &MainPageWindow::handleContactReDonwnload);
 
     connect(settings_pg, &Settings::languageChanged, this, &MainWindow::change_language);
 
     connect(profile_settings_pg, &MyProfile::logOutSiganl, this, &MainWindow::goToSignIn);
-    connect(profile_settings_pg, &MyProfile::logOutSiganl, main_pg, &MainPageWindow::clearDataOnLogout);
+    connect(profile_settings_pg,
+            &MyProfile::logOutSiganl,
+            main_pg,
+            &MainPageWindow::clearDataOnLogout);
 
     connect(welcome_pg, &WelcomePg::languageChanged, this, &MainWindow::change_language);
 
@@ -115,14 +123,8 @@ void MainWindow::goToMainPg()
     // login_pg->clear_fields();
 }
 
-void MainWindow::goToChatPg(QString nick)
+void MainWindow::goToChatPg()
 {
-    // if (staked_widget->indexOf(chat_pg) != -1) {
-    // staked_widget->removeWidget(chat_pg);
-    // }
-    // chat_pg = new ChatWidget(nick);
-    // staked_widget->insertWidget(4, chat_pg);
-    chat_pg->setNick(nick);
     staked_widget->setCurrentIndex(4);
 }
 
