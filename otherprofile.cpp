@@ -134,6 +134,7 @@ void OtherProfile::styling()
     )";
 
     goBackButton->setStyleSheet(buttonStyle);
+    goBackButton->setFocusPolicy(Qt::NoFocus);
 }
 
 void OtherProfile::connections()

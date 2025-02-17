@@ -12,6 +12,7 @@
 #include "settings.h"
 #include "verification.h"
 #include "welcomepg.h"
+#include "loadingwidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -33,7 +34,10 @@ private:
     Settings *settings_pg;
     Verification *verification_pg;
     OtherProfile *other_profile_pg;
+    LoadingWidget *loading_page;
 
+private:
+    void openSavedAccount();
 
 
 private slots:
@@ -47,5 +51,6 @@ private slots:
     void goToVerificationPg();
     void goToOtherProfilePg();
     void change_language();
+    void goto_loading_page();
 };
 #endif // MAINWINDOW_H

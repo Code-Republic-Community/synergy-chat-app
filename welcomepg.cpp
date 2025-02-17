@@ -35,10 +35,10 @@ void WelcomePg::init()
     languageComboBox->addItem(armenianText, "hy_AM");
     languageComboBox->addItem(russianText, "ru_RU");
 
-    languageComboBox->setGeometry(20, 600, 100, 30);
-
+    languageComboBox->setGeometry(20, 600, 120, 30);
+    languageComboBox->setStyleSheet("font-size: 15px;");
     about = new QPushButton(this);
-    about->setGeometry(280, 600, languageComboBox->width(), languageComboBox->height());
+    about->setGeometry(260, 600, languageComboBox->width(), languageComboBox->height());
     about->setStyleSheet("font-size: 15px;");
 
     setLayout(layout);
@@ -50,10 +50,7 @@ void WelcomePg::conecting()
     connect(signUp, &QPushButton::clicked, this, &WelcomePg::onSignUpClicked);
     connect(about, &QPushButton::clicked, this, [this]() {
         QMessageBox::information(
-            this,
-            "About",
-            "A cross-platform desktop chat application built with Qt, offering real-time messaging "
-            "and a clean, user-friendly interface.");
+            this, tr("About"), tr("A cross-platform desktop chat application built with Qt, offering real-time messaging and a clean, user-friendly interface."));
     });
     connect(languageComboBox, &QComboBox::currentIndexChanged, this, [this](int index) {
         QString newLang = languageComboBox->itemData(index).toString();

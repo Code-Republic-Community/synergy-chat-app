@@ -11,12 +11,15 @@ MainPageWindow::MainPageWindow(QWidget *parent)
     , searchBar(new QLineEdit(this))
     , chat(new QLabel(this))
 {
+    loadingPage = new LoadingWidget;
+    loadingPage ->hide();
     QPixmap searchIcon(":/pngs/searchicon.png");
     QPixmap profileIcon(VChatWidget::cut_photo(QPixmap(), 40));
     client_main_page = new HttpClient();
 
     SearchButton->setGeometry(340, 10, 50, 50);
     SearchButton->setIcon(searchIcon);
+    SearchButton->setFocusPolicy(Qt::NoFocus);
     SearchButton->setIconSize(searchIcon.size());
     SearchButton->setStyleSheet("QPushButton {"
                                 "    border: none;"
@@ -52,6 +55,7 @@ MainPageWindow::MainPageWindow(QWidget *parent)
                         "sans-serif; font-weight: bold;");
 
     ProfileButton->setGeometry(10, 10, 50, 50);
+    ProfileButton->setFocusPolicy(Qt::NoFocus);
     ProfileButton->setIcon(profileIcon);
     ProfileButton->setIconSize(profileIcon.size());
     ProfileButton->setStyleSheet("QPushButton {"
@@ -109,6 +113,7 @@ void MainPageWindow::connections()
 
 void MainPageWindow::handle_vchat_click(QString nickname, QString name, QString surname, QPixmap photo)
 {
+
     qDebug() << "Opening chat with: " << nickname;
     scroll_widget->clear_search_chats();
     scroll_widget->delete_search_chats();
@@ -117,13 +122,18 @@ void MainPageWindow::handle_vchat_click(QString nickname, QString name, QString 
 
 void MainPageWindow::vchat_clicked_from_search_pg(QString nickname, QString name, QString surname, QPixmap photo)
 {
+
     if (contacts_nicknames_to_get_account_info.contains(nickname)) {
         clear_matched_arrays();
+        // //////
+        scroll_widget->clear_chats();
+        scroll_widget->delete_all_chats();
+        // //////
         handle_vchat_click(nickname, name, surname, photo);
         get_contacts_info_and_show();
         return;
     }
-
+    emit startloading();
     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
     connect(client_main_page, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
         QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
@@ -135,11 +145,14 @@ void MainPageWindow::vchat_clicked_from_search_pg(QString nickname, QString name
             clear_matched_arrays();
             scroll_widget->clear_chats();
             scroll_widget->delete_all_chats();
+            emit stoploading();
             handle_vchat_click(nickname, name, surname, photo);
             get_contacts_info_and_show();
         } else {
+            emit stoploading();
             qDebug() << "Failed to add contact: " << jsonObject.value("detail").toString();
         }
+
     });
 
     QString addContactRequestLink = "https://synergy-iauu.onrender.com/addcontact/";
@@ -157,9 +170,22 @@ void MainPageWindow::handleProfileButton()
     emit profile_button_signal();
 }
 
+void MainPageWindow::handlestartloading()
+{
+    this->hide();
+    loadingPage->show();
+}
+
+void MainPageWindow::handlestoploading()
+{
+    loadingPage->hide();
+    this->show();
+}
+
 //kanchvuma es funkcian vor stananq contactnery    //getRequest Profile Info
 void MainPageWindow::handleIdReceiving()
 {
+    emit startloading();
     disconnect(client_main_page,
                &HttpClient::responseReceived,
                this,
@@ -295,6 +321,7 @@ void MainPageWindow::get_contacts_info_and_show()
                                             + contacts_nicknames_to_get_account_info[i];
         client_main_page->getRequest(contactInfoGetRequestLink);
     }
+    emit stoploading();
 }
 
 
@@ -359,6 +386,7 @@ void MainPageWindow::handle_search_data(QByteArray responseData)
         scroll_widget->clear_chats();
         scroll_widget->show_search_chats();
     }
+    emit stoploading();
 }
 
 
@@ -367,6 +395,7 @@ void MainPageWindow::handleSearch()
 {
     QString searchText = searchBar->text();
     if (!searchText.isEmpty()) {
+        emit startloading();
         qDebug() << "Search query:" << searchText;
         QString searchLink = "https://synergy-iauu.onrender.com/search/"
                              + Globals::getInstance().getUserId() + "/" + searchText;

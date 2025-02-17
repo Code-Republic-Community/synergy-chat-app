@@ -125,6 +125,10 @@
 
         <name>WelcomePg</name>
         <message>
+            <source>A cross-platform desktop chat application built with Qt, offering real-time messaging and a clean, user-friendly interface.</source>
+            <translation>Кроссплатформенное чат-приложение, созданное на Qt, предлагающее обмен сообщениями в реальном времени и чистый, удобный интерфейс.</translation>
+        </message>
+        <message>
             <source>English</source>
             <translation>Английский</translation>
         </message>
@@ -212,17 +216,22 @@
 
         <name>Verification</name>
             <message>
-                <source>Verification code sent to your email: *****@gmail.com</source>
-                <translation>Код подтверждения отправлен на вашу почту: *****@gmail.com</translation>
+                <source>Verification code sent to your Email: </source>
+                <translation>Код подтверждения отправлен на вашу почту:</translation>
             </message>
             <message>
                 <source>Enter the 6-digit code</source>
                 <translation>Введите 6-значный код</translation>
             </message>
             <message>
-                <source>You have 3 chances</source>
-                <translation>У вас есть 3 попытки</translation>
+                <source>You have</source>
+                <translation>У вас есть</translation>
             </message>
+            <message>
+                <source>chances</source>
+                <translation>попытки</translation>
+            </message>
+
             <message>
                 <source>Verify</source>
                 <translation>Подтвердить</translation>
@@ -340,6 +349,10 @@
                         <message>
                             <source>build your community, and deepen your interests.</source>
                             <translation>создайте свое сообщество и углубляйте свои интересы.</translation>
+                        </message>
+                        <message>
+                            <source>These terms of use is an agreement between Synergy Chat and you that sets forth the general terms and conditions of your use of any Synergys products or services.</source>
+                            <translation>Настоящие условия использования представляют собой соглашение между Synergy Chat и вами, которое устанавливает общие условия использования вами любых продуктов или услуг Synergy.</translation>
                         </message>
     </context>
 </TS>

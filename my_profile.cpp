@@ -274,12 +274,17 @@ void MyProfile::styling()
             background-color: #2A002A;
         }
     )";
-
     goBackButton->setStyleSheet(buttonStyle);
     gotoSettings->setStyleSheet(buttonStyle);
     logOut->setStyleSheet(buttonStyle);
     editProfile->setStyleSheet(buttonStyle);
+    goBackButton->setFocusPolicy(Qt::NoFocus);
+    gotoSettings->setFocusPolicy(Qt::NoFocus);
+    logOut->setFocusPolicy(Qt::NoFocus);
+    editProfile->setFocusPolicy(Qt::NoFocus);
     profilePhoto->setAlignment(Qt::AlignCenter);
+
+
 }
 
 void MyProfile::connections()

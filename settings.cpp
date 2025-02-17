@@ -174,7 +174,8 @@ void Settings::styleing()
 
     save->setStyleSheet(buttonStyle);
     cancel->setStyleSheet(buttonStyle);
-
+    save ->setFocusPolicy(Qt::NoFocus);
+    cancel->setFocusPolicy(Qt::NoFocus);
     for (int i = 0; i < formLayout->rowCount(); ++i) {
         QWidget *labelWidget = formLayout->itemAt(i, QFormLayout::LabelRole)->widget();
         if (labelWidget) {

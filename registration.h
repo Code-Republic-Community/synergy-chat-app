@@ -73,6 +73,9 @@ signals:
     void idreceived();
     void email_obt_signal(QString email);
 
+    void startloading();
+    void stoploading();
+
 private slots:
     void handle_terms_of_use_btn();
     void handle_have_an_account_btn();

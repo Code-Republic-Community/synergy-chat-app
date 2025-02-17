@@ -123,6 +123,10 @@
 
         <name>WelcomePg</name>
         <message>
+            <source>A cross-platform desktop chat application built with Qt, offering real-time messaging and a clean, user-friendly interface.</source>
+            <translation>Բազմապլատֆորմային չատ հավելված, ստեղծված Qt-ով, որը տրամադրում է իրական ժամանակի հաղորդագրություններ և մաքուր ինտերֆեյս:</translation>
+        </message>
+        <message>
             <source>English</source>
             <translation>Անգլերեն</translation>
         </message>
@@ -139,10 +143,6 @@
                 <translation>Բարի գալուստ</translation>
             </message>
             <message>
-                <source>What is Lorem Ipsum?</source>
-                <translation>Ի՞նչ է Lorem Ipsum-ը:</translation>
-            </message>
-            <message>
                 <source>Sign up</source>
                 <translation>Գրանցվել</translation>
             </message>
@@ -156,7 +156,7 @@
             </message>
             <message>
                 <source>About</source>
-                <translation>Մեր Մասին</translation>
+                <translation>Ծրագրի մասին</translation>
             </message>
 
 
@@ -210,16 +210,20 @@
 
         <name>Verification</name>
             <message>
-                <source>Verification code sent to your email: *****@gmail.com</source>
-                <translation>Հաստատման կոդը ուղարկվել է ձեր էլ․ փոստին՝ *****@gmail.com</translation>
+                <source>Verification code sent to your Email: </source>
+                <translation>Հաստատման կոդը ուղարկվել է ձեր էլ․ փոստին՝ </translation>
             </message>
             <message>
                 <source>Enter the 6-digit code</source>
                 <translation>Մուտքագրեք 6-նիշանոց կոդը</translation>
             </message>
             <message>
-                <source>You have 3 chances</source>
-                <translation>Դուք ունեք 3 հնարավորություն</translation>
+                <source>You have</source>
+                <translation>Դուք ունեք</translation>
+            </message>
+            <message>
+                <source>chances</source>
+                <translation>հնարավորություն</translation>
             </message>
             <message>
                 <source>Verify</source>
@@ -338,6 +342,10 @@
                         <message>
                             <source>build your community, and deepen your interests.</source>
                             <translation>ստեղծեք ձեր համայնքը և խորացրեք ձեր հետաքրքրությունները։</translation>
+                        </message>
+                        <message>
+                            <source>These terms of use is an agreement between Synergy Chat and you that sets forth the general terms and conditions of your use of any Synergys products or services.</source>
+                            <translation>Այս օգտագործման պայմանները համաձայնագիր են Synergy Chat-ի և ձեր միջև, որը սահմանում է ձեր կողմից Synergy-ի ցանկացած արտադրանքի կամ ծառայության օգտագործման ընդհանուր պայմանները և դրույթները</translation>
                         </message>
 
     </context>

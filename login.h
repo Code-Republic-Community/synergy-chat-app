@@ -48,13 +48,17 @@ private:
     void saveCredentials(const QString &userId, const QString &username, const QString &password);
 
     void clearCredentials();
+
 public slots:
     void loadCredentials();
+
 signals:
     void prev_btn_signal();
     void next_btn_signal();
     void register_signal();
     void idreceived();
+    void startloading();
+    void stoploading();
 
 private slots:
     void rememberMe(bool isClicked);

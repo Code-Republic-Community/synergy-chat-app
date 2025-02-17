@@ -9,23 +9,45 @@ Verification::Verification(QWidget *parent)
 {
     this->setFixedSize(400, 700);
     client_verification = new HttpClient();
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setAlignment(Qt::AlignCenter);
 
-    verificationtxt = new QLabel(this);
+    QWidget *toplayoutContainer = new QWidget(this);
+    toplayoutContainer->setGeometry(0, 0, 400, 200);
+    QHBoxLayout *toplayout = new QHBoxLayout(toplayoutContainer);
+    toplayout->setContentsMargins(50, 40, 50, 20);
+
+    verificationtxt = new QLabel;
     verificationtxt->setWordWrap(true);
     verificationtxt->setStyleSheet("font-size: 17px; font-weight: bold;");
     verificationtxt->setAlignment(Qt::AlignCenter);
-    layout->addWidget(verificationtxt, 0, Qt::AlignTop | Qt::AlignHCenter);
+    toplayout->addWidget(verificationtxt, 0, Qt::AlignTop | Qt::AlignHCenter);
 
-    code = new QLineEdit(this);
+    QWidget *midlayoutContainer = new QWidget(this);
+    midlayoutContainer->setGeometry(0, 300, 400, 100);
+    QVBoxLayout *midlayout = new QVBoxLayout(midlayoutContainer);
+    midlayout->setContentsMargins(50, 0, 50, 0);
+
+    code = new QLineEdit;
     code->setFixedSize(200, 50);
     code->setStyleSheet("font-size: 16px; padding: 10px;");
     code->setValidator(new QIntValidator(100000, 999999, this));
     code->setMaxLength(7);
-    layout->addWidget(code, 1, Qt::AlignHCenter);
+    midlayout->addWidget(code, 0, Qt::AlignHCenter);
 
-    code->setMaxLength(7);
+    chance = new QLabel;
+    chance->setStyleSheet("font-size: 12px; color: red;");
+    chance->setAlignment(Qt::AlignCenter);
+    midlayout->addWidget(chance, 0, Qt::AlignHCenter);
+
+    Back = new QPushButton(this);
+    Next = new QPushButton(this);
+    Back->setGeometry(20, 640, 90, 40);
+    Next->setGeometry(290, 640, 90, 40);
+    Next->setStyleSheet("background-color: green;");
+
+    connect(Back, &QPushButton::clicked, this, &Verification::onPrevClicked);
+    connect(Next, &QPushButton::clicked, this, &Verification::onNextClicked);
+    setLanguege();
+
     connect(code, &QLineEdit::textEdited, this, [this](const QString &text) {
         original_code = text;
         static QString currentText;
@@ -50,21 +72,6 @@ Verification::Verification(QWidget *parent)
         currentText = code->text();
     });
 
-    chance = new QLabel(this);
-    chance->setStyleSheet("font-size: 12px; color: red;");
-    chance->setAlignment(Qt::AlignCenter);
-    layout->addWidget(chance);
-
-    Back = new QPushButton(this);
-    Next = new QPushButton(this);
-    Back->setGeometry(20, 600, 90, 40);
-    Next->setGeometry(300, 600, 90, 40);
-    Next->setStyleSheet("background-color: green;");
-
-    connect(Back, &QPushButton::clicked, this, &Verification::onPrevClicked);
-    connect(Next, &QPushButton::clicked, this, &Verification::onNextClicked);
-    setLanguege();
-    setLayout(layout);
 }
 
 void Verification::setLanguege()
@@ -72,7 +79,7 @@ void Verification::setLanguege()
     verificationtxt->setText(tr("Verification code sent to your Email: ") + maskedemail);
     code->setPlaceholderText(tr("Enter the 6-digit code"));
     code->setAlignment(Qt::AlignCenter);
-    chance->setText(tr("You have 3 chances"));
+    chance->setText(tr("You have") + " " + QString::number(chanceleft)+ " " + tr("chances"));
     Next->setText(tr("Verify"));
     Back->setText(tr("Back"));
 }
@@ -86,39 +93,40 @@ void Verification::onPrevClicked()
 
 void Verification::onNextClicked()
 {
+    emit startloading();
     connect(client_verification, &HttpClient::responseReceived, this, &Verification::handle_data);
     QUrl url("https://synergy-iauu.onrender.com/verify/");
     QJsonObject jsonData;
     jsonData["user_id"] = Globals::getInstance().getUserId();
     jsonData["verification_code"] = original_code.toInt();
-
     client_verification->postRequest(url, jsonData);
 }
 
 void Verification::handle_data(QByteArray responseData)
 {
+    disconnect(client_verification, &HttpClient::responseReceived, this, &Verification::handle_data);
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
     if (chanceleft <= 0) {
         chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
+        emit stoploading();
         emit prevClicked();
-    } else {
-        if (jsonObject.contains("message")
-            && jsonResponse["message"].toString() == "Verification successful") {
+    }
+    else {
+        if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Verification successful") {
             qDebug() << "Verification successful!";
+            chanceleft = 3;
+            emit stoploading();
             emit nextClicked();
-        } else if (jsonObject.contains("message")
-                   && jsonResponse["message"].toString() == "Invalid verification code") {
+        }
+        else if (jsonObject.contains("detail") && jsonResponse["detail"].toString() == "Invalid verification code") {
             --chanceleft;
             qDebug() << "Invalid verification code";
-            chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
-            clear_fields();
-        } else {
-            --chanceleft;
-            qDebug() << "NEMA";
-            chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
+            chance->setText(tr("You have") + " " + QString::number(chanceleft)+ " " + tr("chances"));
+            emit stoploading();
             clear_fields();
         }
+
     }
 }
 

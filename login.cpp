@@ -23,23 +23,20 @@ void Login::saveCredentials(const QString &userId, const QString &username, cons
 {
     qDebug() << "Save Credentials";
 
-    // Define the full path of the credentials file
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
                    + "/Synergy/credentials.txt";
     QString folderPath = QFileInfo(path).absolutePath(); // Get the folder path
 
-    // Create the folder if it doesn't exist
     QDir dir;
     if (!dir.exists(folderPath)) {
         if (dir.mkpath(folderPath)) {
             qDebug() << "Created folder:" << folderPath;
         } else {
             qDebug() << "Failed to create folder";
-            return; // Exit if the folder cannot be created
+            return;
         }
     }
 
-    // Create and open the file
     QFile file(path);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&file);
@@ -54,34 +51,33 @@ void Login::saveCredentials(const QString &userId, const QString &username, cons
 
 void Login::loadCredentials()
 {
+    emit startloading();
     qDebug() << "Load Credentials";
 
-    // Define the full path of the credentials file
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
                    + "/Synergy/credentials.txt";
-    QString folderPath = QFileInfo(path).absolutePath(); // Get the folder path
+    QString folderPath = QFileInfo(path).absolutePath();
 
-    // Ensure the folder exists
     QDir dir;
     if (!dir.exists(folderPath)) {
         if (dir.mkpath(folderPath)) {
             qDebug() << "Created folder:" << folderPath;
         } else {
             qDebug() << "Failed to create folder";
-            return; // Exit if folder cannot be created
+            return;
         }
     }
 
-    // Open the file and load credentials
+
     QFile file(path);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&file);
         QString userId = in.readLine();
-        Globals::getInstance().setUserID(userId); // Set the user ID in the Globals class
+        Globals::getInstance().setUserID(userId);
         QString username = in.readLine();
-        usernameLineEdit->setText(username); // Set the username in the username line edit
+        usernameLineEdit->setText(username);
         QString password = in.readLine();
-        passwordLineEdit->setText(password); // Set the password in the password line edit
+        passwordLineEdit->setText(password);
         file.close();
 
         qDebug() << "From File User ID = " << userId;
@@ -89,11 +85,12 @@ void Login::loadCredentials()
         qDebug() << "From File Password = " << password;
         remember = true;
         m_rememberMe->setCheckState(Qt::Checked);
-        emit idreceived();      // Emit signal for user ID received
-        emit next_btn_signal(); // Emit signal to proceed to next step
+        emit next_btn_signal();
         emit m_nextAndPrev->nextClicked();
-    } else {
+    }
+    else {
         qDebug() << "Failed to open file for reading";
+        stoploading();
     }
 }
 
@@ -101,20 +98,17 @@ void Login::clearCredentials()
 {
     qDebug() << "Clear Credentials";
 
-    // Define the full path of the credentials file
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
                    + "/Synergy/credentials.txt";
     QFile file(path);
 
-    // Ensure the folder exists before removing the file
     QString folderPath = QFileInfo(path).absolutePath();
     QDir dir;
     if (!dir.exists(folderPath)) {
         qDebug() << "Folder does not exist, no need to remove file.";
-        return; // Exit if folder doesn't exist, no need to remove the file
+        return;
     }
 
-    // Delete the credentials file if it exists
     if (file.exists()) {
         if (file.remove()) {
             qDebug() << "Credentials file removed successfully.";
@@ -229,6 +223,7 @@ void Login::saveTexts()
 
 void Login::handleUserId(QByteArray responseData)
 {
+    emit startloading();
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
 
@@ -245,6 +240,7 @@ void Login::handleUserId(QByteArray responseData)
         emit idreceived();
         emit next_btn_signal();
     } else {
+        emit stoploading();
         qDebug() << "User ID not found in response.";
         usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
         passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
@@ -294,6 +290,7 @@ void Login::handleNextButtonClicked()
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
     } else {
+        emit startloading();
         usernameLineEdit->setStyleSheet("");
         passwordLineEdit->setStyleSheet("");
         saveTexts();

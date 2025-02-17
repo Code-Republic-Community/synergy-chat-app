@@ -246,17 +246,16 @@ Registration::Registration(QWidget *parent)
         }
     });
     connect(termsOfUseButton, &QPushButton::clicked, this, [this]() {
-        QMessageBox::information(this,
-                                 "Terms of use",
-                                 "These terms of use is an agreement between Synergy Chat and"
-                                 "you that sets forth the general terms and conditions"
-                                 "of your use of any Synergys products or services.");
+        QMessageBox::information(
+            this, tr("Terms of use"),
+            tr("These terms of use is an agreement between Synergy Chat and you that sets forth the general terms and conditions of your use of any Synergys products or services."));
     });
     save_texts();
 }
 
 void Registration::handle_reg_btn()
 {
+    emit startloading();
     bool allValid = true;
     for (int i = 0; i < 8; ++i) {
         if (valids[i] == false) {
@@ -283,6 +282,10 @@ void Registration::handle_reg_btn()
         qDebug() << jsonData.value("date_of_birth");
 
         client_registration->postRequest(url, jsonData);
+    }
+    else
+    {
+        emit stoploading();
     }
 }
 
@@ -347,8 +350,10 @@ void Registration::handleUserId(QByteArray responseData)
         qDebug() << Globals::getInstance().getUserId();
         emit email_obt_signal(emailField->text());
         emit idreceived();
+        emit stoploading();
         emit reg_btn_signal();
-    } else if (jsonObject.contains("detail")) {
+    }
+    else if (jsonObject.contains("detail")) {
         if (jsonResponse["detail"].toString() == "Nickname already in use") {
             qDebug() << "Debug" << "Nickname already in use";
             nicknameField->setStyleSheet("QLineEdit { border: 2px solid red; }");
@@ -358,6 +363,7 @@ void Registration::handleUserId(QByteArray responseData)
             emailField->setStyleSheet("QLineEdit { border: 2px solid red; }");
             nicknameField->setStyleSheet("");
         }
+        emit stoploading();
     }
 }
 

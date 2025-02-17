@@ -1,4 +1,7 @@
 #include "mainwindow.h"
+#include "loadingwidget.h"
+#include <QDir>
+#include <QStandardPaths>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     settings_pg = new Settings();
     verification_pg = new Verification();
     other_profile_pg = new OtherProfile();
+    loading_page = new LoadingWidget();
 
     staked_widget = new QStackedWidget();
     staked_widget->addWidget(welcome_pg);          // 0
@@ -23,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     staked_widget->addWidget(settings_pg);         // 6
     staked_widget->addWidget(verification_pg);     // 7
     staked_widget->addWidget(other_profile_pg);    // 8
+    staked_widget->addWidget(loading_page);        // 9
 
     connect(welcome_pg, &WelcomePg::signInClicked, login_pg, &Login::loadCredentials);
     connect(welcome_pg, &WelcomePg::signInClicked, this, &MainWindow::goToSignIn);
@@ -88,11 +93,49 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(reg_pg, &Registration::email_obt_signal, verification_pg, &Verification::handleEmail);
 
+    connect(login_pg, &Login::startloading, this, &MainWindow::goto_loading_page);
+    connect(login_pg, &Login::stoploading, this, &MainWindow::goToSignIn);
+
+    connect(reg_pg, &Registration::startloading, this, &MainWindow::goto_loading_page);
+    connect(reg_pg, &Registration::stoploading, this, &MainWindow::goToRegPg);
+
+    connect(verification_pg, &Verification::startloading, this, &MainWindow::goto_loading_page);
+    connect(verification_pg, &Verification::stoploading, this, &MainWindow::goToVerificationPg);
+
+    openSavedAccount();
+
     this->setCentralWidget(staked_widget);
     this->setFixedSize(400, 700);
 }
 
 MainWindow::~MainWindow() {}
+
+void MainWindow::openSavedAccount()
+{
+    goto_loading_page();
+    QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+    + "/Synergy/credentials.txt";
+    QString folderPath = QFileInfo(path).absolutePath();
+
+    QDir dir;
+    if (!dir.exists(folderPath)) {
+        if (dir.mkpath(folderPath)) {
+            qDebug() << "Created folder:" << folderPath;
+        } else {
+            qDebug() << "Failed to create folder";
+            return;
+        }
+    }
+    QFile file(path);
+    if (file.exists()){
+        goToSignIn();
+        login_pg->loadCredentials();
+    }
+    else {
+        goToWelcomePg();
+        qDebug() << "Failed to open file for reading go to welocme page";
+    }
+}
 
 void MainWindow::goToSignIn()
 {
@@ -120,7 +163,6 @@ void MainWindow::goToMainPg()
     staked_widget->setCurrentIndex(3);
     reg_pg->clear_fields();
     verification_pg->clear_fields();
-    // login_pg->clear_fields();
 }
 
 void MainWindow::goToChatPg()
@@ -148,6 +190,11 @@ void MainWindow::goToOtherProfilePg()
     staked_widget->setCurrentIndex(8);
 }
 
+void MainWindow::goto_loading_page()
+{
+    staked_widget->setCurrentIndex(9);
+}
+
 void MainWindow::change_language()
 {
     welcome_pg->setLanguage();
@@ -160,3 +207,5 @@ void MainWindow::change_language()
     verification_pg->setLanguege();
     other_profile_pg->setLanguage();
 }
+
+

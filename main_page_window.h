@@ -12,6 +12,7 @@
 #include "httpclient.h"
 #include "scroll_widget.h"
 #include "v_chat_widget.h"
+#include "loadingwidget.h"
 
 class MainPageWindow : public QWidget
 {
@@ -74,6 +75,15 @@ signals:
     void vchat_clicked_from_main_pg(QString nickname, QString name, QString surname, QPixmap photo);
     void profile_button_signal();
     void received_contacts();
+
+signals:
+    void startloading();
+    void stoploading();
+private slots:
+    void handlestartloading();
+    void handlestoploading();
+private:
+    LoadingWidget *loadingPage;
 };
 
 #endif // MAIN_PAGE_WINDOW_H

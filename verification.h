@@ -27,6 +27,10 @@ signals:
     void nextClicked();
     void prevClicked();
     void verification_successfull();
+
+    void startloading();
+    void stoploading();
+
 private slots:
     void onPrevClicked();
     void onNextClicked();

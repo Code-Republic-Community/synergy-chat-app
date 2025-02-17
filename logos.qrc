@@ -4,5 +4,7 @@
         <file>searchicon.png</file>
         <file>panda.jpg</file>
         <file>edit.ico</file>
+        <file>load.gif</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

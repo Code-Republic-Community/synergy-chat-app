@@ -122,6 +122,10 @@
 
         <name>WelcomePg</name>
         <message>
+            <source>A cross-platform desktop chat application built with Qt, offering real-time messaging and a clean, user-friendly interface.</source>
+            <translation>A cross-platform desktop chat application built with Qt, offering real-time messaging and a clean, user-friendly interface.</translation>
+        </message>
+        <message>
             <source>English</source>
             <translation>English</translation>
         </message>
@@ -204,18 +208,24 @@
         <source>Enter your username and password. If you don't have an account, register below.</source>
         <translation>Enter your username and password. If you don't have an account, register below.</translation>
     </message>
+
+
 <name>Verification</name>
     <message>
-        <source>Verification code sent to your email: *****@gmail.com</source>
-        <translation>Verification code sent to your email: *****@gmail.com</translation>
+        <source>Verification code sent to your Email: </source>
+        <translation>Verification code sent to your Email: </translation>
     </message>
     <message>
         <source>Enter the 6-digit code</source>
         <translation>Enter the 6-digit code</translation>
     </message>
     <message>
-        <source>You have 3 chances</source>
-        <translation>You have 3 chances</translation>
+        <source>You have</source>
+        <translation>You have</translation>
+    </message>
+    <message>
+        <source>chances</source>
+        <translation>chances</translation>
     </message>
     <message>
         <source>Verify</source>
@@ -237,17 +247,17 @@
         <translation>Type message...</translation>
     </message>
 
-<name>MainPageWindow</name>
-    <message>
-        <source>Chats</source>
-        <translation>Chats</translation>
-    </message>
-    <message>
-        <source>search...</source>
-        <translation>search...</translation>
-    </message>
+        <name>MainPageWindow</name>
+            <message>
+                <source>Chats</source>
+                <translation>Chats</translation>
+            </message>
+            <message>
+                <source>search...</source>
+                <translation>search...</translation>
+            </message>
 
-<name>Registration</name>
+        <name>Registration</name>
             <message>
                 <source>John</source>
                 <translation>John</translation>
@@ -333,7 +343,10 @@
                 <source>build your community, and deepen your interests.</source>
                 <translation>build your community, and deepen your interests.</translation>
             </message>
-
+            <message>
+                <source>These terms of use is an agreement between Synergy Chat and you that sets forth the general terms and conditions of your use of any Synergys products or services.</source>
+                <translation>These terms of use is an agreement between Synergy Chat and you that sets forth the general terms and conditions of your use of any Synergys products or services.</translation>
+            </message>
 
 </context>
 </TS>

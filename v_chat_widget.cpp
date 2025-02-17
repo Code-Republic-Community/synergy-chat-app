@@ -18,6 +18,7 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
         "border-radius: 10px;");
     container->setFixedSize(200, 60);
     container->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    this->setFocusPolicy(Qt::NoFocus);
 
     QHBoxLayout *layout = new QHBoxLayout(container);
     layout->setAlignment(Qt::AlignCenter);

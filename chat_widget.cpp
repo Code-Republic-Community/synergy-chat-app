@@ -19,6 +19,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
     send_btn = new QPushButton(this);
     send_btn->setGeometry(340, 10, 50, 55);
+    send_btn->setFocusPolicy(Qt::NoFocus);
 
     scroll = new QScrollArea(this);
     scroll->setGeometry(10, 70, 380, 560);
@@ -32,6 +33,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
     backButton = new QPushButton(this);
     backButton->setGeometry(12, 632, 100, 55);
+    backButton->setFocusPolicy(Qt::NoFocus);
     backButton->setStyleSheet(
         "background-color: #8e15de; color: white; font-weight: bold; border-radius: 5px;");
 
