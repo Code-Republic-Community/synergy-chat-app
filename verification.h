@@ -43,7 +43,7 @@ private:
     QString maskEmail(const QString &email);
 
 private:
-    inline static int chanceleft = 3;
+    inline static int chanceleft = 2;
     QLabel *verificationtxt;
     QLineEdit *code;
     QLabel *chance;
@@ -54,7 +54,6 @@ private:
     QString maskedemail;
 
     LoadingOverlay *overlay;
-
 public:
     void setLanguege();
 };

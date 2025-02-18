@@ -1,12 +1,14 @@
 #include "verification.h"
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QApplication>
 #include <QUrl>
 #include "globals.h"
 
 Verification::Verification(QWidget *parent)
     : QWidget(parent)
 {
+    this->setAttribute(Qt::WA_DeleteOnClose);
     this->setFixedSize(400, 700);
     client_verification = new HttpClient();
     overlay = new LoadingOverlay(this);
@@ -45,6 +47,9 @@ Verification::Verification(QWidget *parent)
     Next->setGeometry(290, 640, 90, 40);
     Next->setStyleSheet("background-color: green;");
 
+    connect(QApplication::instance(), &QApplication::aboutToQuit, this, [=]() {
+        delete this;
+    });
     connect(Back, &QPushButton::clicked, this, &Verification::onPrevClicked);
     connect(Next, &QPushButton::clicked, this, &Verification::onNextClicked);
     setLanguege();
@@ -80,7 +85,7 @@ void Verification::setLanguege()
     verificationtxt->setText(tr("Verification code sent to your Email: ") + maskedemail);
     code->setPlaceholderText(tr("Enter the 6-digit code"));
     code->setAlignment(Qt::AlignCenter);
-    chance->setText(tr("You have") + " " + QString::number(chanceleft)+ " " + tr("chances"));
+    chance->setText(tr("You have") + " " + QString::number(chanceleft + 1)+ " " + tr("chances"));
     Next->setText(tr("Verify"));
     Back->setText(tr("Back"));
 }
@@ -110,38 +115,42 @@ void Verification::handle_data(QByteArray responseData)
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
     if (chanceleft <= 0) {
-        chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
-        // emit stoploading();
         overlay->hideOverlay();
+        chance->setText(tr("You have") + QString::number(chanceleft + 1) + tr("chances"));
+        // emit stoploading();
+        Next->setEnabled(true);
+        chanceleft = 2;
         emit prevClicked();
     }
     else {
         if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Verification successful") {
-            qDebug() << "Verification successful!";
-            chanceleft = 3;
+            qDebug() << "Verification successful";
+            chanceleft = 2;
             // emit stoploading();
             overlay->hideOverlay();
+            emit verification_successfull();
             emit nextClicked();
         }
         else if (jsonObject.contains("detail") && jsonResponse["detail"].toString() == "Invalid verification code") {
             --chanceleft;
             qDebug() << "Invalid verification code";
-            chance->setText(tr("You have") + " " + QString::number(chanceleft)+ " " + tr("chances"));
+            chance->setText(tr("You have") + " " + QString::number(chanceleft + 1)+ " " + tr("chances"));
             // emit stoploading();
             overlay->hideOverlay();
             clear_fields();
         }
-
+        else if (jsonObject.contains("detail") && jsonResponse["detail"].toString() == "Invalid or expired verification request"){
+            qDebug() << "User id not found // Invalid or expired verification request";
+            chanceleft = 2;
+            overlay->hideOverlay();
+            clear_fields();
+            emit prevClicked();
+        }
     }
 }
 
 Verification::~Verification()
 {
-    delete verificationtxt;
-    delete code;
-    delete chance;
-    delete Back;
-    delete Next;
 }
 
 void Verification::clear_fields()
@@ -151,6 +160,7 @@ void Verification::clear_fields()
 
 QString Verification::maskEmail(const QString &email)
 {
+
     if (email.isEmpty()) {
         return "Invalid Email";
     }
@@ -175,7 +185,7 @@ QString Verification::maskEmail(const QString &email)
 
 void Verification::handleEmail(QString email)
 {
-    chanceleft = 3;
+    chanceleft = 2;
     maskedemail = maskEmail(email);
     qDebug() << "Masked Email: " << maskedemail;
     setLanguege();

@@ -139,6 +139,7 @@ void MainPageWindow::vchat_clicked_from_search_pg(QString nickname, QString name
         return;
     }
     overlay->showOverlay();
+    qDebug()<< "showOverlay 1";
     // scroll_widget->hide();
     // emit startloading();
     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
@@ -186,6 +187,8 @@ void MainPageWindow::handleIdReceiving()
 {
     // emit startloading();
     overlay->showOverlay();
+    qDebug()<< "showOverlay 2";
+
     // scroll_widget->hide();
     disconnect(client_main_page,
                &HttpClient::responseReceived,
@@ -411,6 +414,8 @@ void MainPageWindow::handleSearch()
     if (!searchText.isEmpty()) {
         // emit startloading();
         overlay->showOverlay();
+        qDebug()<< "showOverlay 3";
+
         // scroll_widget->hide();
 
         scroll_widget->clear_chats();

@@ -6,6 +6,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    this->setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
     welcome_pg = new WelcomePg();
     login_pg = new Login();
     reg_pg = new Registration();
@@ -34,9 +35,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(welcome_pg, &WelcomePg::signUpClicked, this, &MainWindow::goToRegPg);
 
     connect(login_pg, &Login::idreceived, profile_settings_pg, &MyProfile::handleIdReceiving);
-    connect(reg_pg, &Registration::idreceived, profile_settings_pg, &MyProfile::handleIdReceiving);
+    connect(verification_pg, &Verification::verification_successfull, profile_settings_pg, &MyProfile::handleIdReceiving);
     connect(login_pg, &Login::idreceived, main_pg, &MainPageWindow::handleIdReceiving);
-    connect(reg_pg, &Registration::idreceived, main_pg, &MainPageWindow::handleIdReceiving);
+    connect(verification_pg, &Verification::verification_successfull, main_pg, &MainPageWindow::handleIdReceiving);
 
     connect(login_pg, &Login::prev_btn_signal, this, &MainWindow::goToWelcomePg);
 
@@ -195,5 +196,7 @@ void MainWindow::change_language()
     verification_pg->setLanguege();
     other_profile_pg->setLanguage();
 }
+
+
 
 

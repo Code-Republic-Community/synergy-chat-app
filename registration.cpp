@@ -349,7 +349,10 @@ void Registration::handleUserId(QByteArray responseData)
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
 
-    if (jsonObject.contains("user_id")) {
+    if (jsonObject.contains("message") &&
+        jsonObject["message"].toString() == "Verification code sent. Please verify to complete registration." &&
+        jsonObject.contains("user_id")) {
+
         Globals::getInstance().setUserID(jsonObject["user_id"].toString());
         qDebug() << Globals::getInstance().getUserId();
         emit email_obt_signal(emailField->text());
