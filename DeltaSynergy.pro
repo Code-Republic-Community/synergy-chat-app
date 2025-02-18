@@ -15,6 +15,7 @@ SOURCES += \
     chatmessagewidget.cpp \
     globals.cpp \
     httpclient.cpp \
+    loadingoverlay.cpp \
     loadingwidget.cpp \
     login.cpp \
     main.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     chatmessagewidget.h \
     globals.h \
     httpclient.h \
+    loadingoverlay.h \
     loadingwidget.h \
     login.h \
     main_page_window.h \

@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
-#include "chatmessagewidget.h"
+// #include "chatmessagewidget.h"
 #include "v_chat_widget.h"
 
 class MainPageWindow;
@@ -18,7 +18,6 @@ class ScrollWidget : public QWidget
 public:
     ScrollWidget(QWidget *parent = nullptr);
     ~ScrollWidget() = default;
-
 private:
     QScrollArea *scroll;
     QVBoxLayout *contentLayout;

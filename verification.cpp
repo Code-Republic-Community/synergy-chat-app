@@ -9,6 +9,7 @@ Verification::Verification(QWidget *parent)
 {
     this->setFixedSize(400, 700);
     client_verification = new HttpClient();
+    overlay = new LoadingOverlay(this);
 
     QWidget *toplayoutContainer = new QWidget(this);
     toplayoutContainer->setGeometry(0, 0, 400, 200);
@@ -93,7 +94,8 @@ void Verification::onPrevClicked()
 
 void Verification::onNextClicked()
 {
-    emit startloading();
+    // emit startloading();
+    overlay->showOverlay();
     connect(client_verification, &HttpClient::responseReceived, this, &Verification::handle_data);
     QUrl url("https://synergy-iauu.onrender.com/verify/");
     QJsonObject jsonData;
@@ -109,21 +111,24 @@ void Verification::handle_data(QByteArray responseData)
     QJsonObject jsonObject = jsonResponse.object();
     if (chanceleft <= 0) {
         chance->setText(tr("You have") + QString::number(chanceleft) + tr("chances"));
-        emit stoploading();
+        // emit stoploading();
+        overlay->hideOverlay();
         emit prevClicked();
     }
     else {
         if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Verification successful") {
             qDebug() << "Verification successful!";
             chanceleft = 3;
-            emit stoploading();
+            // emit stoploading();
+            overlay->hideOverlay();
             emit nextClicked();
         }
         else if (jsonObject.contains("detail") && jsonResponse["detail"].toString() == "Invalid verification code") {
             --chanceleft;
             qDebug() << "Invalid verification code";
             chance->setText(tr("You have") + " " + QString::number(chanceleft)+ " " + tr("chances"));
-            emit stoploading();
+            // emit stoploading();
+            overlay->hideOverlay();
             clear_fields();
         }
 

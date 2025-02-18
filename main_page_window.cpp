@@ -11,8 +11,13 @@ MainPageWindow::MainPageWindow(QWidget *parent)
     , searchBar(new QLineEdit(this))
     , chat(new QLabel(this))
 {
-    loadingPage = new LoadingWidget;
-    loadingPage ->hide();
+    // loadingPage = new LoadingWidget;
+    // loadingPage ->hide();
+    // scroll_widget->hide();
+    overlay = new LoadingOverlay(this);
+    overlay ->hideOverlay();
+    // scroll_widget->show();
+
     QPixmap searchIcon(":/pngs/searchicon.png");
     QPixmap profileIcon(VChatWidget::cut_photo(QPixmap(), 40));
     client_main_page = new HttpClient();
@@ -133,7 +138,9 @@ void MainPageWindow::vchat_clicked_from_search_pg(QString nickname, QString name
         get_contacts_info_and_show();
         return;
     }
-    emit startloading();
+    overlay->showOverlay();
+    // scroll_widget->hide();
+    // emit startloading();
     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
     connect(client_main_page, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
         QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
@@ -145,11 +152,15 @@ void MainPageWindow::vchat_clicked_from_search_pg(QString nickname, QString name
             clear_matched_arrays();
             scroll_widget->clear_chats();
             scroll_widget->delete_all_chats();
-            emit stoploading();
+            // emit stoploading();
+            overlay->hideOverlay();
+            // scroll_widget->show();
             handle_vchat_click(nickname, name, surname, photo);
             get_contacts_info_and_show();
         } else {
-            emit stoploading();
+            // emit stoploading();
+            overlay->hideOverlay();
+            // scroll_widget->show();
             qDebug() << "Failed to add contact: " << jsonObject.value("detail").toString();
         }
 
@@ -170,22 +181,12 @@ void MainPageWindow::handleProfileButton()
     emit profile_button_signal();
 }
 
-void MainPageWindow::handlestartloading()
-{
-    this->hide();
-    loadingPage->show();
-}
-
-void MainPageWindow::handlestoploading()
-{
-    loadingPage->hide();
-    this->show();
-}
-
 //kanchvuma es funkcian vor stananq contactnery    //getRequest Profile Info
 void MainPageWindow::handleIdReceiving()
 {
-    emit startloading();
+    // emit startloading();
+    overlay->showOverlay();
+    // scroll_widget->hide();
     disconnect(client_main_page,
                &HttpClient::responseReceived,
                this,
@@ -293,7 +294,6 @@ void MainPageWindow::get_contacts_info_and_show()
     qDebug() << "count_of_contacts = contacts_nicknames_to_get_account_info.size();"
              << count_of_contacts;
     for (int i = 0; i < count_of_contacts; ++i) {
-        disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
 
         connect(client_main_page, &HttpClient::responseReceived, this, [this](QByteArray responseData) {
                     QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
@@ -314,6 +314,7 @@ void MainPageWindow::get_contacts_info_and_show()
                     contacts.emplaceBack(new VChatWidget(name, nickname, surname, photo));
 
                     emit contact_successfully_added_to_scrollWidget();
+                    disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
                 });
 
         QString contactInfoGetRequestLink = "https://synergy-iauu.onrender.com/getContactInfo/"
@@ -321,7 +322,9 @@ void MainPageWindow::get_contacts_info_and_show()
                                             + contacts_nicknames_to_get_account_info[i];
         client_main_page->getRequest(contactInfoGetRequestLink);
     }
-    emit stoploading();
+    // emit stoploading();
+    overlay->hideOverlay();
+    // scroll_widget->show();
 }
 
 
@@ -342,7 +345,7 @@ void MainPageWindow::handle_search_data(QByteArray responseData)
     if (jsonObject.contains("matched_contacts") && jsonObject["matched_contacts"].isArray()) {
         QJsonArray matchedContactsArray = jsonObject["matched_contacts"].toArray();
         for (const QJsonValue &val : matchedContactsArray) {
-            if (val.isObject()) {
+            if (val.isObject() && !val.isNull()) {
                 QJsonObject userObj = val.toObject();
                 QString nickname = userObj.value("nickname").toString();
                 QString name = userObj.value("name").toString();
@@ -369,7 +372,6 @@ void MainPageWindow::handle_search_data(QByteArray responseData)
                 QString encodedPhoto = userObj.value("profile_photo").toString();
 
                 QPixmap photo = Globals::getInstance().decodeBase64ToPixmap(encodedPhoto);
-
                 VChatWidget *userWidget = new VChatWidget(name, nickname, surname, photo);
                 matched_other_users.append(userWidget);
                 emit matched_contact_or_other_user_added_successfully(false);
@@ -385,8 +387,20 @@ void MainPageWindow::handle_search_data(QByteArray responseData)
         clear_contact_array();
         scroll_widget->clear_chats();
         scroll_widget->show_search_chats();
+
+        overlay->hideOverlay();
+        // scroll_widget->show();
+        // emit stoploading();
     }
-    emit stoploading();
+    else
+    {
+        get_contacts_info_and_show();
+        searchBar->setText("");
+
+        // emit stoploading();
+        overlay->hideOverlay();
+        scroll_widget->show();
+    }
 }
 
 
@@ -395,7 +409,14 @@ void MainPageWindow::handleSearch()
 {
     QString searchText = searchBar->text();
     if (!searchText.isEmpty()) {
-        emit startloading();
+        // emit startloading();
+        overlay->showOverlay();
+        // scroll_widget->hide();
+
+        scroll_widget->clear_chats();
+        scroll_widget->delete_search_chats();
+        scroll_widget->delete_all_chats();
+        clear_matched_arrays();
         qDebug() << "Search query:" << searchText;
         QString searchLink = "https://synergy-iauu.onrender.com/search/"
                              + Globals::getInstance().getUserId() + "/" + searchText;

@@ -18,6 +18,8 @@ Registration::Registration(QWidget *parent)
     valids[1] = true;
     valids[4] = true;
     client_registration = new HttpClient();
+    overlay = new LoadingOverlay(this);
+
     centralWidget = new QWidget(this);
 
 
@@ -255,7 +257,8 @@ Registration::Registration(QWidget *parent)
 
 void Registration::handle_reg_btn()
 {
-    emit startloading();
+    // emit startloading();
+    overlay->showOverlay();
     bool allValid = true;
     for (int i = 0; i < 8; ++i) {
         if (valids[i] == false) {
@@ -285,7 +288,8 @@ void Registration::handle_reg_btn()
     }
     else
     {
-        emit stoploading();
+        overlay->hideOverlay();
+        // emit stoploading();
     }
 }
 
@@ -350,7 +354,8 @@ void Registration::handleUserId(QByteArray responseData)
         qDebug() << Globals::getInstance().getUserId();
         emit email_obt_signal(emailField->text());
         emit idreceived();
-        emit stoploading();
+        // emit stoploading();
+        overlay->hideOverlay();
         emit reg_btn_signal();
     }
     else if (jsonObject.contains("detail")) {
@@ -363,7 +368,8 @@ void Registration::handleUserId(QByteArray responseData)
             emailField->setStyleSheet("QLineEdit { border: 2px solid red; }");
             nicknameField->setStyleSheet("");
         }
-        emit stoploading();
+        overlay->hideOverlay();
+        // emit stoploading();
     }
 }
 

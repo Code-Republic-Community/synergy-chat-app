@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include "httpclient.h"
+#include "loadingoverlay.h"
 
 class Registration : public QWidget
 {
@@ -75,6 +76,8 @@ signals:
 
     void startloading();
     void stoploading();
+private:
+    LoadingOverlay* overlay;
 
 private slots:
     void handle_terms_of_use_btn();

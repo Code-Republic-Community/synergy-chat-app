@@ -24,7 +24,6 @@ MyProfile::MyProfile(QWidget *parent)
 
 void MyProfile::handleProfileUpdate(QByteArray responseData)
 {
-    qDebug() << "________________MYProfile request_________________";
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     if (jsonResponse.isNull() || !jsonResponse.isObject()) {
         qDebug() << "Invalid JSON response.";

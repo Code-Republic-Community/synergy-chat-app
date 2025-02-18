@@ -76,18 +76,12 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(chat_pg, &ChatWidget::go_back_signal, this, &MainWindow::goToMainPg);
-    connect(profile_settings_pg,
-            &MyProfile::logOutSiganl,
-            main_pg,
-            &MainPageWindow::handleContactReDonwnload);
+    connect(profile_settings_pg, &MyProfile::logOutSiganl, main_pg, &MainPageWindow::handleContactReDonwnload);
 
     connect(settings_pg, &Settings::languageChanged, this, &MainWindow::change_language);
 
     connect(profile_settings_pg, &MyProfile::logOutSiganl, this, &MainWindow::goToSignIn);
-    connect(profile_settings_pg,
-            &MyProfile::logOutSiganl,
-            main_pg,
-            &MainPageWindow::clearDataOnLogout);
+    connect(profile_settings_pg, &MyProfile::logOutSiganl, main_pg, &MainPageWindow::clearDataOnLogout);
 
     connect(welcome_pg, &WelcomePg::languageChanged, this, &MainWindow::change_language);
 
@@ -95,12 +89,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(login_pg, &Login::startloading, this, &MainWindow::goto_loading_page);
     connect(login_pg, &Login::stoploading, this, &MainWindow::goToSignIn);
-
-    connect(reg_pg, &Registration::startloading, this, &MainWindow::goto_loading_page);
-    connect(reg_pg, &Registration::stoploading, this, &MainWindow::goToRegPg);
-
-    connect(verification_pg, &Verification::startloading, this, &MainWindow::goto_loading_page);
-    connect(verification_pg, &Verification::stoploading, this, &MainWindow::goToVerificationPg);
 
     openSavedAccount();
 

@@ -14,6 +14,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include "httpclient.h"
+#include "loadingoverlay.h"
 
 class Verification : public QWidget
 {
@@ -51,6 +52,8 @@ private:
     QString original_code;
     HttpClient *client_verification;
     QString maskedemail;
+
+    LoadingOverlay *overlay;
 
 public:
     void setLanguege();

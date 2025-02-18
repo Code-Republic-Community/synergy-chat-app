@@ -13,6 +13,7 @@
 #include "scroll_widget.h"
 #include "v_chat_widget.h"
 #include "loadingwidget.h"
+#include "loadingoverlay.h"
 
 class MainPageWindow : public QWidget
 {
@@ -76,14 +77,9 @@ signals:
     void profile_button_signal();
     void received_contacts();
 
-signals:
-    void startloading();
-    void stoploading();
-private slots:
-    void handlestartloading();
-    void handlestoploading();
 private:
-    LoadingWidget *loadingPage;
+    // LoadingWidget *loadingPage;
+    LoadingOverlay *overlay;
 };
 
 #endif // MAIN_PAGE_WINDOW_H

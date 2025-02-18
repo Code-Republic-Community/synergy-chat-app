@@ -52,6 +52,7 @@ void Login::saveCredentials(const QString &userId, const QString &username, cons
 void Login::loadCredentials()
 {
     emit startloading();
+    // overlay->showOverlay();
     qDebug() << "Load Credentials";
 
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
@@ -91,6 +92,7 @@ void Login::loadCredentials()
     else {
         qDebug() << "Failed to open file for reading";
         stoploading();
+        // overlay->hideOverlay();
     }
 }
 
@@ -123,8 +125,10 @@ void Login::clearCredentials()
 void Login::init()
 {
     setFixedSize(400, 700);
+
     remember = false;
     client_login = new HttpClient();
+    overlay = new LoadingOverlay(this);
 
     m_loginLabel = new QLabel(this);
     m_fontForLogin = m_loginLabel->font();
@@ -223,6 +227,7 @@ void Login::saveTexts()
 
 void Login::handleUserId(QByteArray responseData)
 {
+    // overlay->showOverlay();
     emit startloading();
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
@@ -238,8 +243,11 @@ void Login::handleUserId(QByteArray responseData)
             clearCredentials();
         }
         emit idreceived();
+        // overlay->hideOverlay();
+        emit stoploading();
         emit next_btn_signal();
     } else {
+        // overlay->hideOverlay();
         emit stoploading();
         qDebug() << "User ID not found in response.";
         usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
@@ -290,6 +298,7 @@ void Login::handleNextButtonClicked()
         QTimer::singleShot(3000, m_forget, &QLabel::hide);
         return;
     } else {
+        // overlay->showOverlay();
         emit startloading();
         usernameLineEdit->setStyleSheet("");
         passwordLineEdit->setStyleSheet("");
@@ -309,6 +318,8 @@ void Login::handleNextButtonClicked()
 void Login::handlePrevButtonClicked()
 {
     emit prev_btn_signal();
+    // overlay->hideOverlay();
+    emit stoploading();
 }
 
 Login::~Login() {}

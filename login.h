@@ -11,6 +11,7 @@
 #include <QTimer>
 #include "httpclient.h"
 #include "navigationPrevOrNext.h"
+#include "loadingoverlay.h"
 
 class Login : public QWidget
 {
@@ -44,6 +45,7 @@ private:
     QString m_usernameText;
     QString m_passwordText;
 
+    LoadingOverlay *overlay;
 private:
     void saveCredentials(const QString &userId, const QString &username, const QString &password);
 

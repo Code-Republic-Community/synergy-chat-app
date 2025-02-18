@@ -15,7 +15,6 @@ ScrollWidget::ScrollWidget(QWidget *parent)
     contentLayout = new QVBoxLayout(scroll_content);
     contentLayout->setSpacing(2);
     contentLayout->setContentsMargins(0, 0, 0, 0);
-
     scroll_content->setLayout(contentLayout);
     scroll->setWidget(scroll_content);
 }
@@ -94,7 +93,7 @@ void ScrollWidget::add_matched_other_users(VChatWidget *chat)
 void ScrollWidget::show_chats()
 {
     clear_chats();
-    qDebug() << "Show chats Scroll Widget";
+    qDebug() << "Show chats Scroll Widget" << all_chats.size();
     contentLayout->setAlignment(Qt::AlignTop);
     for (int i = 0; i < all_chats.size(); ++i) {
         contentLayout->addWidget(all_chats[i]);
@@ -138,9 +137,7 @@ void ScrollWidget::show_search_chats()
     }
     if (!matched_other_users.isEmpty()) {
         qDebug() << "Show Matched Other Users Scroll Widget";
-
         draw_line();
-
         for (int i = 0; i < matched_other_users.size(); ++i) {
             contentLayout->addWidget(matched_other_users[i]);
             matched_other_users[i]->show();
