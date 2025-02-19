@@ -1,8 +1,10 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
+
 #include <QPair>
 #include <QString>
 #include <QPixmap>
+
 class Globals
 {
 private:

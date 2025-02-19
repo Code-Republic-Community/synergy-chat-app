@@ -1,7 +1,7 @@
 #include "main_page_window.h"
+#include "globals.h"
 #include <QJsonArray>
 #include <QJsonDocument>
-#include "globals.h"
 
 MainPageWindow::MainPageWindow(QWidget *parent)
     : QWidget(parent)
@@ -11,12 +11,8 @@ MainPageWindow::MainPageWindow(QWidget *parent)
     , searchBar(new QLineEdit(this))
     , chat(new QLabel(this))
 {
-    // loadingPage = new LoadingWidget;
-    // loadingPage ->hide();
-    // scroll_widget->hide();
     overlay = new LoadingOverlay(this);
     overlay ->hideOverlay();
-    // scroll_widget->show();
 
     QPixmap searchIcon(":/pngs/searchicon.png");
     QPixmap profileIcon(VChatWidget::cut_photo(QPixmap(), 40));
@@ -118,7 +114,6 @@ void MainPageWindow::connections()
 
 void MainPageWindow::handle_vchat_click(QString nickname, QString name, QString surname, QPixmap photo)
 {
-
     qDebug() << "Opening chat with: " << nickname;
     scroll_widget->clear_search_chats();
     scroll_widget->delete_search_chats();
@@ -130,18 +125,13 @@ void MainPageWindow::vchat_clicked_from_search_pg(QString nickname, QString name
 
     if (contacts_nicknames_to_get_account_info.contains(nickname)) {
         clear_matched_arrays();
-        // //////
         scroll_widget->clear_chats();
         scroll_widget->delete_all_chats();
-        // //////
         handle_vchat_click(nickname, name, surname, photo);
         get_contacts_info_and_show();
         return;
     }
     overlay->showOverlay();
-    qDebug()<< "showOverlay 1";
-    // scroll_widget->hide();
-    // emit startloading();
     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
     connect(client_main_page, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
         QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
@@ -153,15 +143,11 @@ void MainPageWindow::vchat_clicked_from_search_pg(QString nickname, QString name
             clear_matched_arrays();
             scroll_widget->clear_chats();
             scroll_widget->delete_all_chats();
-            // emit stoploading();
             overlay->hideOverlay();
-            // scroll_widget->show();
             handle_vchat_click(nickname, name, surname, photo);
             get_contacts_info_and_show();
         } else {
-            // emit stoploading();
             overlay->hideOverlay();
-            // scroll_widget->show();
             qDebug() << "Failed to add contact: " << jsonObject.value("detail").toString();
         }
 
@@ -182,14 +168,10 @@ void MainPageWindow::handleProfileButton()
     emit profile_button_signal();
 }
 
-//kanchvuma es funkcian vor stananq contactnery    //getRequest Profile Info
 void MainPageWindow::handleIdReceiving()
 {
-    // emit startloading();
     overlay->showOverlay();
-    qDebug()<< "showOverlay 2";
 
-    // scroll_widget->hide();
     disconnect(client_main_page,
                &HttpClient::responseReceived,
                this,
@@ -215,7 +197,6 @@ void MainPageWindow::clearDataOnLogout()
     disconnect(client_main_page, &HttpClient::responseReceived, nullptr, nullptr);
 }
 
-//anuny miqich sxala pti liner remove all data on log out
 void MainPageWindow::handleContactReDonwnload()
 {
     scroll_widget->clear_search_chats();
@@ -241,7 +222,6 @@ void MainPageWindow::clear_contact_array()
     contacts.resize(0);
 }
 
-// response stanaluc vercnum enq mer contactneri nickname ery ev gcum QStringList i mej vor heto avelacnenq mainpage um
 void MainPageWindow::handle_contact(QByteArray responseData)
 {
     disconnect(client_main_page, &HttpClient::responseReceived, this, &MainPageWindow::handle_contact);
@@ -253,9 +233,6 @@ void MainPageWindow::handle_contact(QByteArray responseData)
     }
 
     QJsonObject jsonObject = jsonResponse.object();
-
-
-    // dnum enq main page i profili nkary
     QString encodedPhoto = jsonObject.value("profile_photo").toString();
     QPixmap photo = Globals::getInstance().decodeBase64ToPixmap(encodedPhoto);
     ProfileButton->setIcon(VChatWidget::cut_photo(photo, 40));
@@ -283,9 +260,7 @@ void MainPageWindow::handle_contact(QByteArray responseData)
             }
         }
     }
-
     qDebug() << "Extracted nicknames: " << contacts_nicknames_to_get_account_info;
-
     disconnect(this, &MainPageWindow::received_contacts, this, &MainPageWindow::get_contacts_info_and_show);
     connect(this, &MainPageWindow::received_contacts, this, &MainPageWindow::get_contacts_info_and_show);
     emit received_contacts();
@@ -297,7 +272,6 @@ void MainPageWindow::get_contacts_info_and_show()
     qDebug() << "count_of_contacts = contacts_nicknames_to_get_account_info.size();"
              << count_of_contacts;
     for (int i = 0; i < count_of_contacts; ++i) {
-
         connect(client_main_page, &HttpClient::responseReceived, this, [this](QByteArray responseData) {
                     QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
                     if (!jsonDoc.isObject()) {
@@ -325,9 +299,7 @@ void MainPageWindow::get_contacts_info_and_show()
                                             + contacts_nicknames_to_get_account_info[i];
         client_main_page->getRequest(contactInfoGetRequestLink);
     }
-    // emit stoploading();
     overlay->hideOverlay();
-    // scroll_widget->show();
 }
 
 
@@ -390,17 +362,12 @@ void MainPageWindow::handle_search_data(QByteArray responseData)
         clear_contact_array();
         scroll_widget->clear_chats();
         scroll_widget->show_search_chats();
-
         overlay->hideOverlay();
-        // scroll_widget->show();
-        // emit stoploading();
     }
     else
     {
         get_contacts_info_and_show();
         searchBar->setText("");
-
-        // emit stoploading();
         overlay->hideOverlay();
         scroll_widget->show();
     }
@@ -412,12 +379,7 @@ void MainPageWindow::handleSearch()
 {
     QString searchText = searchBar->text();
     if (!searchText.isEmpty()) {
-        // emit startloading();
         overlay->showOverlay();
-        qDebug()<< "showOverlay 3";
-
-        // scroll_widget->hide();
-
         scroll_widget->clear_chats();
         scroll_widget->delete_search_chats();
         scroll_widget->delete_all_chats();

@@ -9,10 +9,10 @@
 #include <QStringList>
 #include <QVector>
 #include <QWidget>
+
 #include "httpclient.h"
 #include "scroll_widget.h"
 #include "v_chat_widget.h"
-#include "loadingwidget.h"
 #include "loadingoverlay.h"
 
 class MainPageWindow : public QWidget
@@ -35,11 +35,9 @@ private:
     QLabel *chat;
     HttpClient *client_main_page;
 
-    //for search box
     QVector<VChatWidget *> matched_contacts;
     QVector<VChatWidget *> matched_other_users;
 
-    // esqany login ylneluc contactnery stanalu u cuyc talu hamar
 private:
     QVector<VChatWidget *> contacts;
     QStringList contacts_nicknames_to_get_account_info;
@@ -48,7 +46,6 @@ private slots:
     void get_contacts_info_and_show();
 public slots:
     void handleIdReceiving();
-    // /////////////////////////////////////////////////////////
 public slots:
     void clearDataOnLogout();
     void handleContactReDonwnload();
@@ -78,7 +75,6 @@ signals:
     void received_contacts();
 
 private:
-    // LoadingWidget *loadingPage;
     LoadingOverlay *overlay;
 };
 

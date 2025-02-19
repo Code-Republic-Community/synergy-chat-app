@@ -1,4 +1,8 @@
 #include "my_profile.h"
+#include "globals.h"
+#include "httpclient.h"
+#include "v_chat_widget.h"
+
 #include <QDebug>
 #include <QFileDialog>
 #include <QJsonDocument>
@@ -6,9 +10,9 @@
 #include <QPixmap>
 #include <QStringList>
 #include <QUrl>
-#include "globals.h"
-#include "httpclient.h"
-#include "v_chat_widget.h"
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
+#include <QRegularExpressionMatch>
 
 MyProfile::MyProfile(QWidget *parent)
     : QWidget(parent)
@@ -120,6 +124,10 @@ void MyProfile::setLanguage()
 
 void MyProfile::init()
 {
+    nameRegex = QRegularExpression("^[a-zA-Z]{2,}$");
+    surnameRegex = QRegularExpression("^[a-zA-Z]{1,}$");
+    nicknameRegex = QRegularExpression("^[a-zA-Z][a-zA-Z0-9_]{2,}$");
+
     client_donwnload_profile_data = new HttpClient();
     is_photo_edited = false;
     topLayoutContainer = new QWidget(this);
@@ -329,6 +337,36 @@ void MyProfile::connections()
         qDebug() << "go to settings siganl";
         emit gotoSettingsSignal();
     });
+
+    // petqa grvi tramabanutyun
+    connect(nameEdit, &QLineEdit::textChanged, this, [=]() {
+        QRegularExpressionMatch match = nameRegex.match(nameEdit->text());
+        if (match.hasMatch()) {
+            nameEdit->setStyleSheet("");
+        }
+        else {
+            nameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+        }
+    });
+    connect(surnameEdit, &QLineEdit::textChanged, this, [=]() {
+        QRegularExpressionMatch match = surnameRegex.match(surnameEdit->text());
+        if (match.hasMatch()) {
+            surnameEdit->setStyleSheet("");
+        }
+        else {
+            surnameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+        }
+    });
+    connect(nicknameEdit, &QLineEdit::textChanged, this, [=]() {
+        QRegularExpressionMatch match = nicknameRegex.match(nicknameEdit->text());
+        if (match.hasMatch()) {
+            nicknameEdit->setStyleSheet("");
+        }
+        else {
+            nicknameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+        }
+    });
+
 }
 
 void MyProfile::toggleEditMode(bool enable)

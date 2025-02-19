@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <QWidget>
-// #include "chatmessagewidget.h"
+
 #include "v_chat_widget.h"
 
 class MainPageWindow;

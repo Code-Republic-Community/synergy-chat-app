@@ -1,10 +1,11 @@
-// messagesFrame->setFixedSize(380, 570);
-
 #include "chat_widget.h"
+#include "globals.h"
+#include "chatmessagewidget.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QTimer>
-#include "globals.h"
+
 
 ChatWidget::ChatWidget(QWidget *parent)
     : QWidget(parent)

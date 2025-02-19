@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QStackedWidget>
+
 #include "chat_widget.h"
 #include "login.h"
 #include "main_page_window.h"

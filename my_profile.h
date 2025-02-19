@@ -9,6 +9,8 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QRegularExpression>
+
 #include "httpclient.h"
 
 class MyProfile : public QWidget
@@ -68,6 +70,11 @@ private:
     QMap<int, QString> *newDataMap;
 
     bool isEditing = false;
+
+private:
+    QRegularExpression nameRegex;
+    QRegularExpression surnameRegex;
+    QRegularExpression nicknameRegex;
 
 private:
     void init();

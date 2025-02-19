@@ -13,6 +13,7 @@
 #include <QTranslator>
 #include <QVBoxLayout>
 #include <QWidget>
+
 #include "httpclient.h"
 #include "loadingoverlay.h"
 

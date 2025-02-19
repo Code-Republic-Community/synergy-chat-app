@@ -10,9 +10,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
-#include "chatmessagewidget.h"
 #include "httpclient.h"
-#include "scroll_widget.h"
 #include "v_chat_widget.h"
 
 class ChatWidget : public QWidget

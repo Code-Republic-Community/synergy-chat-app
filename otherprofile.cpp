@@ -1,9 +1,11 @@
 #include "otherprofile.h"
+#include "globals.h"
+#include "v_chat_widget.h"
+
 #include <QDebug>
 #include <QJsonDocument>
 #include <QPixmap>
-#include "globals.h"
-#include "v_chat_widget.h"
+
 
 OtherProfile::OtherProfile(QWidget *parent)
     : QWidget(parent)

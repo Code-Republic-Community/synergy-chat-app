@@ -1,12 +1,13 @@
 #include "registration.h"
+#include "globals.h"
+#include "httpclient.h"
+
 #include <QDate>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
-#include "globals.h"
-#include "httpclient.h"
 
 Registration::Registration(QWidget *parent)
     : QWidget(parent)

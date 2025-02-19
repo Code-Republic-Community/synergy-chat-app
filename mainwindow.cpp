@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "loadingwidget.h"
+
 #include <QDir>
 #include <QStandardPaths>
 

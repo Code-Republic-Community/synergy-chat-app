@@ -1,5 +1,6 @@
 #include "welcomepg.h"
 #include "translator.h"
+
 WelcomePg::WelcomePg(QWidget *parent)
     : QWidget(parent)
     , welcome_label(new QLabel(this))

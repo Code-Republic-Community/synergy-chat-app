@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QWidget>
+
 #include "httpclient.h"
 
 class OtherProfile : public QWidget

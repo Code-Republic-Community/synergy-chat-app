@@ -1,4 +1,5 @@
 #include "navigationPrevOrNext.h"
+
 #include <QDebug>
 #include <QPushButton>
 

@@ -1,9 +1,10 @@
 #include "verification.h"
+#include "globals.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QApplication>
 #include <QUrl>
-#include "globals.h"
 
 Verification::Verification(QWidget *parent)
     : QWidget(parent)

@@ -1,4 +1,5 @@
 #include "loadingoverlay.h"
+
 #include <QGraphicsBlurEffect>
 #include <QResizeEvent>
 

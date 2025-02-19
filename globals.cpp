@@ -1,7 +1,9 @@
 #include "globals.h"
+
 #include <QFile>
 #include <QDebug>
 #include <QBuffer>
+
 Globals &Globals::getInstance()
 {
     static Globals instance;
@@ -26,7 +28,6 @@ Globals::Globals()
     formLabelStyle = {"font-size", "14px"};
     labelStyle = {"font-weight", "bold"};
     checkBoxStyle = {"border", "1px solid black"};
-
     USER_ID = "";
 }
 

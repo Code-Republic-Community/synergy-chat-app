@@ -1,6 +1,7 @@
 #include "settings.h"
-#include <QPushButton>
 #include "translator.h"
+
+#include <QPushButton>
 
 Settings::Settings(QWidget *parent)
     : QWidget(parent)
