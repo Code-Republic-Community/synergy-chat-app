@@ -11,6 +11,7 @@
 #include <QIcon>
 #include <QRegularExpression>
 
+#include "loadingoverlay.h"
 #include "httpclient.h"
 
 class MyProfile : public QWidget
@@ -23,10 +24,11 @@ signals:
     void goBackSignal();
     void logOutSiganl();
     void gotoSettingsSignal();
-    void settings_changed_successfully();
+
+    void profile_photo_changed(QPixmap photo);
 private slots:
     void handleProfileUpdate(QByteArray responseData);
-    void handleProfileEditing();
+    void handleProfileEditing(QByteArray responseData);
 public slots:
     void handleIdReceiving();
 
@@ -69,6 +71,8 @@ private:
     QMap<int, QString> *oldDataMap;
     QMap<int, QString> *newDataMap;
 
+    QString encoded_photo;
+    LoadingOverlay *overlay;
     bool isEditing = false;
 
 private:

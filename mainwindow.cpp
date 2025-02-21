@@ -7,7 +7,6 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    this->setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
     welcome_pg = new WelcomePg();
     login_pg = new Login();
     reg_pg = new Registration();
@@ -91,6 +90,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(login_pg, &Login::startloading, this, &MainWindow::goto_loading_page);
     connect(login_pg, &Login::stoploading, this, &MainWindow::goToSignIn);
+
+    connect(profile_settings_pg, &MyProfile::profile_photo_changed, main_pg, &MainPageWindow::handle_profile_photo_change);
 
     openSavedAccount();
 

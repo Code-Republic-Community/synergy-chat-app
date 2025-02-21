@@ -74,6 +74,9 @@ signals:
     void profile_button_signal();
     void received_contacts();
 
+public slots:
+    void handle_profile_photo_change(QPixmap photo);
+
 private:
     LoadingOverlay *overlay;
 };

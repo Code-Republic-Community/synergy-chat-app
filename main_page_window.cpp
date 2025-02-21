@@ -168,6 +168,11 @@ void MainPageWindow::handleProfileButton()
     emit profile_button_signal();
 }
 
+void MainPageWindow::handle_profile_photo_change(QPixmap photo)
+{
+    ProfileButton->setIcon(VChatWidget::cut_photo(photo, 40));
+}
+
 void MainPageWindow::handleIdReceiving()
 {
     overlay->showOverlay();

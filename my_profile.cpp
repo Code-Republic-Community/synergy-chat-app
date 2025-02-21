@@ -28,6 +28,7 @@ MyProfile::MyProfile(QWidget *parent)
 
 void MyProfile::handleProfileUpdate(QByteArray responseData)
 {
+    disconnect(client_donwnload_profile_data,&HttpClient::responseReceived,this, &MyProfile::handleProfileUpdate);
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     if (jsonResponse.isNull() || !jsonResponse.isObject()) {
         qDebug() << "Invalid JSON response.";
@@ -41,8 +42,12 @@ void MyProfile::handleProfileUpdate(QByteArray responseData)
     QString email = jsonObject.value("email").toString();
     QString name = jsonObject.value("name").toString();
     QString date_of_birth = jsonObject.value("date_of_birth").toString();
+    encoded_photo = jsonObject.value("profile_photo").toString();
+    QPixmap photo = Globals::getInstance().decodeBase64ToPixmap(encoded_photo);
+    profilePhoto->setPixmap(VChatWidget::cut_photo(photo, 100));
 
-    profilePhoto->setPixmap(VChatWidget::cut_photo(QPixmap(), 100));
+
+    oldDataMap->insert(3, encoded_photo);
 
     if (nameLabel) {
         nameLabel->setText(name);
@@ -59,39 +64,33 @@ void MyProfile::handleProfileUpdate(QByteArray responseData)
     if (ageLabel) {
         ageLabel->setText(date_of_birth);
     }
+
     oldDataMap = newDataMap;
 }
 
-void MyProfile::handleProfileEditing() //petqa grvi
+void MyProfile::handleProfileEditing(QByteArray responseData)
 {
-//     QJsonObject jsonData;
-//     jsonData["name"] = newDataMap->value(0);
-//     jsonData["surname"] = newDataMap->value(1);
-//     jsonData["nickname"] = newDataMap->value(2);
-//     QUrl putRequestLink("https://synergy-iauu.onrender.com/edit_profile/" + Globals::getInstance().getUserId() + "/");
-//     connect(client_donwnload_profile_data, &HttpClient::responseReceived, this, [=](QByteArray responseData){
-//         QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
-//         QJsonObject jsonObject = jsonResponse.object();
-//         if(jsonObject.contains("message") && jsonObject["message"].toString() == "Profile updated successfully")
-//         {
-//             oldDataMap->insert(2, newDataMap->take(2));
-//         }
-//         else
-//         {
-//             newDataMap->insert(2, oldDataMap->take(2));
-//             nicknameLabel->setText(newDataMap->take(2));
-//             nicknameEdit->setText(nicknameLabel->text());
-//         }
-//     });
-//     client_donwnload_profile_data->putRequest(putRequestLink, jsonData); //hat hat put anem vor nickname y zbaxvac lini mnacacy ashxati ...
+    disconnect(client_donwnload_profile_data, &HttpClient::responseReceived, this, &MyProfile::handleProfileEditing);
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+    QJsonObject jsonObject = jsonResponse.object();
+    if(jsonObject.contains("message") && jsonObject["message"].toString() == "Profile updated successfully")
+    {
+        qDebug()<< "Profile edited successfully";
+        toggleEditMode(false);
+        overlay->hideOverlay();
+    }
+    else
+    {
+        toggleEditMode(false);
+        nicknameLabel->setText(newDataMap->value(2));
+        overlay->hideOverlay();
+    }
+    handleIdReceiving();
 }
 
 void MyProfile::handleIdReceiving()
 {
-    connect(client_donwnload_profile_data,
-            &HttpClient::responseReceived,
-            this,
-            &MyProfile::handleProfileUpdate);
+    connect(client_donwnload_profile_data,&HttpClient::responseReceived,this, &MyProfile::handleProfileUpdate);
     QString link("https://synergy-iauu.onrender.com/profile_info/");
     QUrl accountinfo(link + Globals::getInstance().getUserId());
     client_donwnload_profile_data->getRequest(accountinfo);
@@ -124,6 +123,8 @@ void MyProfile::setLanguage()
 
 void MyProfile::init()
 {
+    overlay = new LoadingOverlay(this);
+    overlay->hideOverlay();
     nameRegex = QRegularExpression("^[a-zA-Z]{2,}$");
     surnameRegex = QRegularExpression("^[a-zA-Z]{1,}$");
     nicknameRegex = QRegularExpression("^[a-zA-Z][a-zA-Z0-9_]{2,}$");
@@ -214,6 +215,7 @@ void MyProfile::setup()
     oldDataMap->insert(0, nameLabel->text());
     oldDataMap->insert(1, surnameLabel->text());
     oldDataMap->insert(2, nicknameLabel->text());
+    oldDataMap->insert(3, Globals::getInstance().encodeImageToBase64(picture));
 }
 
 void MyProfile::createLabelPair(const QString &smallText, QLabel *&smallLabel, QLabel *&mainLabel)
@@ -296,9 +298,6 @@ void MyProfile::styling()
 
 void MyProfile::connections()
 {
-
-    connect(this, &MyProfile::settings_changed_successfully, this, &MyProfile::handleProfileEditing);
-
     connect(editProfile, &QPushButton::clicked, this, [this]() {
         if (isEditing) {
             saveChanges();
@@ -321,9 +320,9 @@ void MyProfile::connections()
                                                         "Select Profile Photo",
                                                         QDir::homePath(),
                                                         "Images (*.png *.jpg *.jpeg)");
-
         if (!filePath.isEmpty()) {
             QPixmap newProfilePic(filePath);
+            encoded_photo = Globals::getInstance().encodeImageToBase64(newProfilePic);
             profilePhoto->setPixmap(VChatWidget::cut_photo(newProfilePic, 100));
         }
     });
@@ -338,32 +337,58 @@ void MyProfile::connections()
         emit gotoSettingsSignal();
     });
 
-    // petqa grvi tramabanutyun
     connect(nameEdit, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = nameRegex.match(nameEdit->text());
         if (match.hasMatch()) {
+            editProfile->setEnabled(true);
             nameEdit->setStyleSheet("");
         }
         else {
             nameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+            editProfile->setDisabled(true);
         }
     });
     connect(surnameEdit, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = surnameRegex.match(surnameEdit->text());
         if (match.hasMatch()) {
             surnameEdit->setStyleSheet("");
+            editProfile->setEnabled(true);
         }
         else {
             surnameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+            editProfile->setDisabled(true);
         }
     });
     connect(nicknameEdit, &QLineEdit::textChanged, this, [=]() {
         QRegularExpressionMatch match = nicknameRegex.match(nicknameEdit->text());
         if (match.hasMatch()) {
+            editProfile->setEnabled(true);
+            connect(client_donwnload_profile_data, &HttpClient::responseReceived, [=](QByteArray responseData){
+                QJsonDocument jsonDocument = QJsonDocument::fromJson(responseData);
+                if(jsonDocument.isNull() || !jsonDocument.isObject())
+                {
+                    qDebug() << "Invalid Json Response";
+                    editProfile->setDisabled(true);
+                    nicknameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+                    return;
+                }
+                QJsonObject object = jsonDocument.object();
+                if(object.contains("message") && object["message"].toString() == "Nickname already in use")
+                {
+                    editProfile->setDisabled(true);
+                    nicknameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+                }
+                else if(object.contains("message") && object["message"].toString() == "Nickname is free")
+                {
+                    editProfile->setEnabled(true);
+                    nicknameEdit->setStyleSheet("");
+                }
+            });
             nicknameEdit->setStyleSheet("");
         }
         else {
             nicknameEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+            editProfile->setDisabled(true);
         }
     });
 
@@ -390,6 +415,8 @@ void MyProfile::toggleEditMode(bool enable)
         newDataMap->insert(0, nameLabel->text());
         newDataMap->insert(1, surnameLabel->text());
         newDataMap->insert(2, nicknameLabel->text());
+        newDataMap->insert(3, encoded_photo);
+
         editProfile->setText(tr("Save"));
         goBackButton->setText(tr("Cancel"));
     }
@@ -398,7 +425,8 @@ void MyProfile::toggleEditMode(bool enable)
         nameLabel->setText(oldDataMap->value(0));
         surnameLabel->setText(oldDataMap->value(1));
         nicknameLabel->setText(oldDataMap->value(2));
-
+        encoded_photo = oldDataMap->value(3);
+        profilePhoto->setPixmap(VChatWidget::cut_photo(Globals::getInstance().decodeBase64ToPixmap(encoded_photo), 100));
         editProfile->setText(tr("Edit"));
         goBackButton->setText(tr("Back"));
     }
@@ -406,17 +434,42 @@ void MyProfile::toggleEditMode(bool enable)
 
 void MyProfile::saveChanges()
 {
+    overlay->showOverlay();
+    QJsonObject jsonData;
+    QUrl putRequestLink("https://synergy-iauu.onrender.com/edit_profile/" + Globals::getInstance().getUserId());
+    connect(client_donwnload_profile_data, &HttpClient::responseReceived, this, &MyProfile::handleProfileEditing);
 
-    oldDataMap->insert(0, nameEdit->text());
-    oldDataMap->insert(1, surnameEdit->text());
-
-    nameLabel->setText(nameEdit->text());
-    surnameLabel->setText(surnameEdit->text());
-    nicknameLabel->setText(nicknameEdit->text());
-
-    newDataMap->insert(0, nameEdit->text());
-    newDataMap->insert(1, surnameEdit->text());
-    newDataMap->insert(2, nicknameEdit->text());
-    emit settings_changed_successfully();
-    toggleEditMode(false);
+    if(oldDataMap->value(0) != nameEdit->text())
+    {
+        oldDataMap->insert(0, nameEdit->text());
+        nameLabel->setText(nameEdit->text());
+        jsonData["name"] = oldDataMap->value(0);
+    }
+    if(oldDataMap->value(1) != surnameEdit->text())
+    {
+        oldDataMap->insert(1, surnameEdit->text());
+        surnameLabel->setText(surnameEdit->text());
+        jsonData["surname"] = oldDataMap->value(1);
+    }
+    if(oldDataMap->value(2) != nicknameEdit->text())
+    {
+        oldDataMap->insert(2, nicknameEdit->text());
+        nicknameLabel->setText(nicknameEdit->text());
+        jsonData["nickname"] = oldDataMap->value(2);
+    }
+    if(oldDataMap->value(3) != encoded_photo)
+    {
+        oldDataMap->insert(3, encoded_photo);
+        emit profile_photo_changed(Globals::getInstance().decodeBase64ToPixmap(encoded_photo));
+    }
+    jsonData["profile_photo"] = encoded_photo;
+    if(!jsonData.isEmpty())
+    {
+        qDebug()<<jsonData;
+        client_donwnload_profile_data->putRequest(putRequestLink, jsonData);
+    }
+    else
+    {
+        overlay->hideOverlay();
+    }
 }
