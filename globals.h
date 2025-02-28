@@ -9,7 +9,6 @@ class Globals
 {
 private:
     Globals();
-
 public:
     static Globals &getInstance();
     const QString &getUserId();
@@ -17,13 +16,7 @@ public:
     QPixmap decodeBase64ToPixmap(const QString &base64String);
     QString encodeImageToBase64(const QPixmap &pixmap);
 private:
-    QPair<QString, QString> comboBoxStyle;
-    QPair<QString, QString> buttonStyle;
-    QPair<QString, QString> formLabelStyle;
-    QPair<QString, QString> labelStyle;
-    QPair<QString, QString> checkBoxStyle;
     QString USER_ID;
-
 private:
     Globals(const Globals &) = delete;
     Globals &operator=(const Globals &) = delete;

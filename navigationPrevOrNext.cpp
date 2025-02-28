@@ -9,13 +9,9 @@ navigationPrevOrNext::navigationPrevOrNext(QWidget *parent)
     m_prev = new QPushButton(this);
     m_next = new QPushButton(this);
 
-    m_prev->setGeometry(0, 100, 90, 40);
-    m_next->setGeometry(20, 100, 90, 40);
+    m_prev->setGeometry(0, 0, 100, 40);
+    m_next->setGeometry(110, 0, 100, 40);
 
-    m_next->setStyleSheet("background-color: green;");
-
-    m_prev->move(0, 60);
-    m_next->move(100, 60);
 
     connect(m_prev, &QPushButton::clicked, this, &navigationPrevOrNext::onPrevClicked);
     connect(m_next, &QPushButton::clicked, this, &navigationPrevOrNext::onNextClicked);

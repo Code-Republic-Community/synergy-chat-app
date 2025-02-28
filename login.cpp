@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QStandardPaths>
 #include <QTextStream>
+#include <QStyle>
 
 Login::Login(QWidget *parent)
     : QWidget(parent)
@@ -53,7 +54,6 @@ void Login::saveCredentials(const QString &userId, const QString &username, cons
 void Login::loadCredentials()
 {
     emit startloading();
-    // overlay->showOverlay();
     qDebug() << "Load Credentials";
 
     QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
@@ -87,13 +87,11 @@ void Login::loadCredentials()
         qDebug() << "From File Password = " << password;
         remember = true;
         m_rememberMe->setCheckState(Qt::Checked);
-        emit next_btn_signal();
         emit m_nextAndPrev->nextClicked();
     }
     else {
         qDebug() << "Failed to open file for reading";
-        stoploading();
-        // overlay->hideOverlay();
+        emit stoploading();
     }
 }
 
@@ -135,7 +133,7 @@ void Login::init()
     m_fontForLogin = m_loginLabel->font();
     m_fontForLogin.setPointSize(30);
     m_loginLabel->setFont(m_fontForLogin);
-    m_loginLabel->setGeometry(150, 100, 150, 60);
+    m_loginLabel->setGeometry(150, 80, 150, 60);
 
     m_underLoginText = new QLabel(this);
     m_underLoginText->setWordWrap(true);
@@ -157,22 +155,24 @@ void Login::init()
 
     m_rememberMe = new QCheckBox(this);
     m_rememberMe->setGeometry(125, 440, 150, 30);
+    m_rememberMe->setObjectName("m_rememberMe");
 
     m_dontHaveAnAccount = new QLabel(this);
-    m_dontHaveAnAccount->setGeometry(110, 460, 200, 150);
+    m_dontHaveAnAccount->setGeometry(125, 480, 200, 20);
+
 
     m_register = new QLabel(this);
-    m_register->setGeometry(110, 543, 120, 20);
-    m_register->setStyleSheet("color: blue; text-decoration: underline;");
+    m_register->setGeometry(125, 500, 120, 20);
+    m_register->setObjectName("m_register");
     m_register->setCursor(Qt::PointingHandCursor);
 
     m_nextAndPrev = new navigationPrevOrNext(this);
-    m_nextAndPrev->setGeometry(175, 565, 400, 100);
+    m_nextAndPrev->setGeometry(95, 630, 210, 60);
 
-    m_forget = new QLabel(this);
-    m_forget->setGeometry(165, 530, 250, 150);
-    m_forget->setStyleSheet("color: red;");
-    m_forget->hide();
+    // m_forget = new QLabel(this);
+    // m_forget->setGeometry(165, 530, 250, 150);
+    // // m_forget->setStyleSheet("color: red;");
+    // m_forget->hide();
 
     setLanguage();
 
@@ -202,22 +202,26 @@ void Login::setLanguage()
 
     m_rememberMe->setText(tr("Remember Me"));
 
-    m_dontHaveAnAccount->setText(tr("Don't have an account"));
+    m_dontHaveAnAccount->setText(tr("Don't have an account ?"));
     m_register->setText(tr("Register"));
 
     m_nextAndPrev->setLeftButton(tr("Back"));
     m_nextAndPrev->setRightButton(tr("Next"));
 
-    m_forget->setText(tr("Both must be complementary"));
+    // m_forget->setText(tr("Both must be complementary"));
 }
 
 void Login::clear_fields()
 {
-    usernameLineEdit->setText("");
-    usernameLineEdit->setStyleSheet("");
-    passwordLineEdit->setText("");
-    passwordLineEdit->setStyleSheet("");
     m_rememberMe->setCheckState(Qt::Unchecked);
+    usernameLineEdit->setText("");
+    passwordLineEdit->setText("");
+    usernameLineEdit->setProperty("error", false);
+    passwordLineEdit->setProperty("error", false);
+    usernameLineEdit->style()->unpolish(usernameLineEdit);
+    usernameLineEdit->style()->polish(usernameLineEdit);
+    passwordLineEdit->style()->unpolish(passwordLineEdit);
+    passwordLineEdit->style()->polish(passwordLineEdit);
 }
 
 void Login::saveTexts()
@@ -228,7 +232,6 @@ void Login::saveTexts()
 
 void Login::handleUserId(QByteArray responseData)
 {
-    // overlay->showOverlay();
     emit startloading();
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     QJsonObject jsonObject = jsonResponse.object();
@@ -243,16 +246,18 @@ void Login::handleUserId(QByteArray responseData)
         } else {
             clearCredentials();
         }
-        emit idreceived();
-        // overlay->hideOverlay();
         emit stoploading();
+        emit idreceived();
         emit next_btn_signal();
     } else {
-        // overlay->hideOverlay();
         emit stoploading();
         qDebug() << "User ID not found in response.";
-        usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
-        passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
+        usernameLineEdit->setProperty("error", true);
+        passwordLineEdit->setProperty("error", true);
+        usernameLineEdit->style()->unpolish(usernameLineEdit);
+        usernameLineEdit->style()->polish(usernameLineEdit);
+        passwordLineEdit->style()->unpolish(passwordLineEdit);
+        passwordLineEdit->style()->polish(passwordLineEdit);
     }
 }
 
@@ -275,34 +280,44 @@ void Login::mousePressEvent(QMouseEvent *event)
     }
     if (event) {
     }
+
 }
 void Login::handleNextButtonClicked()
 {
     QString username = usernameLineEdit->text();
     QString password = passwordLineEdit->text();
     if (username.isEmpty() && password.isEmpty()) {
-        usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
-        passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
-        m_forget->show();
-        QTimer::singleShot(3000, m_forget, &QLabel::hide);
+        usernameLineEdit->setProperty("error", true);
+        passwordLineEdit->setProperty("error", true);
+        usernameLineEdit->style()->unpolish(usernameLineEdit);
+        usernameLineEdit->style()->polish(usernameLineEdit);
+        passwordLineEdit->style()->unpolish(passwordLineEdit);
+        passwordLineEdit->style()->polish(passwordLineEdit);
         return;
     } else if (username.isEmpty()) {
-        usernameLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
-        passwordLineEdit->setStyleSheet("");
-        m_forget->show();
-        QTimer::singleShot(3000, m_forget, &QLabel::hide);
+        usernameLineEdit->setProperty("error", true);
+        passwordLineEdit->setProperty("error", false);
+        usernameLineEdit->style()->unpolish(usernameLineEdit);
+        usernameLineEdit->style()->polish(usernameLineEdit);
+        passwordLineEdit->style()->unpolish(passwordLineEdit);
+        passwordLineEdit->style()->polish(passwordLineEdit);
         return;
     } else if (password.isEmpty()) {
-        usernameLineEdit->setStyleSheet("");
-        passwordLineEdit->setStyleSheet("QLineEdit { border: 2px solid red; }");
-        m_forget->show();
-        QTimer::singleShot(3000, m_forget, &QLabel::hide);
+        usernameLineEdit->setProperty("error", false);
+        passwordLineEdit->setProperty("error", true);
+        usernameLineEdit->style()->unpolish(usernameLineEdit);
+        usernameLineEdit->style()->polish(usernameLineEdit);
+        passwordLineEdit->style()->unpolish(passwordLineEdit);
+        passwordLineEdit->style()->polish(passwordLineEdit);
         return;
     } else {
-        // overlay->showOverlay();
         emit startloading();
-        usernameLineEdit->setStyleSheet("");
-        passwordLineEdit->setStyleSheet("");
+        usernameLineEdit->setProperty("error", false);
+        passwordLineEdit->setProperty("error", false);
+        usernameLineEdit->style()->unpolish(usernameLineEdit);
+        usernameLineEdit->style()->polish(usernameLineEdit);
+        passwordLineEdit->style()->unpolish(passwordLineEdit);
+        passwordLineEdit->style()->polish(passwordLineEdit);
         saveTexts();
         QUrl url("https://synergy-iauu.onrender.com/login/");
         QJsonObject jsonData;
@@ -318,9 +333,9 @@ void Login::handleNextButtonClicked()
 
 void Login::handlePrevButtonClicked()
 {
-    emit prev_btn_signal();
-    // overlay->hideOverlay();
     emit stoploading();
+    qDebug() << "Back button clicked, emitting prev_btn_signal";
+    emit prev_btn_signal();
 }
 
 Login::~Login() {}

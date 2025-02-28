@@ -7,11 +7,10 @@ ScrollWidget::ScrollWidget(QWidget *parent)
     scroll = new QScrollArea(this);
     scroll->setWidgetResizable(true);
     change_sizes(50, 100, 300, 570);
-    scroll->setBackgroundRole(QPalette::Dark);
+    // scroll->setBackgroundRole(QPalette::Dark);
     scroll->setWidgetResizable(true);
 
     scroll_content = new QWidget(scroll);
-
     contentLayout = new QVBoxLayout(scroll_content);
     contentLayout->setSpacing(2);
     contentLayout->setContentsMargins(0, 0, 0, 0);
@@ -29,21 +28,22 @@ void ScrollWidget::createLineContainer()
     lineLayout->setContentsMargins(10, 2, 10, 2);
 
     QLabel *lineText = new QLabel("Unknown Contacts");
-    lineText->setStyleSheet("font-weight: bold; font-size: 14px; padding: 0px; color: white;");
+    // lineText->setStyleSheet("font-weight: bold; font-size: 14px; padding: 0px; color: white;");
     lineText->setAlignment(Qt::AlignCenter);
 
     QFrame *lineLeft = new QFrame();
     lineLeft->setFrameShape(QFrame::HLine);
     lineLeft->setFrameShadow(QFrame::Sunken);
-    lineLeft->setStyleSheet("background-color: gray;");
+    // lineLeft->setStyleSheet("background-color: gray;");
     lineLeft->setFixedHeight(2);
 
     QFrame *lineRight = new QFrame();
     lineRight->setFrameShape(QFrame::HLine);
     lineRight->setFrameShadow(QFrame::Sunken);
-    lineRight->setStyleSheet("background-color: gray;");
+    // lineRight->setStyleSheet("background-color: gray;");
     lineRight->setFixedHeight(2);
-
+    lineLeft->setObjectName("lineLeft");
+    lineRight->setObjectName("lineRight");
     lineLayout->addWidget(lineLeft);
     lineLayout->addWidget(lineText);
     lineLayout->addWidget(lineRight);
@@ -98,7 +98,7 @@ void ScrollWidget::show_chats()
     for (int i = 0; i < all_chats.size(); ++i) {
         contentLayout->addWidget(all_chats[i]);
         all_chats[i]->show();
-        all_chats[i]->scroll_long_text(all_chats[i]->get_name());
+        // all_chats[i]->scroll_long_text(all_chats[i]->get_name());
     }
 }
 
@@ -132,7 +132,7 @@ void ScrollWidget::show_search_chats()
         for (int i = 0; i < matched_contacts.size(); ++i) {
             contentLayout->addWidget(matched_contacts[i]);
             matched_contacts[i]->show();
-            matched_contacts[i]->scroll_long_text(matched_contacts[i]->get_name());
+            // matched_contacts[i]->scroll_long_text(matched_contacts[i]->get_name());
         }
     }
     if (!matched_other_users.isEmpty()) {
@@ -141,7 +141,7 @@ void ScrollWidget::show_search_chats()
         for (int i = 0; i < matched_other_users.size(); ++i) {
             contentLayout->addWidget(matched_other_users[i]);
             matched_other_users[i]->show();
-            matched_other_users[i]->scroll_long_text(matched_other_users[i]->get_name());
+            // matched_other_users[i]->scroll_long_text(matched_other_users[i]->get_name());
         }
     }
 }

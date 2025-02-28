@@ -50,8 +50,10 @@ private:
     QLabel *passwordLabel;
     QLabel *confirmPasswordLabel;
     QCheckBox *checkBox;
-    QPushButton *termsOfUseButton;
+    QLabel *termsOfUseButton;
+
     QPushButton *haveAccountButton;
+
     QPushButton *prevButton;
     QPushButton *registerButton;
     QLabel *topLabel;
@@ -68,7 +70,6 @@ private:
 public:
     void setLanguage();
 signals:
-    void terms_of_use_signal();
     void have_an_account_signal();
     void reg_btn_signal();
     void prev_btn_signal();
@@ -81,7 +82,6 @@ private:
     LoadingOverlay* overlay;
 
 private slots:
-    void handle_terms_of_use_btn();
     void handle_have_an_account_btn();
     void handle_reg_btn();
     void handle_prev_btn();
@@ -89,6 +89,12 @@ private slots:
 
 private:
     void save_texts();
+
+private:
+    QLabel *haveAnAccountLabel;
+    QLabel *haveAnAccountClickLabel;
+protected:
+    void mousePressEvent(QMouseEvent *event);
 };
 
 #endif // REGISTRATION_h

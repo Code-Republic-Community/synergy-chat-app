@@ -1,11 +1,15 @@
 #include "chat_widget.h"
 #include "globals.h"
 #include "chatmessagewidget.h"
-
+#include "qcoreevent.h"
+#include "windows.h"
+#include <QSystemTrayIcon>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QTimer>
-
+#include <QMediaPlayer>
+#include <QSoundEffect>
+#include <QMouseEvent>
 
 ChatWidget::ChatWidget(QWidget *parent)
     : QWidget(parent)
@@ -19,28 +23,33 @@ ChatWidget::ChatWidget(QWidget *parent)
     chatReloadTimer->setInterval(10000);
 
     send_btn = new QPushButton(this);
-    send_btn->setGeometry(340, 10, 50, 55);
+    send_btn->setGeometry(330, 20, 50, 50);
     send_btn->setFocusPolicy(Qt::NoFocus);
+    send_btn->setObjectName("send_btn");
+    send_btn->setIcon(QPixmap(":/pngs/send.png"));
+    QSize size(40, 40);
+    send_btn->setIconSize(size);
+    send_btn->installEventFilter(this);
 
     scroll = new QScrollArea(this);
-    scroll->setGeometry(10, 70, 380, 560);
+    scroll->setGeometry(20, 90, 360, 530);
     scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     contentWidget = new QWidget();
-    contentWidget->setGeometry(0, 0, 380, 560);
+    contentWidget->setGeometry(20, 90, 360, 530);
 
     scroll->setWidget(contentWidget);
 
     backButton = new QPushButton(this);
-    backButton->setGeometry(12, 632, 100, 55);
+    backButton->setGeometry(20, 640, 100, 40);
     backButton->setFocusPolicy(Qt::NoFocus);
-    backButton->setStyleSheet(
-        "background-color: #8e15de; color: white; font-weight: bold; border-radius: 5px;");
+    // backButton->setStyleSheet(
+    //     "background-color: #8e15de; color: white; font-weight: bold; border-radius: 5px;");
 
     line = new QLineEdit(this);
     line->setObjectName("messageInput");
-    line->setGeometry(10, 10, 325, 55);
+    line->setGeometry(20, 20, 290, 50);
 
     connect(backButton, &QPushButton::clicked, this, &ChatWidget::handle_go_back);
     connect(send_btn, &QPushButton::clicked, this, &ChatWidget::sendMessage);
@@ -65,7 +74,6 @@ void ChatWidget::handle_go_back()
 
 void ChatWidget::setLanguage()
 {
-    send_btn->setText(tr("✉️"));
     backButton->setText(tr("Back"));
     line->setPlaceholderText(tr("Type message..."));
 }
@@ -74,7 +82,7 @@ void ChatWidget::handleDataFromMainPage(QString nickname, QString name, QString 
 {
     qDebug() <<"handleDataFromMainPage(QString nickname, QString name, QString surname, QPixmap photo)";
     v_user = new VChatWidget(name, nickname, surname, photo, this);
-    v_user->setGeometry(120, 630, 272, 60);
+    v_user->setGeometry(140, 630, 240, 60);
     v_user->show();
     connect(v_user, &VChatWidget::clicked_vchat, this, &ChatWidget::handle_profile_signal);
     connect(chatReloadTimer, &QTimer::timeout, this, [=]() {
@@ -86,6 +94,7 @@ void ChatWidget::handleDataFromMainPage(QString nickname, QString name, QString 
 
 void ChatWidget::sendMessage(bool isOutgoing)
 {
+
     QString contact_nickname = v_user->get_nick();
     QString url_path = QString("https://synergy-iauu.onrender.com/sendMessage/%1/%2")
                            .arg(Globals::getInstance().getUserId())
@@ -98,11 +107,15 @@ void ChatWidget::sendMessage(bool isOutgoing)
 
     qDebug() << "Sending message to:" << url.toString();
     qDebug() << "Message content:" << jsonData;
-
     if (!line->text().isEmpty()) {
         addMessage(line->text(), isOutgoing);
         line->clear();
     }
+    else
+    {
+        return;
+    }
+
     connect(chat_client, &HttpClient::responseReceived, this, [=](QByteArray responseData) {
         qDebug() << "Message sent. Reloading chat.";
         loadChat(contact_nickname);
@@ -113,8 +126,8 @@ void ChatWidget::sendMessage(bool isOutgoing)
 
 void ChatWidget::addMessage(const QString &message_text, bool isOutgoing)
 {
-    ChatMessageWidget *message = new ChatMessageWidget(message_text, contentWidget);
-
+    ChatMessageWidget *message = new ChatMessageWidget(message_text);
+    message->hide();
     int messageWidth = message->width() + 20;
     int messageHeight = message->height() + 20;
 
@@ -126,6 +139,7 @@ void ChatWidget::addMessage(const QString &message_text, bool isOutgoing)
 
     y += messageHeight + 10;
     int newContentHeight = y + messageHeight + 20;
+    message->setParent(contentWidget);
     message->show();
     contentWidget->setMinimumHeight(newContentHeight);
 }
@@ -166,6 +180,7 @@ void ChatWidget::loadChat(QString nickname)
         QJsonArray messagesArray = jsonObject["conversation"].toArray();
         QString currentUserId = Globals::getInstance().getUserId();
         clearMessages();
+        static int messagecount = messagesArray.size();
         for (const QJsonValue &messageVal : messagesArray) {
             if (!messageVal.isObject())
                 continue;
@@ -176,10 +191,31 @@ void ChatWidget::loadChat(QString nickname)
             bool isOutgoing = (sender == currentUserId);
 
             addMessage(text, isOutgoing);
+            if(messageVal == messagesArray.last())
+            {
+                if(!isOutgoing && notification_OnOff && messagecount != messagesArray.size())
+                {
+                    playNotificationSound();
+                    messagecount = messagesArray.size();
+                }
+            }
         }
     });
 
     chat_client->getRequest(url.toString());
+}
+
+void ChatWidget::playNotificationSound() {
+    MessageBeep(MB_ICONASTERISK);
+    QSystemTrayIcon *trayIcon = new QSystemTrayIcon();
+    trayIcon->show();
+    trayIcon->showMessage("Notification", "This is a system notification!",
+                          QSystemTrayIcon::Information, 3000);
+}
+
+void ChatWidget::handle_notification_mode(bool mode)
+{
+    notification_OnOff = mode;
 }
 
 void ChatWidget::handle_line()
@@ -192,3 +228,15 @@ void ChatWidget::handle_line()
         qDebug() << "Search query is empty";
     }
 }
+
+bool ChatWidget::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == send_btn) {
+        if (event->type() == QEvent::Enter) {
+            send_btn->setIcon(QPixmap(":/pngs/send-hover.png"));
+        } else if (event->type() == QEvent::Leave) {
+            send_btn->setIcon(QPixmap(":/pngs/send.png"));
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+

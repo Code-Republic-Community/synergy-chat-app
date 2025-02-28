@@ -31,7 +31,12 @@ private:
     QPushButton *signIn;
     QPushButton *about;
     QComboBox *languageComboBox;
-
+    QPushButton *thememode;
+    QString theme;
+signals:
+    void theme_changed(QString mode);
+public slots:
+    void handle_theme_changed_from_settings(QString mode);
 private:
     QString englishText;
     QString armenianText;

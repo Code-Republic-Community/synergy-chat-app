@@ -9,6 +9,7 @@ LoadingWidget::LoadingWidget(QWidget *parent) : QWidget(parent) {
     movie->setScaledSize(QSize(100, 100));
 
     loadingLabel->setMovie(movie);
+    loadingLabel->setObjectName("loadingLabel");
     loadingLabel->setAlignment(Qt::AlignCenter);
     movie->start();
 

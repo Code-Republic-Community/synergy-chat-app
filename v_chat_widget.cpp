@@ -13,10 +13,13 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
     QFrame *container = new QFrame();
-    container->setStyleSheet(
-        "border: 0px solid white;"
-        "border-radius: 10px;");
-    container->setFixedSize(200, 60);
+    container->setObjectName("frame_container");
+    // container->setStyleSheet(
+    //     "border: 3px solid #0078D7;"
+    //     "border-radius: 10px;"
+    //     "background-color: #EAEAEA");
+    container->setFixedWidth(240);
+    container->setFixedHeight(60);
     container->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     this->setFocusPolicy(Qt::NoFocus);
 
@@ -26,20 +29,20 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
     layout->setSpacing(5);
 
     name = new QLabel();
-    name->setStyleSheet("color: white; font-size: 12px; border: none;");
+    // name->setStyleSheet("color: #0078D7; font-size: 12px; border: none;");
     name->setAlignment(Qt::AlignLeft);
     name->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     nick = new QLabel();
-    nick->setStyleSheet("color: white; font-size: 12px; border: 0px;");
+    // nick->setStyleSheet("color: #0078D7; font-size: 12px; border: none;");
     nick->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     nick->setAlignment(Qt::AlignRight);
 
     pic = new QLabel();
+    pic->setObjectName("pic_vchat");
     pic->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     pic->setPixmap(cut_photo(contact_photo, 40));
     pic->setFixedSize(40, 40);
-    pic->setStyleSheet("border: 0px;");
 
     layout->setSpacing(10);
     layout->addWidget(name);
@@ -53,8 +56,8 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
     mainLayout->addWidget(container, 0, Qt::AlignCenter);
     setLayout(mainLayout);
 
-    timer = nullptr;
-    position = 0;
+    // timer = nullptr;
+    // position = 0;
 
     setLanguage(name_text, nick_text);
     connect(this, &QPushButton::clicked, this, [this](){
@@ -62,31 +65,31 @@ VChatWidget::VChatWidget(QString name_text, QString nick_text, QString surname_t
     });
 }
 
-void VChatWidget::scroll_long_text(QString text)
-{
-    if (!timer) {
-        timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, this, &VChatWidget::update_text);
-    }
+// void VChatWidget::scroll_long_text(QString text)
+// {
+//     if (!timer) {
+//         timer = new QTimer(this);
+//         connect(timer, &QTimer::timeout, this, &VChatWidget::update_text);
+//     }
 
-    position = 0;
-    scroll_text = text + "        ";
-    timer->start(400);
-}
+//     position = 0;
+//     scroll_text = text + "        ";
+//     timer->start(400);
+// }
 
-void VChatWidget::update_text()
-{
-    if (!name)
-        return;
+// void VChatWidget::update_text()
+// {
+//     if (!name)
+//         return;
 
-    int visibleText = qMin(10, scroll_text.length());
-    name->setText(scroll_text.mid(position, visibleText));
-    position++;
+//     int visibleText = qMin(10, scroll_text.length());
+//     name->setText(scroll_text.mid(position, visibleText));
+//     position++;
 
-    if (position >= scroll_text.length() - visibleText) {
-        position = 0;
-    }
-}
+//     if (position >= scroll_text.length() - visibleText) {
+//         position = 0;
+//     }
+// }
 
 void VChatWidget::set_name(QString text)
 {
@@ -94,7 +97,7 @@ void VChatWidget::set_name(QString text)
     contact_name = text;
 }
 
-QPixmap VChatWidget::cut_photo(QPixmap profile_photo, int size)
+QPixmap VChatWidget::cut_photo(QPixmap profile_photo, int size, QColor color)
 {
     QPixmap avatar(profile_photo);
 
@@ -121,8 +124,7 @@ QPixmap VChatWidget::cut_photo(QPixmap profile_photo, int size)
     painter.drawPixmap(0, 0, size, size, avatar);
 
     painter.setClipping(false);
-
-    QPen pen(QColor("#8e15de"));
+    QPen pen(color);
     pen.setWidth(borderThickness);
     painter.setPen(pen);
     painter.setBrush(Qt::NoBrush);

@@ -5,14 +5,15 @@ ChatMessageWidget::ChatMessageWidget(const QString &text, QWidget *parent)
     , messageLabel(new QLabel(this))
     , timeLabel(new QLabel(this))
 {
+
     layout = new QVBoxLayout(this);
     layout->setContentsMargins(10, 5, 10, 5);
 
     messageLabel->setWordWrap(true);
-    messageLabel->setStyleSheet("background-color: #8e15de; padding: 10px; border-radius: 10px;");
 
     timeLabel->setAlignment(Qt::AlignRight);
-    timeLabel->setStyleSheet("font-size: 10px; color: white;");
+    timeLabel->setObjectName("timelabel");
+
 
     layout->addWidget(messageLabel);
     layout->addWidget(timeLabel);
@@ -32,10 +33,4 @@ void ChatMessageWidget::setMessage(const QString &text)
 void ChatMessageWidget::setAlignment(Qt::Alignment alignment)
 {
     layout->setAlignment(Qt::Alignment(alignment));
-
-    if (alignment & Qt::AlignRight) {
-        messageLabel->setStyleSheet("background-color: #8e15de; color: white;");
-    } else {
-        messageLabel->setStyleSheet("background-color: #e0e0e0; color: black;");
-    }
 }

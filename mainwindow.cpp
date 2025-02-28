@@ -3,6 +3,7 @@
 
 #include <QDir>
 #include <QStandardPaths>
+#include <QApplication>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
     staked_widget->addWidget(other_profile_pg);    // 8
     staked_widget->addWidget(loading_page);        // 9
 
-    connect(welcome_pg, &WelcomePg::signInClicked, login_pg, &Login::loadCredentials);
     connect(welcome_pg, &WelcomePg::signInClicked, this, &MainWindow::goToSignIn);
     connect(welcome_pg, &WelcomePg::signUpClicked, this, &MainWindow::goToRegPg);
 
@@ -93,10 +93,39 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(profile_settings_pg, &MyProfile::profile_photo_changed, main_pg, &MainPageWindow::handle_profile_photo_change);
 
-    openSavedAccount();
+    connect(settings_pg, &Settings::themeChanged, this, [this](QString mode){
+        emit theme_changed(mode);
+    });
 
+    connect(settings_pg, &Settings::notification, chat_pg, &ChatWidget::handle_notification_mode);
+
+    connect(welcome_pg, &WelcomePg::theme_changed, this, &MainWindow::changeTheme);
+
+    connect(settings_pg, &Settings::themeChanged, welcome_pg, &WelcomePg::handle_theme_changed_from_settings);
+    connect(welcome_pg, &WelcomePg::theme_changed, settings_pg, &Settings::handle_theme_changed_from_welcome);
+
+    changeTheme("Light");
+
+    openSavedAccount();
     this->setCentralWidget(staked_widget);
     this->setFixedSize(400, 700);
+}
+
+
+void applyStyleSheet(const QString &styleFile) {
+    QFile file(styleFile);
+    if (!file.open(QFile::ReadOnly)) {
+        qWarning("Unable to open stylesheet file");
+        return;
+    }
+    QTextStream stream(&file);
+    qApp->setStyleSheet(stream.readAll());
+    file.close();
+}
+
+void MainWindow::changeTheme(QString mode) {
+    QString themeFile = (mode == "Dark") ? ":/styles/darkmode.qss" : ":/styles/lightmode.qss";
+    applyStyleSheet(themeFile);
 }
 
 MainWindow::~MainWindow() {}
@@ -130,6 +159,7 @@ void MainWindow::openSavedAccount()
 
 void MainWindow::goToSignIn()
 {
+    qDebug() <<"GOTO Login page";
     staked_widget->setCurrentIndex(1);
     reg_pg->clear_fields();
     verification_pg->clear_fields();
@@ -145,6 +175,7 @@ void MainWindow::goToRegPg()
 void MainWindow::goToWelcomePg()
 {
     staked_widget->setCurrentIndex(0);
+    qDebug() << "Goto welcome page";
     reg_pg->clear_fields();
     verification_pg->clear_fields();
 }

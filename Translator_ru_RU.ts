@@ -186,8 +186,8 @@
                 <translation>Запомнить меня</translation>
             </message>
             <message>
-                <source>Don't have an account</source>
-                <translation>Нет учетной записи?</translation>
+                <source>Don't have an account ?</source>
+                <translation>Нет учетной записи ?</translation>
             </message>
             <message>
                 <source>register</source>
@@ -339,7 +339,7 @@
                         </message>
 
                         <message>
-                            <source>Welcome to DeltaSynergy! A place for meaningful</source>
+                            <source>Welcome to Synergy Chat App! A place for meaningful</source>
                             <translation>Добро пожаловать в Synergy Чат! Место для содержательного</translation>
                         </message>
                         <message>

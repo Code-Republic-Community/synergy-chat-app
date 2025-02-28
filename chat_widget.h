@@ -25,6 +25,7 @@ public slots:
     void handleDataFromMainPage(QString nickname, QString name, QString surname, QPixmap photo);
 
 private:
+
     QPushButton *send_btn;
     VChatWidget *v_user;
     QPushButton *go_back_btn;
@@ -44,6 +45,13 @@ private:
 signals:
     void other_profile_signal(QString nickname, QString name, QString surname, QPixmap photo);
     void go_back_signal();
+private:
+    bool notification_OnOff; // true false
+    void playNotificationSound();
+public slots:
+    void handle_notification_mode(bool mode);
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 private slots:
     void handle_profile_signal(QString nickname, QString name, QString surname, QPixmap photo);
     void handle_go_back();

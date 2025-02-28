@@ -28,7 +28,7 @@ MyProfile::MyProfile(QWidget *parent)
 
 void MyProfile::handleProfileUpdate(QByteArray responseData)
 {
-    disconnect(client_donwnload_profile_data,&HttpClient::responseReceived,this, &MyProfile::handleProfileUpdate);
+    disconnect(client_donwnload_profile_data, &HttpClient::responseReceived, this, &MyProfile::handleProfileUpdate);
     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
     if (jsonResponse.isNull() || !jsonResponse.isObject()) {
         qDebug() << "Invalid JSON response.";
@@ -90,6 +90,7 @@ void MyProfile::handleProfileEditing(QByteArray responseData)
 
 void MyProfile::handleIdReceiving()
 {
+    disconnect(client_donwnload_profile_data,&HttpClient::responseReceived,this, &MyProfile::handleProfileUpdate);
     connect(client_donwnload_profile_data,&HttpClient::responseReceived,this, &MyProfile::handleProfileUpdate);
     QString link("https://synergy-iauu.onrender.com/profile_info/");
     QUrl accountinfo(link + Globals::getInstance().getUserId());
@@ -144,6 +145,16 @@ void MyProfile::init()
     createLabelPair(tr("Nickname"), nicknameSmallLabel, nicknameLabel);
     createLabelPair(tr("Email"), emailSmallLabel, emailLabel);
     createLabelPair(tr("Date of Birth"), ageSmallLabel, ageLabel);
+    nameLabel->setObjectName("nameLabel");
+    surnameLabel->setObjectName("surnameLabel");
+    nicknameLabel->setObjectName("nicknameLabel");
+    emailLabel->setObjectName("emailLabel");
+    ageLabel->setObjectName("ageLabel");
+    nameSmallLabel->setObjectName("nameSmallLabel");
+    surnameSmallLabel->setObjectName("surnameSmallLabel");
+    nicknameSmallLabel->setObjectName("nicknameSmallLabel");
+    emailSmallLabel->setObjectName("emailSmallLabel");
+    ageSmallLabel->setObjectName("ageSmallLabel");
 
     nameEdit = new QLineEdit(this);
     surnameEdit = new QLineEdit(this);
@@ -157,6 +168,10 @@ void MyProfile::init()
     gotoSettings = new QPushButton(this);
     logOut = new QPushButton(this);
     editProfile = new QPushButton(this);
+    goBackButton->setMinimumSize(80, 40);
+    gotoSettings->setMinimumSize(80, 40);
+    logOut->setMinimumSize(80, 40);
+    editProfile->setMinimumSize(80, 40);
 
     changePhotoButton = new QPushButton(this);
     changePhotoButton->hide();
@@ -169,7 +184,7 @@ void MyProfile::setup()
 {
     QPixmap picture(":/pngs/panda.jpg");
     topLayoutContainer ->setLayout(topLayout);
-    topLayoutContainer->setGeometry(0, 0, 400, 60);
+    topLayoutContainer->setGeometry(0, 0, 400, 70);
 
     bottomLayoutContainer->setLayout(bottomLayout);
     bottomLayoutContainer->setGeometry(0, 640, 400, 60);
@@ -184,9 +199,10 @@ void MyProfile::setup()
     oldDataMap->insert(1, surnameLabel->text());
     oldDataMap->insert(2, nicknameLabel->text());
 
+    topLayout->setContentsMargins(20, 0, 20, 0);
     topLayout ->addWidget(goBackButton);
-
     topLayout ->addWidget(editProfile);
+
 
     profilePhoto->setGeometry(150, 60, 100, 100);
 
@@ -205,8 +221,14 @@ void MyProfile::setup()
     surnameEdit->setGeometry(surnameLabel->geometry());
     nicknameEdit->setGeometry(nicknameLabel->geometry());
 
+    bottomLayout->setContentsMargins(20, 0, 20, 20);
+
+    bottomLayout->addStretch();
     bottomLayout->addWidget(gotoSettings);
+    bottomLayout->addItem(new QSpacerItem(20, 0));
     bottomLayout->addWidget(logOut);
+    bottomLayout->addStretch();
+
 
     changePhotoButton->setIcon(*editIcon);
     changePhotoButton->setGeometry(230, 120, 20, 20);
@@ -221,72 +243,72 @@ void MyProfile::setup()
 void MyProfile::createLabelPair(const QString &smallText, QLabel *&smallLabel, QLabel *&mainLabel)
 {
     smallLabel = new QLabel(smallText, this);
-    smallLabel->setStyleSheet("font-size: 10px; color: white;");
+    // smallLabel->setStyleSheet("font-size: 10px; color: white;");
 
     mainLabel = new QLabel(this);
-    mainLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
+    // mainLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
 }
 
 void MyProfile::setupLabelPosition(QLabel *smallLabel, QLabel *mainLabel, int y)
 {
 
-    smallLabel->setGeometry(10, y - 17, 380, 15);
-    mainLabel->setGeometry(10, y, 380, 30);
+    smallLabel->setGeometry(25, y - 20, 360, 15);
+    mainLabel->setGeometry(20, y, 360, 30);
 }
 
 void MyProfile::styling()
 {
-    QString labelStyle = R"(
-        QLabel {
-            color: #FFFFFF;
-            font-size: 12px;
-            border: 3px solid #420242;
-            border-radius: 5px;
-            padding: 3px;
-        }
-    )";
+    // QString labelStyle = R"(
+    //     QLabel {
+    //         // color: #FFFFFF;
+    //         font-size: 12px;
+    //         border: 3px /*solid #420242*/;
+    //         border-radius: 5px;
+    //         padding: 3px;
+    //     }
+    // )";
 
-    nameLabel->setStyleSheet(labelStyle);
-    surnameLabel->setStyleSheet(labelStyle);
-    nicknameLabel->setStyleSheet(labelStyle);
-    emailLabel->setStyleSheet(labelStyle);
-    ageLabel->setStyleSheet(labelStyle);
+    // nameLabel->setStyleSheet(labelStyle);
+    // surnameLabel->setStyleSheet(labelStyle);
+    // nicknameLabel->setStyleSheet(labelStyle);
+    // emailLabel->setStyleSheet(labelStyle);
+    // ageLabel->setStyleSheet(labelStyle);
 
-    QString lineEditStyle = R"(
-        QLineEdit {
-            color: #FFFFFF;
-            font-size: 12px;
-            border: 3px solid #420242;
-            border-radius: 5px;
-            padding: 3px;
-            background-color: #2A002A;
-        }
-    )";
+    // QString lineEditStyle = R"(
+    //     QLineEdit {
+    //         // color: #FFFFFF;
+    //         font-size: 12px;
+    //         border: 3px /*solid #420242*/;
+    //         border-radius: 5px;
+    //         padding: 3px;
+    //         // background-color: #2A002A;
+    //     }
+    // )";
 
-    nameEdit->setStyleSheet(lineEditStyle);
-    surnameEdit->setStyleSheet(lineEditStyle);
-    nicknameEdit->setStyleSheet(lineEditStyle);
+    // nameEdit->setStyleSheet(lineEditStyle);
+    // surnameEdit->setStyleSheet(lineEditStyle);
+    // nicknameEdit->setStyleSheet(lineEditStyle);
 
-    QString buttonStyle = R"(
-        QPushButton {
-            border: 3px solid #420242;
-            border-radius: 5px;
-            padding: 8px 15px;
-            background-color: #420242;
-            color: white;
-            font-weight: bold;
-        }
-        QPushButton:hover {
-            background-color: #5A005A;
-        }
-        QPushButton:pressed {
-            background-color: #2A002A;
-        }
-    )";
-    goBackButton->setStyleSheet(buttonStyle);
-    gotoSettings->setStyleSheet(buttonStyle);
-    logOut->setStyleSheet(buttonStyle);
-    editProfile->setStyleSheet(buttonStyle);
+    // QString buttonStyle = R"(
+    //     QPushButton {
+    //         border: 3px /*solid #420242*/;
+    //         border-radius: 5px;
+    //         padding: 8px 15px;
+    //         // background-color: #420242;
+    //         // color: white;
+    //         font-weight: bold;
+    //     }
+    //     QPushButton:hover {
+    //         // background-color: #5A005A;
+    //     }
+    //     QPushButton:pressed {
+    //         // background-color: #2A002A;
+    //     }
+    // )";
+    // goBackButton->setStyleSheet(buttonStyle);
+    // gotoSettings->setStyleSheet(buttonStyle);
+    // logOut->setStyleSheet(buttonStyle);
+    // editProfile->setStyleSheet(buttonStyle);
     goBackButton->setFocusPolicy(Qt::NoFocus);
     gotoSettings->setFocusPolicy(Qt::NoFocus);
     logOut->setFocusPolicy(Qt::NoFocus);

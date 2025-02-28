@@ -7,14 +7,13 @@ LoadingOverlay::LoadingOverlay(QWidget *parent) : QWidget(parent) {
     setParent(parent);
     setFixedSize(parent->size());
 
-    setStyleSheet("background-color: rgba(0, 0, 0, 50);");
     setWindowFlags(Qt::Widget | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TransparentForMouseEvents, false);
     setAttribute(Qt::WA_NoSystemBackground, true);
 
     loadingLabel = new QLabel(this);
     movie = new QMovie(":/pngs/load.gif");
-
+    loadingLabel->setObjectName("loadingLabel");
     movie->setScaledSize(QSize(70, 70));
 
     loadingLabel->setMovie(movie);

@@ -39,7 +39,7 @@ private:
     QFont m_fontForHaventAccount;
     QLabel *m_register;
     navigationPrevOrNext *m_nextAndPrev;
-    QLabel *m_forget;
+    // QLabel *m_forget;
 
     HttpClient *client_login;
     QString m_usernameText;

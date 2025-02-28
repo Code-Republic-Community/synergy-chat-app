@@ -66,7 +66,6 @@ private slots:
 
 public slots:
     void handle_vchat_click(QString nickname, QString name, QString surname, QPixmap photo);
-    void keyPressEvent(QKeyEvent *event);
     void handleProfileButton();
 
 signals:
@@ -77,6 +76,10 @@ signals:
 public slots:
     void handle_profile_photo_change(QPixmap photo);
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+private:
+    QPixmap profile_picture;
 private:
     LoadingOverlay *overlay;
 };

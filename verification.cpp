@@ -9,7 +9,6 @@
 Verification::Verification(QWidget *parent)
     : QWidget(parent)
 {
-    this->setAttribute(Qt::WA_DeleteOnClose);
     this->setFixedSize(400, 700);
     client_verification = new HttpClient();
     overlay = new LoadingOverlay(this);
@@ -19,9 +18,10 @@ Verification::Verification(QWidget *parent)
     QHBoxLayout *toplayout = new QHBoxLayout(toplayoutContainer);
     toplayout->setContentsMargins(50, 40, 50, 20);
 
-    verificationtxt = new QLabel;
+    verificationtxt = new QLabel(this);
+    verificationtxt->setObjectName("verificationtxt");
     verificationtxt->setWordWrap(true);
-    verificationtxt->setStyleSheet("font-size: 17px; font-weight: bold;");
+    // verificationtxt->setStyleSheet("font-size: 17px; font-weight: bold;");
     verificationtxt->setAlignment(Qt::AlignCenter);
     toplayout->addWidget(verificationtxt, 0, Qt::AlignTop | Qt::AlignHCenter);
 
@@ -30,23 +30,33 @@ Verification::Verification(QWidget *parent)
     QVBoxLayout *midlayout = new QVBoxLayout(midlayoutContainer);
     midlayout->setContentsMargins(50, 0, 50, 0);
 
-    code = new QLineEdit;
+    code = new QLineEdit(this);
+    code->setObjectName("code");
     code->setFixedSize(200, 50);
-    code->setStyleSheet("font-size: 16px; padding: 10px;");
+    // code->setStyleSheet("font-size: 16px; padding: 10px;");
     code->setValidator(new QIntValidator(100000, 999999, this));
     code->setMaxLength(7);
     midlayout->addWidget(code, 0, Qt::AlignHCenter);
 
     chance = new QLabel;
-    chance->setStyleSheet("font-size: 12px; color: red;");
+    // chance->setStyleSheet("font-size: 12px; color: red;");
     chance->setAlignment(Qt::AlignCenter);
     midlayout->addWidget(chance, 0, Qt::AlignHCenter);
 
+    QWidget *bottomLayoutContainer = new QWidget(this);
+    bottomLayoutContainer->setGeometry(0, 600, 400, 100);
+    QHBoxLayout *bottomLayout = new QHBoxLayout(bottomLayoutContainer);
     Back = new QPushButton(this);
     Next = new QPushButton(this);
-    Back->setGeometry(20, 640, 90, 40);
-    Next->setGeometry(290, 640, 90, 40);
-    Next->setStyleSheet("background-color: green;");
+    Back->setMinimumWidth(100);
+    Next->setMinimumWidth(100);
+
+    bottomLayout->setAlignment(Qt::AlignCenter);
+    bottomLayout->addStretch();
+    bottomLayout->addWidget(Back);
+    bottomLayout->addItem(new QSpacerItem(20, 0));
+    bottomLayout->addWidget(Next);
+    bottomLayout->addStretch();
 
     connect(QApplication::instance(), &QApplication::aboutToQuit, this, [=]() {
         delete this;
@@ -60,19 +70,15 @@ Verification::Verification(QWidget *parent)
         static QString currentText;
         QString Text = text;
         Text.remove(QRegularExpression("[^\\d]"));
-
         QString formattedText = Text;
-
         if (Text.length() > 2) {
             formattedText = Text.left(3) + "-" + Text.mid(3);
         }
-
         if (!currentText.isEmpty() && text.length() < currentText.length()) {
             if (currentText.length() > 3 && currentText[3] == '-' && text.length() == 3) {
                 formattedText.remove(2, 2);
             }
         }
-
         if (formattedText != text) {
             code->setText(formattedText);
         }
@@ -100,7 +106,6 @@ void Verification::onPrevClicked()
 
 void Verification::onNextClicked()
 {
-    // emit startloading();
     overlay->showOverlay();
     connect(client_verification, &HttpClient::responseReceived, this, &Verification::handle_data);
     QUrl url("https://synergy-iauu.onrender.com/verify/");
@@ -118,7 +123,6 @@ void Verification::handle_data(QByteArray responseData)
     if (chanceleft <= 0) {
         overlay->hideOverlay();
         chance->setText(tr("You have") + QString::number(chanceleft + 1) + tr("chances"));
-        // emit stoploading();
         Next->setEnabled(true);
         chanceleft = 2;
         emit prevClicked();
@@ -127,7 +131,6 @@ void Verification::handle_data(QByteArray responseData)
         if (jsonObject.contains("message") && jsonResponse["message"].toString() == "Verification successful") {
             qDebug() << "Verification successful";
             chanceleft = 2;
-            // emit stoploading();
             overlay->hideOverlay();
             emit verification_successfull();
             emit nextClicked();
@@ -136,7 +139,6 @@ void Verification::handle_data(QByteArray responseData)
             --chanceleft;
             qDebug() << "Invalid verification code";
             chance->setText(tr("You have") + " " + QString::number(chanceleft + 1)+ " " + tr("chances"));
-            // emit stoploading();
             overlay->hideOverlay();
             clear_fields();
         }

@@ -3,7 +3,6 @@
 
 WelcomePg::WelcomePg(QWidget *parent)
     : QWidget(parent)
-    , welcome_label(new QLabel(this))
 {
     this->setFixedSize(400, 700);
     init();
@@ -13,36 +12,35 @@ WelcomePg::WelcomePg(QWidget *parent)
 
 void WelcomePg::init()
 {
-    englishText = tr("English");
-    armenianText = tr("Armenian");
-    russianText = tr("Russian");
+    theme = "Light";
+    welcome_label = new QLabel(this);
+    welcome_label->setText("Synergy");
+    welcome_label->setObjectName("welcome_label");
+    welcome_label->setStyleSheet("font-size: 30px; font-weight: bold;");
+    welcome_label->adjustSize();
+    QSize size = welcome_label->size();
+    welcome_label->setGeometry((400 - size.width()) / 2, 20, size.width(), size.height());
 
-    QWidget *central = new QWidget(this);
-    QVBoxLayout *layout = new QVBoxLayout(central);
-    welcome_label->setAlignment(Qt::AlignCenter);
-    welcome_label->setStyleSheet("font-size: 30px; font-weight: bold; color: #FFFFFF;");
-    layout->addWidget(welcome_label, 0, Qt::AlignTop | Qt::AlignHCenter);
+    thememode = new QPushButton(this);
+    thememode->setFixedSize(30, 30);
+    thememode->setIcon(QIcon(":/pngs/darkmode.ico"));
+    thememode->move(400 - 50, 20);
+
 
     signUp = new QPushButton(this);
     signUp->setGeometry(100, 200, 200, 80);
-    signUp->setStyleSheet("font-size: 17px; font-weight: bold;");
 
     signIn = new QPushButton(this);
     signIn->setGeometry(100, 300, 200, 80);
-    signIn->setStyleSheet("font-size: 17px; font-weight: bold;");
 
     languageComboBox = new QComboBox(this);
     languageComboBox->addItem(englishText, "en_US");
     languageComboBox->addItem(armenianText, "hy_AM");
     languageComboBox->addItem(russianText, "ru_RU");
 
-    languageComboBox->setGeometry(20, 600, 120, 30);
-    languageComboBox->setStyleSheet("font-size: 15px;");
+    languageComboBox->setGeometry(20, 600, 140, 30);
     about = new QPushButton(this);
-    about->setGeometry(260, 600, languageComboBox->width(), languageComboBox->height());
-    about->setStyleSheet("font-size: 15px;");
-
-    setLayout(layout);
+    about->setGeometry(240, 600, languageComboBox->width(), languageComboBox->height());
 }
 
 void WelcomePg::conecting()
@@ -58,6 +56,20 @@ void WelcomePg::conecting()
         Translator::get().set(newLang);
         emit languageChanged();
     });
+    connect(thememode, &QPushButton::clicked, this, [this](){
+        if(theme == "Light")
+        {
+            thememode->setIcon(QIcon(":/pngs/lightmode.ico"));
+            theme = "Dark";
+            emit theme_changed(theme);
+        }
+        else if (theme == "Dark")
+        {
+            thememode->setIcon(QIcon(":/pngs/darkmode.ico"));
+            theme = "Light";
+            emit theme_changed(theme);
+        }
+    });
 }
 
 void WelcomePg::setLanguage()
@@ -68,7 +80,6 @@ void WelcomePg::setLanguage()
     languageComboBox->setItemText(0, englishText);
     languageComboBox->setItemText(1, armenianText);
     languageComboBox->setItemText(2, russianText);
-    welcome_label->setText(tr("Synergy"));
     signUp->setText(tr("Sign up"));
     signIn->setText(tr("Sign in"));
     about->setText(tr("About"));
@@ -82,6 +93,19 @@ void WelcomePg::onSignInClicked()
 void WelcomePg::onSignUpClicked()
 {
     emit signUpClicked();
+}
+
+void WelcomePg::handle_theme_changed_from_settings(QString mode)
+{
+    theme = mode;
+    if(theme == "Light")
+    {
+        thememode->setIcon(QIcon(":/pngs/darkmode.ico"));
+    }
+    else if (theme == "Dark")
+    {
+        thememode->setIcon(QIcon(":/pngs/lightmode.ico"));
+    }
 }
 
 WelcomePg::~WelcomePg() {}

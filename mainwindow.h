@@ -23,7 +23,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow();
-
+public slots:
+    void changeTheme(QString mode);
+signals:
+    void theme_changed(QString mode);
 private:
     QStackedWidget *staked_widget;
     WelcomePg *welcome_pg;

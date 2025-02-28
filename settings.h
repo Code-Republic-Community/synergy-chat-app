@@ -22,7 +22,10 @@ public:
 signals:
     void goBackSignal();
     void languageChanged();
-    void themeChanged();
+    void themeChanged(QString mode);
+    void notification(bool mode);
+public slots:
+    void handle_theme_changed_from_welcome(QString mode);
 
 private:
     QMap<QComboBox *, int> oldSettings;
@@ -40,7 +43,6 @@ private:
 
     QString lightText;
     QString darkText;
-    QString autoText;
 
     QString enabledText;
     QString disabledText;

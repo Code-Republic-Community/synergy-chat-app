@@ -66,6 +66,12 @@ void OtherProfile::init()
     createLabelPair(tr("Name"), nameSmallLabel, nameLabel);
     createLabelPair(tr("Surname"), surnameSmallLabel, surnameLabel);
     createLabelPair(tr("Nickname"), nicknameSmallLabel, nicknameLabel);
+    nameLabel->setObjectName("nameLabel");
+    surnameLabel->setObjectName("surnameLabel");
+    nicknameLabel->setObjectName("nicknameLabel");
+    nameSmallLabel->setObjectName("nameSmallLabel");
+    surnameSmallLabel->setObjectName("surnameSmallLabel");
+    nicknameSmallLabel->setObjectName("nicknameSmallLabel");
     goBackButton = new QPushButton(this);
 }
 
@@ -89,53 +95,53 @@ void OtherProfile::setup()
 void OtherProfile::createLabelPair(const QString &smallText, QLabel *&smallLabel, QLabel *&mainLabel)
 {
     smallLabel = new QLabel(smallText, this);
-    smallLabel->setStyleSheet("font-size: 10px; color: white;");
+    // smallLabel->setStyleSheet("font-size: 10px; color: white;");
 
     mainLabel = new QLabel(this);
-    mainLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
+    // mainLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
 }
 
 void OtherProfile::setupLabelPosition(QLabel *smallLabel, QLabel *mainLabel, int y)
 {
 
-    smallLabel->setGeometry(10, y - 17, 380, 15);
-    mainLabel->setGeometry(10, y, 380, 30);
+    smallLabel->setGeometry(25, y - 20, 380, 15);
+    mainLabel->setGeometry(20, y, 360, 30);
 }
 
 void OtherProfile::styling()
 {
-    QString labelStyle = R"(
-        QLabel {
-            color: #FFFFFF;
-            font-size: 12px;
-            border: 3px solid #420242;
-            border-radius: 5px;
-            padding: 3px;
-        }
-    )";
+    // QString labelStyle = R"(
+    //     QLabel {
+    //         color: #FFFFFF;
+    //         font-size: 12px;
+    //         border: 3px solid #420242;
+    //         border-radius: 5px;
+    //         padding: 3px;
+    //     }
+    // )";
 
-    nameLabel->setStyleSheet(labelStyle);
-    surnameLabel->setStyleSheet(labelStyle);
-    nicknameLabel->setStyleSheet(labelStyle);
+    // nameLabel->setStyleSheet(labelStyle);
+    // surnameLabel->setStyleSheet(labelStyle);
+    // nicknameLabel->setStyleSheet(labelStyle);
 
-    QString buttonStyle = R"(
-        QPushButton {
-            border: 1px solid #420242;
-            border-radius: 5px;
-            padding: 8px 15px;
-            background-color: #420242;
-            color: white;
-            font-weight: bold;
-        }
-        QPushButton:hover {
-            background-color: #5A005A;
-        }
-        QPushButton:pressed {
-            background-color: #2A002A;
-        }
-    )";
+    // QString buttonStyle = R"(
+    //     QPushButton {
+    //         border: 1px solid #420242;
+    //         border-radius: 5px;
+    //         padding: 8px 15px;
+    //         background-color: #420242;
+    //         color: white;
+    //         font-weight: bold;
+    //     }
+    //     QPushButton:hover {
+    //         background-color: #5A005A;
+    //     }
+    //     QPushButton:pressed {
+    //         background-color: #2A002A;
+    //     }
+    // )";
 
-    goBackButton->setStyleSheet(buttonStyle);
+    // goBackButton->setStyleSheet(buttonStyle);
     goBackButton->setFocusPolicy(Qt::NoFocus);
 }
 

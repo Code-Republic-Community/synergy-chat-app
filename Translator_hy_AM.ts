@@ -178,7 +178,7 @@
                 <translation>Հիշել ինձ</translation>
             </message>
             <message>
-                <source>Don't have an account</source>
+                <source>Don't have an account ?</source>
                 <translation>Չունե՞ք հաշիվ</translation>
             </message>
             <message>
@@ -192,10 +192,6 @@
             <message>
                 <source>Next</source>
                 <translation>Առաջ</translation>
-            </message>
-            <message>
-                <source>Both must be complementary</source>
-                <translation>Երկուսն էլ պետք է լինեն նույնը</translation>
             </message>
             <message>
                 <source>Register</source>
@@ -332,7 +328,7 @@
                         </message>
 
                         <message>
-                            <source>Welcome to DeltaSynergy! A place for meaningful</source>
+                            <source>Welcome to Synergy Chat App! A place for meaningful</source>
                             <translation>Բարի գալուստ Synergy Չատ! Տեղ իմաստալից </translation>
                         </message>
                         <message>

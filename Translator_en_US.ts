@@ -181,8 +181,8 @@
         <translation>Remember Me</translation>
     </message>
     <message>
-        <source>Don't have an account</source>
-        <translation>Don't have an account</translation>
+        <source>Don't have an account ?</source>
+        <translation>Don't have an account ?</translation>
     </message>
     <message>
         <source>register</source>
@@ -332,8 +332,8 @@
                 <translation>Register</translation>
             </message>
             <message>
-                <source>Welcome to DeltaSynergy! A place for meaningful</source>
-                <translation>Welcome to DeltaSynergy! A place for meaningful</translation>
+                <source>Welcome to Synergy Chat App! A place for meaningful</source>
+                <translation>Welcome to Synergy Chat App! A place for meaningful</translation>
             </message>
             <message>
                 <source>conversations. Connect with your friends and family,</source>
