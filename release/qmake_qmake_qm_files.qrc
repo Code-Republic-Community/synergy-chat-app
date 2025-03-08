@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="i18n">
+<file alias="Translator_en_US.qm">C:/Users/tigra/OneDrive/Documents/QT/synergy-chat-app/release/Translator_en_US.qm</file>
+<file alias="Translator_hy_AM.qm">C:/Users/tigra/OneDrive/Documents/QT/synergy-chat-app/release/Translator_hy_AM.qm</file>
+<file alias="Translator_ru_RU.qm">C:/Users/tigra/OneDrive/Documents/QT/synergy-chat-app/release/Translator_ru_RU.qm</file>
+</qresource>
+</RCC>
