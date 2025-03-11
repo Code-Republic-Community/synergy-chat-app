@@ -177,14 +177,14 @@ void MyProfile::init()
 
     changePhotoButton = new QPushButton(this);
     changePhotoButton->hide();
-    editIcon = new QIcon(":/pngs/resources/edit.ico");
+    editIcon = new QIcon(":/pngs/edit.ico");
     oldDataMap = new QMap<int, QString>();
     newDataMap = new QMap<int, QString>();
 }
 
 void MyProfile::setup()
 {
-    QPixmap picture(":/pngs/resources/panda.jpg");
+    QPixmap picture(":/pngs/panda.jpg");
     topLayoutContainer ->setLayout(topLayout);
     topLayoutContainer->setGeometry(0, 0, 400, 70);
 

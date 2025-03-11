@@ -12,7 +12,7 @@ LoadingOverlay::LoadingOverlay(QWidget *parent) : QWidget(parent) {
     setAttribute(Qt::WA_NoSystemBackground, true);
 
     loadingLabel = new QLabel(this);
-    movie = new QMovie(":/pngs/resources/load.gif");
+    movie = new QMovie(":/pngs/load.gif");
     loadingLabel->setObjectName("loadingLabel");
     movie->setScaledSize(QSize(70, 70));
 

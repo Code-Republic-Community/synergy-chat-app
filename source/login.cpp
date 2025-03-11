@@ -1,7 +1,3 @@
-#include "login.h"
-#include "globals.h"
-#include "httpclient.h"
-
 #include <QDir>
 #include <QFile>
 #include <QJsonDocument>
@@ -13,6 +9,10 @@
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QStyle>
+
+#include "login.h"
+#include "globals.h"
+#include "httpclient.h"
 
 Login::Login(QWidget *parent)
     : QWidget(parent)

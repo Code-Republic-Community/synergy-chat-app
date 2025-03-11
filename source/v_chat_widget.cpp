@@ -82,7 +82,7 @@ QPixmap VChatWidget::cut_photo(QPixmap profile_photo, int size, QColor color)
 
     if (avatar.isNull()) {
         qDebug() << "Failed to load image: ";
-        avatar = QPixmap(":/pngs/resources/panda.jpg");
+        avatar = QPixmap(":/pngs/panda.jpg");
     }
 
     double borderThickness = 2.2;

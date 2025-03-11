@@ -22,7 +22,7 @@ MainPageWindow::MainPageWindow(QWidget *parent)
 
     player->setAudioOutput(audioOutput);
     audioOutput->setVolume(1.0);
-    player->setSource(QUrl("qrc:/mp3/resources/notification.wav"));
+    player->setSource(QUrl("qrc:/mp3/notification.wav"));
 
 
     notification_OnOff = true;
@@ -32,7 +32,7 @@ MainPageWindow::MainPageWindow(QWidget *parent)
     overlay = new LoadingOverlay(this);
     overlay ->hideOverlay();
 
-    QPixmap searchIcon(":/pngs/resources/searchicon.png");
+    QPixmap searchIcon(":/pngs/searchicon.png");
     QPixmap profileIcon(VChatWidget::cut_photo(QPixmap(), 40));
 
     client_main_page = new HttpClient();
@@ -448,10 +448,10 @@ void MainPageWindow::handleSearch()
 bool MainPageWindow::eventFilter(QObject *obj, QEvent *event) {
     if (obj == SearchButton) {
         if (event->type() == QEvent::Enter) {
-            SearchButton->setIcon(QPixmap(":/pngs/resources/searchicon-hover.png"));
+            SearchButton->setIcon(QPixmap(":/pngs/searchicon-hover.png"));
             SearchButton->setIconSize(SearchButton->size());
         } else if (event->type() == QEvent::Leave) {
-            SearchButton->setIcon(QPixmap(":/pngs/resources/searchicon.png"));
+            SearchButton->setIcon(QPixmap(":/pngs/searchicon.png"));
             SearchButton->setIconSize(SearchButton->size());
         }
     }

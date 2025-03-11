@@ -23,7 +23,7 @@ void WelcomePg::init()
 
     thememode = new QPushButton(this);
     thememode->setFixedSize(30, 30);
-    thememode->setIcon(QIcon(":/pngs/resources/darkmode.ico"));
+    thememode->setIcon(QIcon(":/pngs/darkmode.ico"));
     thememode->move(400 - 50, 20);
 
 
@@ -59,13 +59,13 @@ void WelcomePg::conecting()
     connect(thememode, &QPushButton::clicked, this, [this](){
         if(theme == "Light")
         {
-            thememode->setIcon(QIcon(":/pngs/resources/lightmode.ico"));
+            thememode->setIcon(QIcon(":/pngs/lightmode.ico"));
             theme = "Dark";
             emit theme_changed(theme);
         }
         else if (theme == "Dark")
         {
-            thememode->setIcon(QIcon(":/pngs/resources/darkmode.ico"));
+            thememode->setIcon(QIcon(":/pngs/darkmode.ico"));
             theme = "Light";
             emit theme_changed(theme);
         }
@@ -100,11 +100,11 @@ void WelcomePg::handle_theme_changed_from_settings(QString mode)
     theme = mode;
     if(theme == "Light")
     {
-        thememode->setIcon(QIcon(":/pngs/resources/darkmode.ico"));
+        thememode->setIcon(QIcon(":/pngs/darkmode.ico"));
     }
     else if (theme == "Dark")
     {
-        thememode->setIcon(QIcon(":/pngs/resources/lightmode.ico"));
+        thememode->setIcon(QIcon(":/pngs/lightmode.ico"));
     }
 }
 

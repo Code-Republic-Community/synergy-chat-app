@@ -4,7 +4,7 @@ LoadingWidget::LoadingWidget(QWidget *parent) : QWidget(parent) {
     setFixedSize(400, 700);
 
     loadingLabel = new QLabel(this);
-    movie = new QMovie(":/pngs/resources/load.gif");
+    movie = new QMovie(":/pngs/load.gif");
 
     movie->setScaledSize(QSize(100, 100));
 

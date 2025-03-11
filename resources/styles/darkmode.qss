@@ -17,7 +17,7 @@ QCheckBox::indicator:checked {
     background-color: #0078D7;
     border: 2px solid #0078D7;
     border-radius: 4px;
-    image: url(:/pngs/resources/check.png);
+    image: url(:/pngs/check.png);
 }
 
 QCheckBox::indicator:unchecked {
@@ -92,7 +92,7 @@ WelcomePg QComboBox::drop-down {
 
 /* Drop-down Arrow */
 WelcomePg QComboBox::down-arrow {
-    image: url(":/pngs/resources/down.ico");
+    image: url(:/pngs/down.ico);
     width: 18px;
     height: 18px;
 }
@@ -334,7 +334,7 @@ Registration QDateEdit QCalendarWidget QToolButton#qt_calendar_prevmonth {
     border: 1px solid #0078D7;
     border-radius: 3px;
     color: white;
-    qproperty-icon: url(:/pngs/resources/left.png);
+    qproperty-icon: url(:/pngs/left.png);
     qproperty-iconSize: 16px 16px;
     /* Set button size */
     width: 12px;
@@ -345,7 +345,7 @@ Registration QDateEdit QCalendarWidget QToolButton#qt_calendar_nextmonth {
     border: 1px solid #0078D7;
     border-radius: 3px;
     color: white;
-    qproperty-icon: url(:/pngs/resources/right.png);
+    qproperty-icon: url(:/pngs/right.png);
     qproperty-iconSize: 16px 16px;
     /* Set button size */
     width: 12px;
@@ -496,7 +496,7 @@ Settings QComboBox::drop-down {
 
 /* Drop-down Arrow */
 Settings QComboBox::down-arrow {
-    image: url(:/pngs/resources/down.ico);
+    image: url(:/pngs/down.ico);
     width: 18px;  /* Bigger arrow */
     height: 18px;
 }
